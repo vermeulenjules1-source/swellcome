@@ -1,0 +1,46 @@
+# Met le site en ligne sur GitHub Pages à chaque push sur main.
+# Étapes : récupérer le code, lancer scripts/build.py, publier le dossier dist/.
+name: Mise en ligne du site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # permet aussi de lancer la mise en ligne à la main depuis l'onglet Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule mise en ligne à la fois ; la plus récente l'emporte
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construire le site
+        # Sans nom de domaine, GitHub Pages sert le site sous /swellcome
+        env:
+          SWELLCOME_BASE: /swellcome
+        run: python3 scripts/build.py
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
