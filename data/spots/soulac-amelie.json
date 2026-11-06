@@ -1,0 +1,32 @@
+{
+  "slug": "soulac-amelie",
+  "nom": "Soulac – L'Amélie",
+  "noms_alternatifs": [],
+  "commune": "Soulac-sur-Mer",
+  "departement": "Gironde",
+  "departement_slug": "gironde",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 2,
+  "coordonnees": {
+    "lat": 45.487,
+    "lon": -1.148,
+    "precision": "approximative",
+    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+  },
+  "orientation_deg": null,
+  "orientation_16": null,
+  "fond": null,
+  "type_vague": null,
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [],
+  "surveillance": null,
+  "acces_parking": null,
+  "description": null,
+  "sources": [],
+  "verifie_le": null,
+  "confiance": "faible"
+}
