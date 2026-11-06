@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+.astro/
+
+# Secrets et environnement
+.env
+.env.*
+
+# Modèle de marée FES2022 (à télécharger depuis AVISO, ne pas committer)
+fes2022/
+*.nc
+
+# Système
+.DS_Store
