@@ -1,0 +1,31 @@
+<!-- En-tête commun à toutes les pages, inséré par build.py. -->
+<a class="skip-link" href="#contenu">Aller au contenu</a>
+
+<header class="site-header">
+  <div class="container">
+    <a class="logo" href="{{base}}/" aria-label="Swellcome, retour à l'accueil">
+      <svg class="logo-mark" aria-hidden="true"><use href="#logo-mark"></use></svg>
+      <span class="logo-text">
+        <span class="logo-name">Swellcome</span>
+        <span class="logo-tagline">SURF FORECAST</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
+      <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg>
+      <span class="visually-hidden">Ouvrir le menu</span>
+    </button>
+
+    <nav class="main-nav" id="menu-principal" aria-label="Navigation principale">
+      <ul>
+        <li><a href="{{base}}/spots/" data-nav="spots">Spots</a></li>
+        <li><a href="{{base}}/comprendre-le-forecast/" data-nav="guide">Comprendre le forecast</a></li>
+        <li><a href="{{base}}/a-propos/" data-nav="a-propos">À propos</a></li>
+        <li><a class="btn" href="#newsletter">
+          <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+          Newsletter
+        </a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

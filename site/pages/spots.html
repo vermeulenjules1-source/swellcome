@@ -1,0 +1,42 @@
+<!--
+titre: Spots de surf en France : prévisions spot par spot | Swellcome
+description: Tous les spots de surf suivis par Swellcome, classés par département, du nord au sud. Prévisions houle, vent et marée pour chacun.
+nav: spots
+-->
+
+<section class="page-head">
+  <div class="container">
+    <span class="eyebrow">Spots</span>
+    <h1>Tous les spots</h1>
+    <p class="lead">Chaque spot a sa page, avec ses prévisions et sa fiche : orientation, fond, marée qui fonctionne et niveau conseillé.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="dept-block">
+      <div class="dept-head">
+        <h2><a href="{{base}}/gironde/" style="text-decoration:none">Gironde</a></h2>
+        <span class="muted">Nouvelle-Aquitaine · {{nombre_spots}} spots</span>
+      </div>
+      <p class="compass"><svg class="icon" aria-hidden="true"><use href="#i-arrow-down"></use></svg> Du nord au sud</p>
+{{liste_spots_gironde}}
+    </div>
+
+    <div class="dept-block">
+      <div class="dept-head">
+        <h2>Bientôt</h2>
+        <span class="muted">Les prochaines côtes couvertes</span>
+      </div>
+      <div class="coming-soon">
+        <div class="card"><h3>Landes</h3><p>Nouvelle-Aquitaine</p></div>
+        <div class="card"><h3>Pays basque</h3><p>Pyrénées-Atlantiques</p></div>
+        <div class="card"><h3>Bretagne</h3><p>Finistère, Morbihan</p></div>
+        <div class="card"><h3>Manche</h3><p>Normandie, Hauts-de-France</p></div>
+        <div class="card"><h3>Méditerranée</h3><p>Occitanie, PACA, Corse</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>

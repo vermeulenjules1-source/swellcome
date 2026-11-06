@@ -1,0 +1,116 @@
+<!--
+titre: Swellcome · Prévisions surf en France, adaptées à votre niveau
+description: Houle, vent et marée pour chaque spot de France, avec un verdict selon votre niveau. Gratuit, sans publicité. Know before you go.
+-->
+
+<!-- Bandeau d'accueil -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Surf forecast · France</span>
+      <h1>Know before you go.</h1>
+      <p class="lead">Les prévisions surf de chaque spot français, traduites selon votre niveau. Vous savez en un coup d'œil si la session vaut le déplacement.</p>
+      <div class="hero-actions">
+        <a class="btn" href="{{base}}/spots/">
+          Voir les spots
+          <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn--secondary" href="{{base}}/comprendre-le-forecast/">Lire un forecast</a>
+      </div>
+    </div>
+
+    <!-- Carte d'exemple : valeurs fictives, signalées comme telles -->
+    <figure class="card card--shadow forecast-card" style="margin:0" aria-label="Exemple de carte de prévision, valeurs fictives">
+      <div class="card-top">
+        <div>
+          <p class="spot-name">Lacanau – Plage centrale</p>
+          <p class="spot-place">Gironde · demain, 9 h</p>
+        </div>
+        <span class="badge badge--good"><span class="dot"></span>Bon pour vous</span>
+      </div>
+      <div class="big-value">1,2<small>m</small></div>
+      <div class="value-label">Hauteur de houle</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-value">9 s</div><div class="stat-label">Période</div></div>
+        <div class="stat"><div class="stat-value">NO</div><div class="stat-label">Direction</div></div>
+        <div class="stat"><div class="stat-value">12 km/h</div><div class="stat-label">Vent offshore</div></div>
+      </div>
+      <figcaption class="example-flag">Exemple illustratif : ce ne sont pas des prévisions réelles.</figcaption>
+    </figure>
+  </div>
+
+  <!-- Ligne de vague décorative -->
+  <svg class="hero-waves" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#FFFFFF" d="M0 48c120-20 240-30 360-20s240 40 360 40 240-30 360-40 240 0 360 20v32H0z"/>
+  </svg>
+</section>
+
+<!-- Les trois promesses -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Pourquoi Swellcome</span>
+      <h2>Un forecast qui parle votre langue</h2>
+      <p>La même houle n'a pas le même effet pour un débutant et pour un surfeur confirmé. Swellcome traduit les chiffres en réponse simple.</p>
+    </div>
+    <div class="grid grid--3">
+      <article class="card">
+        <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg></span>
+        <h3>Ouvert à tous</h3>
+        <p class="muted">Houle, période, vent et marée sur 7 jours pour chaque spot, sans compte et sans publicité.</p>
+      </article>
+      <article class="card">
+        <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg></span>
+        <h3>Adapté à votre niveau</h3>
+        <p class="muted">Choisissez votre niveau : chaque créneau reçoit un verdict, top, correct ou à oublier, avec une phrase d'explication.</p>
+      </article>
+      <article class="card">
+        <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></span>
+        <h3>Alerté au bon moment</h3>
+        <p class="muted">Bientôt : une alerte gratuite la veille au soir quand votre spot correspond à vos critères.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Les spots de Gironde -->
+<section class="section section--sand">
+  <div class="container">
+    <div class="dept-block">
+      <div class="dept-head">
+        <div class="section-header" style="margin-bottom:0">
+          <span class="eyebrow">Premiers spots</span>
+          <h2>La Gironde, de Soulac au Porge</h2>
+          <p>Swellcome démarre sur {{nombre_spots}} spots girondins avant de couvrir les Landes, le Pays basque, la Bretagne, la Manche et la Méditerranée.</p>
+        </div>
+      </div>
+      <p class="compass"><svg class="icon" aria-hidden="true"><use href="#i-arrow-down"></use></svg> Du nord au sud</p>
+{{liste_spots_gironde}}
+    </div>
+  </div>
+</section>
+
+<!-- Les niveaux -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Quatre niveaux</span>
+      <h2>Quelles conditions pour vous ?</h2>
+      <p>Les critères de départ utilisés pour le verdict. Ils seront affinés avec des moniteurs et des surfeurs locaux.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" style="border:1px solid var(--border)">
+        <thead>
+          <tr><th scope="col">Niveau</th><th scope="col">Taille de vague</th><th scope="col">Période</th><th scope="col">Vent</th><th scope="col">Spots conseillés</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Débutant</td><td>0,5 à 1 m</td><td>Peu importante</td><td>Faible, moins de 15 km/h</td><td>Plages surveillées, fond sableux</td></tr>
+          <tr><td>Intermédiaire</td><td>0,8 à 1,8 m</td><td>8 s et plus</td><td>Offshore ou faible</td><td>Beach breaks</td></tr>
+          <tr><td>Confirmé</td><td>1,2 à 2,5 m</td><td>10 s et plus</td><td>Offshore ou faible</td><td>Beach breaks puissants, reefs</td></tr>
+          <tr><td>Expert</td><td>2 m et plus</td><td>12 s et plus</td><td>Offshore</td><td>Tous, y compris les spots engagés</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:24px"><a href="{{base}}/comprendre-le-forecast/">Comprendre la houle, la période et le vent →</a></p>
+  </div>
+</section>

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "swellcome",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "python3 scripts/build.py && python3 -m http.server 8000 -d dist"],
+      "port": 8000
+    }
+  ]
+}

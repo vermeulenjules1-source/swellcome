@@ -1,0 +1,73 @@
+<!-- Bandeau newsletter + pied de page, communs à toutes les pages. -->
+<section class="newsletter" id="newsletter" aria-labelledby="newsletter-titre">
+  <div class="container">
+    <div>
+      <span class="eyebrow">Newsletter</span>
+      <h2 id="newsletter-titre">Ne ratez plus aucune session</h2>
+      <p>Les grosses houles annoncées, les nouveaux spots et les guides pour mieux lire un forecast. Un email de temps en temps, jamais de publicité.</p>
+    </div>
+
+    <!--
+      Formulaire d'inscription.
+      L'adresse d'envoi (action) est réglée dans scripts/build.py (NEWSLETTER_ACTION).
+      Tant qu'elle est vide, le formulaire affiche un message et n'envoie rien.
+    -->
+    <form class="newsletter-form" action="{{newsletter_action}}" method="post" data-newsletter novalidate>
+      <div class="field-row">
+        <label class="visually-hidden" for="newsletter-email">Adresse email</label>
+        <input type="email" id="newsletter-email" name="EMAIL" placeholder="votre@email.fr" autocomplete="email" required>
+        <button class="btn" type="submit">S'inscrire</button>
+      </div>
+      <!-- Champ piège anti-robots : invisible pour les humains, doit rester vide -->
+      <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <label class="consent">
+        <input type="checkbox" name="OPT_IN" value="1" required>
+        <span>J'accepte de recevoir la newsletter de Swellcome. Désinscription en un clic dans chaque email. Voir la <a href="{{base}}/confidentialite/">politique de confidentialité</a>.</span>
+      </label>
+      <p class="form-message" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="{{base}}/" aria-label="Swellcome, retour à l'accueil">
+          <svg class="logo-mark" aria-hidden="true"><use href="#logo-mark"></use></svg>
+          <span class="logo-text">
+            <span class="logo-name">Swellcome</span>
+            <span class="logo-tagline">SURF FORECAST</span>
+          </span>
+        </a>
+        <p>Know before you go. Les prévisions surf de France, gratuites et adaptées à votre niveau.</p>
+      </div>
+
+      <nav class="footer-col" aria-labelledby="footer-site">
+        <h2 id="footer-site">Le site</h2>
+        <ul>
+          <li><a href="{{base}}/spots/">Tous les spots</a></li>
+          <li><a href="{{base}}/gironde/">Spots de Gironde</a></li>
+          <li><a href="{{base}}/comprendre-le-forecast/">Comprendre le forecast</a></li>
+          <li><a href="{{base}}/a-propos/">À propos et sources</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-labelledby="footer-legal">
+        <h2 id="footer-legal">Informations légales</h2>
+        <ul>
+          <li><a href="{{base}}/mentions-legales/">Mentions légales</a></li>
+          <li><a href="{{base}}/confidentialite/">Politique de confidentialité</a></li>
+          <li><a href="{{base}}/cookies/">Cookies</a></li>
+          <li><a href="{{base}}/conditions-utilisation/">Conditions d'utilisation</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-legal">
+      <p><strong>Sécurité :</strong> les prévisions sont des estimations. Vérifiez toujours les conditions sur place, privilégiez les zones de baignade surveillées, respectez les drapeaux et méfiez-vous des baïnes et des courants.</p>
+      <p>Données météo et vagues : <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a> (CC BY 4.0), à partir des modèles de Météo-France, ECMWF, NOAA et DWD. Marées calculées à partir de FES2022 (CNES/AVISO), indicatives, elles ne remplacent pas l'annuaire du Shom.</p>
+      <p>© {{annee}} Swellcome</p>
+    </div>
+  </div>
+</footer>

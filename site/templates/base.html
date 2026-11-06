@@ -1,0 +1,44 @@
+<!doctype html>
+<!--
+  Gabarit commun à toutes les pages.
+  build.py remplace chaque mot entre doubles accolades :
+    titre, description : lus en tête de chaque page
+    icones, header, footer : contenus de site/partials/
+    contenu : le corps de la page
+    base : préfixe des liens (vide en local)
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{titre}}</title>
+  <meta name="description" content="{{description}}">
+  <meta name="theme-color" content="#09283B">
+
+  <!-- Aperçu lors d'un partage sur les réseaux sociaux -->
+  <meta property="og:title" content="{{titre}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+
+  <link rel="icon" href="{{base}}/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="{{base}}/assets/fonts/manrope-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{base}}/assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{base}}/assets/css/style.css">
+
+  <!-- Indique au CSS que le JavaScript est actif (sert au menu mobile) -->
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+{{icones}}
+{{header}}
+
+<main id="contenu">
+{{contenu}}
+</main>
+
+{{footer}}
+
+<script src="{{base}}/assets/js/main.js" defer></script>
+</body>
+</html>
