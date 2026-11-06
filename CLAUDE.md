@@ -24,7 +24,7 @@ Dix spots de Soulac au Porge, une page publique par spot (`/gironde/<slug-spot>`
 
 ## Stack
 
-À confirmer avec Jules lors de la première session. Proposition par défaut : scripts de collecte et de marée en Python (PyFES l'impose) et générateur de site statique léger (Astro, ou HTML/CSS/JS simple). Jules code en HTML/CSS de base : privilégier un code lisible et commenté, expliquer chaque étape et éviter les dépendances inutiles.
+Validée avec Jules le 6 novembre 2026 : HTML/CSS/JS simple, assemblé par `scripts/build.py` (Python, bibliothèque standard uniquement). Le script colle header et footer sur chaque page de `site/pages/`, génère une page par fiche de `data/spots/` et écrit le tout dans `dist/` (non commité). Polices Manrope et Inter hébergées dans `site/assets/fonts/`, aucun appel à Google Fonts. Scripts de collecte et de marée en Python (PyFES l'impose). Jules code en HTML/CSS de base : privilégier un code lisible et commenté, expliquer chaque étape et éviter les dépendances inutiles.
 
 ## Arborescence visée
 
@@ -40,7 +40,15 @@ site/            code du site statique
 
 ## Identité visuelle
 
-Logo : `assets/logo.png` (icône carrée bleu marine avec une vague blanche, « Swellcome » en gras, sous-titre « SURF FORECAST » en capitales espacées). Couleurs relevées sur le logo : bleu marine `#12293C` et fond crème `#FAF7F2`. Le blanc est la couleur de la vague. Style sobre et lisible, sans dégradé. Une version vectorielle (SVG) et un favicon restent à produire à partir de ce fichier.
+La référence est `docs/charte-graphique.md` (version 1.0, novembre 2026) : elle prime sur les couleurs relevées auparavant sur le logo. En résumé :
+
+- Signature : « Know before you go. », descriptif « Surf Forecast ».
+- Couleurs : Deep Ocean `#09283B` (principale), Sea Mist `#DCEBE8` (secondaire), Soft Sand `#F4F1E9` (fond alternatif), Pure White `#FFFFFF` (dominante), Ocean Teal `#77B9B1` et Warm Sun `#E6B96C` (accents rares).
+- Typographies : Manrope (titres, chiffres clés, SemiBold/Bold) et Inter (textes, Regular/Medium), hébergées sur le site.
+- Icônes fines style Lucide, cartes blanches arrondies, ombres très légères, pas de dégradé marqué ni d'effet 3D.
+- Jamais d'information portée par la couleur seule : toujours un libellé ou une valeur. Jamais de valeur d'exemple présentée comme une prévision réelle.
+
+Logo : `assets/logo.png` (icône carrée bleu marine avec une vague blanche, « Swellcome » en gras, sous-titre « SURF FORECAST » en capitales espacées). Une version vectorielle (SVG) et un favicon restent à produire à partir de ce fichier.
 
 ## Mentions obligatoires sur le site
 
