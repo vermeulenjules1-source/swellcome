@@ -1,0 +1,41 @@
+<!--
+  Gabarit d'un article de blog. build.py le remplit avec les fichiers de site/blog/.
+-->
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <ol>
+        <li><a href="{{base}}/">Accueil</a></li>
+        <li><a href="{{base}}/blog/">Blog</a></li>
+        <li aria-current="page">{{article_titre}}</li>
+      </ol>
+    </nav>
+    <span class="eyebrow">{{article_categorie}}</span>
+    <h1>{{article_titre}}</h1>
+    <p class="lead">{{article_description}}</p>
+    <p class="updated" style="margin:16px 0 0">Publié le {{article_date}}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <article class="prose">
+{{article_corps}}
+
+      <div class="notice" style="margin-top:32px">
+        <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
+        <div><p><strong>Sécurité.</strong> Un article ne remplace jamais l'observation du spot et les consignes des sauveteurs. En cas de danger, appelez le 112.</p></div>
+      </div>
+
+      {{article_spots}}
+    </article>
+  </div>
+</section>
+
+<section class="section section--sand">
+  <div class="container">
+    <div class="section-header"><h2>À lire aussi</h2></div>
+{{article_autres}}
+    <p style="margin-top:24px"><a href="{{base}}/blog/">Tous les articles →</a> · <a href="{{base}}/spots/">Voir les spots →</a></p>
+  </div>
+</section>
