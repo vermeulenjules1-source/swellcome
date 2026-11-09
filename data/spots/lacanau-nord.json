@@ -1,32 +1,69 @@
 {
   "slug": "lacanau-nord",
   "nom": "Lacanau – Plage nord",
-  "noms_alternatifs": [],
+  "noms_alternatifs": [
+    "La Nord"
+  ],
   "commune": "Lacanau",
   "departement": "Gironde",
   "departement_slug": "gironde",
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 8,
   "coordonnees": {
-    "lat": 45.01,
-    "lon": -1.199,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 45.010621,
+    "lon": -1.200417,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
+  "orientation_deg": 275,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "fenetre_houle": "Secteur SO à NO (calcul théorique)",
+  "vent_ideal": "Secteur E (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "Surveillée en saison, avec une zone de baignade secondaire. En 2026 : jusqu'au 6 septembre, puis les 12 et 13 septembre, de 12 h à 18 h 30.",
   "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "description": "Au nord de la station de Lacanau-Océan, un beach break orienté plein ouest. Les avis divergent sur le niveau requis : observez bien la taille et les courants avant d'y aller.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, plages surveillées de Lacanau",
+      "url": "https://www.medoc-atlantique.co.uk/lacanau/holidays-at-lake-of-lacanau/supervised-beaches-in-lacanau/",
+      "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Bouger à Bordeaux, plages surveillées en septembre 2026",
+      "url": "https://www.bougerabordeaux.com/actu/news/gironde-plages-surveillees-septembre-2026/",
+      "porte_sur": "horaires de fin de saison"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, surf et glisse",
+      "url": "https://www.medoc-atlantique.co.uk/surfing/",
+      "porte_sur": "pratique du surf"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire"
 }

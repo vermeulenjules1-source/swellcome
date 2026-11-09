@@ -8,25 +8,61 @@
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 5,
   "coordonnees": {
-    "lat": 45.275,
-    "lon": -1.17,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 45.26835,
+    "lon": -1.165588,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
+  "orientation_deg": 279,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "fenetre_houle": "Secteur SO à NO (calcul théorique)",
+  "vent_ideal": "Secteur E (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
-  "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "dangers": [
+    "Baïnes",
+    "Courants",
+    "Site isolé"
+  ],
+  "surveillance": "Surveillée en été. Dates et horaires à demander à la mairie de Naujac-sur-Mer ; ne présumez aucune surveillance hors saison.",
+  "acces_parking": "Une seule route à travers la forêt, puis des sentiers au-dessus de la dune. Accès forestier parfois limité en cas de risque d'incendie.",
+  "description": "Une plage sauvage de Naujac-sur-Mer, au bout d'une unique route forestière. Isolée et peu urbanisée, elle demande d'être particulièrement prudent.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Petit Futé, plage du Pin Sec",
+      "url": "https://www.petitfute.co.uk/v1780-naujac-sur-mer-33990/c1173-visites-points-d-interet/c974-site-naturel/510397-plage-du-pin-sec.html",
+      "porte_sur": "accès"
+    },
+    {
+      "titre": "Bord de Mer, plage du Pin Sec",
+      "url": "https://bord-de-mer.com/annuaire/fiche/plage-du-pin-sec-naujac-sur-mer/",
+      "porte_sur": "surveillance, parking"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, surf et glisse",
+      "url": "https://www.medoc-atlantique.co.uk/surfing/",
+      "porte_sur": "pratique du surf"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "faible",
+  "mode_verification": "documentaire"
 }

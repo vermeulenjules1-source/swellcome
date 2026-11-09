@@ -8,25 +8,55 @@
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 6,
   "coordonnees": {
-    "lat": 45.222,
-    "lon": -1.173,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 45.223065,
+    "lon": -1.172026,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
+  "orientation_deg": 276,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "fenetre_houle": "Secteur SO à NO (calcul théorique)",
+  "vent_ideal": "Secteur E (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
-  "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "Plage surveillée en saison, avec une seconde zone de baignade plus au sud en haute saison. Dates à demander au poste : 05 56 09 10 28.",
+  "acces_parking": "Parking gratuit au bout de l'avenue Jean Laffitte, puis chemin aménagé au-dessus de la dune. Reliée à la Vélodyssée.",
+  "description": "Une station discrète au bout de l'avenue Jean Laffitte, entourée d'une côte sauvage et peu urbanisée. Plage surveillée en saison, accessible par un chemin aménagé sur la dune.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, plage surveillée d'Hourtin-Plage",
+      "url": "https://www.medoc-atlantique.co.uk/sit/hourtin-plage-supervised-beach-7095798/",
+      "porte_sur": "surveillance, accès"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, surf et glisse",
+      "url": "https://www.medoc-atlantique.co.uk/surfing/",
+      "porte_sur": "pratique du surf"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire"
 }

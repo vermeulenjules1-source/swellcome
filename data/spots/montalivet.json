@@ -1,32 +1,59 @@
 {
   "slug": "montalivet",
   "nom": "Montalivet",
-  "noms_alternatifs": [],
+  "noms_alternatifs": [
+    "Plage centrale de Montalivet"
+  ],
   "commune": "Vendays-Montalivet",
   "departement": "Gironde",
   "departement_slug": "gironde",
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 4,
   "coordonnees": {
-    "lat": 45.38,
-    "lon": -1.162,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 45.378522,
+    "lon": -1.159044,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
+  "orientation_deg": 269,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "fenetre_houle": "Secteur SO à NO (calcul théorique)",
+  "vent_ideal": "Secteur E (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
-  "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "Sauveteurs d'avril à octobre selon les périodes : 11 h à 19 h en plein été, 12 h à 18 h 30 autour. Calendrier à consulter chaque année.",
+  "acces_parking": "Parkings de plage gratuits. Chiens interdits entre les deux digues du 1er avril au 30 novembre.",
+  "description": "La plage centrale de Vendays-Montalivet, entre les deux digues de la station, orientée plein ouest. Le Longboard Masters se tient en septembre sur la plage sud voisine.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Office de tourisme de Vendays-Montalivet, les plages",
+      "url": "https://www.vendays-montalivet-tourisme.fr/en/explore/all-the-must-haves/beaches/",
+      "porte_sur": "surveillance, parking, réglementation"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire"
 }

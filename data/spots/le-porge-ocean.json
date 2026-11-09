@@ -1,32 +1,70 @@
 {
   "slug": "le-porge-ocean",
   "nom": "Le Porge Océan",
-  "noms_alternatifs": [],
+  "noms_alternatifs": [
+    "Plage du Gressier"
+  ],
   "commune": "Le Porge",
   "departement": "Gironde",
   "departement_slug": "gironde",
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 10,
   "coordonnees": {
-    "lat": 44.893,
-    "lon": -1.214,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 44.894241,
+    "lon": -1.217531,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
-  "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "orientation_deg": 277,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
+  "maree_favorable": "Toutes marées. La montante adoucit les vagues, la descendante creuse les sections du large.",
+  "fenetre_houle": "Secteur SO à NO (calcul théorique)",
+  "vent_ideal": "Secteur E (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
-  "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
-  "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "niveau_minimal": "Débutant entre 0,4 et 0,8 m de houle, exigeant au-delà de 2 m",
+  "dangers": [
+    "Baïnes",
+    "Courants",
+    "Shorebreak par forte houle"
+  ],
+  "surveillance": "De mi-juin à mi-septembre. En 2026 : 11 h à 18 h 30 du 1er juillet au 30 août, 13 h 30 à 18 h autour. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "Grand parking gratuit, complet les week-ends d'été, puis accès à pied à travers la dune. Vélodyssée à proximité.",
+  "description": "La plage du Gressier, seule plage surveillée de la commune, sur une longue côte sableuse sans protection naturelle. Les bancs se redessinent après les coups de vent d'hiver.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Le Porge, surf à la plage du Gressier",
+      "url": "https://leporge.com/surf-le-porge/",
+      "porte_sur": "marée, niveau, dangers, écoles"
+    },
+    {
+      "titre": "Le Porge Océan, baignade et secours",
+      "url": "https://leporge-ocean.fr/baignade-secours.html",
+      "porte_sur": "danger des baïnes"
+    },
+    {
+      "titre": "Bouger à Bordeaux, plages surveillées en septembre 2026",
+      "url": "https://www.bougerabordeaux.com/actu/news/gironde-plages-surveillees-septembre-2026/",
+      "porte_sur": "horaires de fin de saison"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire"
 }

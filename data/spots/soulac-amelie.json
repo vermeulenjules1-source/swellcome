@@ -8,25 +8,61 @@
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 2,
   "coordonnees": {
-    "lat": 45.487,
-    "lon": -1.148,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 45.484974,
+    "lon": -1.151349,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
+  "orientation_deg": 287,
+  "orientation_16": "ONO",
+  "fond": "Sable, avec quelques rochers",
+  "type_vague": "Beach break",
   "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "fenetre_houle": "Secteur OSO à NNO (calcul théorique)",
+  "vent_ideal": "Secteur ESE (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
-  "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
-  "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "niveau_minimal": "Tous niveaux selon l'école locale, avec encadrement pour débuter",
+  "dangers": [
+    "Baïnes",
+    "Courants",
+    "Rochers"
+  ],
+  "surveillance": "Surveillée de juin à septembre, sauveteurs jusqu'au 6 septembre en 2026. Horaires à demander à la mairie.",
+  "acces_parking": "Parking gratuit au-dessus de la plage, rue du 8 mai 1945. Des visiteurs signalent une descente difficile à cause de l'érosion de la dune : à vérifier sur place.",
+  "description": "Au hameau de l'Amélie, à l'écart de la station de Soulac. Une plage de sable avec quelques rochers, labellisée Pavillon Bleu, sur laquelle une école locale décrit plusieurs bancs adaptés à tous les niveaux.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, plage surveillée de l'Amélie",
+      "url": "https://www.medoc-atlantique.co.uk/sit/plage-surveillee-lamelie-7125044/",
+      "porte_sur": "accès, fond, label"
+    },
+    {
+      "titre": "OSC, école de surf de Soulac",
+      "url": "https://www.soulacsurf.fr/",
+      "porte_sur": "bancs et niveaux"
+    },
+    {
+      "titre": "Bouger à Bordeaux, plages surveillées en septembre 2026",
+      "url": "https://www.bougerabordeaux.com/actu/news/gironde-plages-surveillees-septembre-2026/",
+      "porte_sur": "horaires de fin de saison"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire"
 }

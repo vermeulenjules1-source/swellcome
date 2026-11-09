@@ -1,32 +1,69 @@
 {
   "slug": "carcans-plage",
   "nom": "Carcans-Plage",
-  "noms_alternatifs": [],
+  "noms_alternatifs": [
+    "Carcans-Océan"
+  ],
   "commune": "Carcans",
   "departement": "Gironde",
   "departement_slug": "gironde",
   "region": "Nouvelle-Aquitaine",
   "ordre_nord_sud": 7,
   "coordonnees": {
-    "lat": 45.085,
-    "lon": -1.193,
-    "precision": "approximative",
-    "note": "Position estimée au centre de la plage d'accès, à relever sur Géoportail (IGN)."
+    "lat": 45.082069,
+    "lon": -1.192137,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
   },
-  "orientation_deg": null,
-  "orientation_16": null,
-  "fond": null,
-  "type_vague": null,
+  "orientation_deg": 274,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
-  "fenetre_houle": null,
-  "vent_ideal": null,
+  "fenetre_houle": "Secteur SO à NO (calcul théorique)",
+  "vent_ideal": "Secteur E (offshore, calculé depuis l'orientation)",
   "taille_ideale": null,
-  "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": null,
-  "acces_parking": null,
-  "description": null,
-  "sources": [],
-  "verifie_le": null,
-  "confiance": "faible"
+  "niveau_minimal": "Tous niveaux en école, à partir de 6 ans selon le club local",
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "Week-ends de mai et juin 12 h à 18 h 30, puis 11 h à 19 h de début juillet à fin août. Seconde zone de baignade en haute saison.",
+  "acces_parking": "Trois accès plage et un accès pour personnes à mobilité réduite. Poste de secours en haut de la plage sud. Parkings nord, central et sud.",
+  "description": "La station océane de Carcans, avec plusieurs parkings répartis du nord au sud et un club de surf au pied de la dune, labellisé Handisurf.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux, barres et baïnes"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "système barre-baïne"
+    },
+    {
+      "titre": "Village de l'Océan, accès plage et surveillance à Carcans",
+      "url": "https://www.village-ocean-carcans.com/carcans-plage/les-acces-plage-et-la-surveillance/",
+      "porte_sur": "accès, surveillance"
+    },
+    {
+      "titre": "Carcans Océan Surf Club",
+      "url": "https://www.carcansoceansurfclub.com/",
+      "porte_sur": "niveaux, encadrement"
+    },
+    {
+      "titre": "Médoc Atlantique Tourisme, COSC",
+      "url": "https://www.medoc-atlantique.co.uk/sit/cosc-carcans-ocean-surf-club-7332563/",
+      "porte_sur": "école"
+    }
+  ],
+  "verifie_le": "2026-11-09",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire"
 }
