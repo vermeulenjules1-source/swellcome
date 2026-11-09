@@ -37,6 +37,7 @@ VARIABLES_MARINE = {
     "swell_wave_direction": "direction",
     "secondary_swell_wave_height": "houle2",
     "secondary_swell_wave_period": "periode2",
+    "secondary_swell_wave_direction": "direction2",
     "wind_wave_height": "mer_vent",
     "sea_surface_temperature": "eau",
 }
