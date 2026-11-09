@@ -98,4 +98,4 @@ Fichiers issus de Wikimedia Commons, avec auteur, licence et source dans le cham
 
 ## Carte de l'accueil
 
-Fond Plan IGN de la Géoplateforme (WMTS, sans clé, Licence Ouverte), affiché avec Leaflet 1.9.4 (licence BSD, copie dans `site/assets/vendor/leaflet/`). Google Maps écarté : clé d'API liée à un compte de facturation. Les visiteurs contactent `data.geopf.fr` pour les images, ce qui est indiqué dans les pages Cookies et Confidentialité.
+Plan IGN vectoriel (`data.geopf.fr/tms/1.0.0/PLAN.IGN`) et photographies aériennes (`ORTHOIMAGERY.ORTHOPHOTOS`) de la Géoplateforme, sans clé, Licence Ouverte, affichés avec MapLibre GL 4.7.1 (licence BSD, copie dans `site/assets/vendor/maplibre/`). Google Maps écarté : clé d'API liée à un compte de facturation. Le style aux couleurs de la charte est généré par `scripts/style_carte.py` dans `site/assets/data/style-carte.json`. Les visiteurs contactent `data.geopf.fr` pour le fond de carte, ce qui est indiqué dans les pages Cookies et Confidentialité. La bibliothèque (0,8 Mo) n'est chargée qu'à l'approche de la section.

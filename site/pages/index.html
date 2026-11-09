@@ -59,11 +59,11 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
     <div class="section-header">
       <span class="eyebrow"><svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg> Prévisions</span>
       <h2>Où surfer ? Les conditions, spot par spot</h2>
-      <p>Choisissez votre niveau et votre jour, puis touchez un point sur la carte : les {{nombre_spots}} spots de Gironde, de Soulac au Porge.</p>
+      <p>Choisissez votre niveau et votre jour, puis touchez une étiquette pour voler vers le spot : les {{nombre_spots}} spots de Gironde, de Soulac au Porge.</p>
     </div>
 
-    <link rel="stylesheet" href="{{base}}/assets/vendor/leaflet/leaflet.css">
-    <div id="carte-spots" class="carte-bloc" data-apercu="{{base}}/assets/data/apercu.json">
+    <div id="carte-spots" class="carte-bloc" data-apercu="{{base}}/assets/data/apercu.json"
+         data-style="{{base}}/assets/data/style-carte.json" data-vendor="{{base}}/assets/vendor/maplibre">
 {{liste_spots_gironde}}
     </div>
 
@@ -74,7 +74,6 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
   </div>
 </section>
 
-<script src="{{base}}/assets/vendor/leaflet/leaflet.js" defer></script>
 <script src="{{base}}/assets/js/verdict.js" defer></script>
 <script src="{{base}}/assets/js/carte.js" defer></script>
 
