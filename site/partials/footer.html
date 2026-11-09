@@ -16,7 +16,7 @@
       <div class="field-row">
         <label class="visually-hidden" for="newsletter-email">Adresse email</label>
         <input type="email" id="newsletter-email" name="EMAIL" placeholder="votre@email.fr" autocomplete="email" required>
-        <button class="btn" type="submit">S'inscrire</button>
+        <button class="btn btn--pulse" type="submit">S'inscrire</button>
       </div>
       <!-- Champ piège anti-robots : invisible pour les humains, doit rester vide -->
       <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
@@ -43,12 +43,20 @@
         <p>Know before you go. Les prévisions surf de France, gratuites et adaptées à votre niveau.</p>
       </div>
 
+      <nav class="footer-col" aria-labelledby="footer-spots">
+        <h2 id="footer-spots">Spots de Gironde</h2>
+        <ul>
+{{footer_spots}}
+        </ul>
+      </nav>
+
       <nav class="footer-col" aria-labelledby="footer-site">
         <h2 id="footer-site">Le site</h2>
         <ul>
           <li><a href="{{base}}/spots/">Tous les spots</a></li>
-          <li><a href="{{base}}/gironde/">Spots de Gironde</a></li>
           <li><a href="{{base}}/comprendre-le-forecast/">Comprendre le forecast</a></li>
+          <li><a href="{{base}}/blog/">Blog</a></li>
+          <li><a href="{{base}}/blog/baines-comprendre-et-reagir/">Comprendre les baïnes</a></li>
           <li><a href="{{base}}/a-propos/">À propos et sources</a></li>
         </ul>
       </nav>
@@ -66,7 +74,7 @@
 
     <div class="footer-legal">
       <p><strong>Sécurité :</strong> les prévisions sont des estimations. Vérifiez toujours les conditions sur place, privilégiez les zones de baignade surveillées, respectez les drapeaux et méfiez-vous des baïnes et des courants.</p>
-      <p>Données météo et vagues : <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a> (CC BY 4.0), à partir des modèles de Météo-France, ECMWF, NOAA et DWD. Marées calculées à partir de FES2022 (CNES/AVISO), indicatives, elles ne remplacent pas l'annuaire du Shom.</p>
+      <p>Données météo et vagues : <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a> (CC BY 4.0), à partir des modèles de Météo-France, ECMWF, NOAA et DWD. Marées calculées à partir de FES2022 (CNES/AVISO), indicatives, elles ne remplacent pas l'annuaire du Shom. Positions et orientations des plages : IGN, BD TOPO.</p>
       <p>© {{annee}} Swellcome</p>
     </div>
   </div>

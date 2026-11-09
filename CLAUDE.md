@@ -20,7 +20,7 @@ Ces décisions priment sur les documents de `docs/` en cas de contradiction.
 
 ## Premier objectif : prototype Gironde
 
-Dix spots de Soulac au Porge, une page publique par spot (`/gironde/<slug-spot>`), avec houle, vent et marée sur 7 jours, puis le verdict par niveau (top, correct, à oublier) avec un sélecteur de niveau sans compte. Les fiches spots (orientation, fond, marée qui marche, niveau minimal) sont renseignées à la main par Jules. Prévoir des champs vides plutôt que d'inventer des valeurs.
+Dix spots de Soulac au Porge, une page publique par spot (`/gironde/<slug-spot>`), avec houle, vent et marée sur 7 jours, puis le verdict par niveau (top, correct, à oublier) avec un sélecteur de niveau sans compte. Les fiches spots (orientation, fond, marée qui marche, niveau minimal) sont renseignées à la main par Jules. Prévoir des champs vides plutôt que d'inventer des valeurs. Depuis le 9 novembre 2026, les dix fiches sont préremplies par recherche documentaire à la demande de Jules (`mode_verification: documentaire`) : positions et orientations calculées depuis la BD TOPO de l'IGN, le reste avec ses `sources`. Elles restent à vérifier sur le terrain. Les sites de prévisions et guides de spots ne servent jamais de source.
 
 ## Stack
 

@@ -3,17 +3,29 @@ titre: Swellcome · Prévisions surf en France, adaptées à votre niveau
 description: Houle, vent et marée pour chaque spot de France, avec un verdict selon votre niveau. Gratuit, sans publicité. Know before you go.
 -->
 
-<!-- Bandeau d'accueil -->
-<section class="hero">
+<!-- Bandeau d'accueil animé.
+     Pour passer à une vraie vidéo de surf : déposer le fichier dans site/assets/video/hero.mp4,
+     build.py l'insère tout seul derrière le texte. -->
+<section class="hero hero--anime {{hero_classe}}">
+  <div class="hero-media" aria-hidden="true">
+    {{hero_video}}
+    <div class="hero-mer">
+      <svg class="vague vague--1" viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 60 Q180 10 360 60 T720 60 T1080 60 T1440 60 T1800 60 T2160 60 T2520 60 T2880 60 V200 H0Z"/></svg>
+      <svg class="vague vague--2" viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 60 Q180 10 360 60 T720 60 T1080 60 T1440 60 T1800 60 T2160 60 T2520 60 T2880 60 V200 H0Z"/></svg>
+      <svg class="vague vague--3" viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 60 Q180 10 360 60 T720 60 T1080 60 T1440 60 T1800 60 T2160 60 T2520 60 T2880 60 V200 H0Z"/></svg>
+      <svg class="vague vague--4" viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 60 Q180 10 360 60 T720 60 T1080 60 T1440 60 T1800 60 T2160 60 T2520 60 T2880 60 V200 H0Z"/></svg>
+    </div>
+  </div>
+
   <div class="container hero-grid">
     <div>
       <span class="eyebrow">Surf forecast · France</span>
       <h1>Know before you go.</h1>
       <p class="lead">Les prévisions surf de chaque spot français, traduites selon votre niveau. Vous savez en un coup d'œil si la session vaut le déplacement.</p>
       <div class="hero-actions">
-        <a class="btn" href="{{base}}/spots/">
+        <a class="btn btn--brillant" href="{{base}}/spots/">
           Voir les spots
-          <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+          <svg class="icon icon--fleche" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
         </a>
         <a class="btn btn--secondary" href="{{base}}/comprendre-le-forecast/">Lire un forecast</a>
       </div>
@@ -38,11 +50,6 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
       <figcaption class="example-flag">Exemple illustratif : ce ne sont pas des prévisions réelles.</figcaption>
     </figure>
   </div>
-
-  <!-- Ligne de vague décorative -->
-  <svg class="hero-waves" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
-    <path fill="#FFFFFF" d="M0 48c120-20 240-30 360-20s240 40 360 40 240-30 360-40 240 0 360 20v32H0z"/>
-  </svg>
 </section>
 
 <!-- Les trois promesses -->
@@ -112,5 +119,18 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
       </table>
     </div>
     <p style="margin-top:24px"><a href="{{base}}/comprendre-le-forecast/">Comprendre la houle, la période et le vent →</a></p>
+  </div>
+</section>
+
+<!-- Derniers articles du blog -->
+<section class="section section--sand">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Blog</span>
+      <h2>Avant d'aller à l'eau</h2>
+      <p>Des guides pour mieux lire le forecast et surfer en sécurité.</p>
+    </div>
+{{derniers_articles}}
+    <p style="margin-top:24px"><a href="{{base}}/blog/">Tous les articles →</a></p>
   </div>
 </section>

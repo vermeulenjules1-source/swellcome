@@ -17,9 +17,9 @@
     <div class="badges">
       <span class="badge badge--neutral">
         <svg class="icon" aria-hidden="true" style="width:16px;height:16px"><use href="#i-pin"></use></svg>
-        Position approximative
+        Position de la plage (IGN)
       </span>
-      <span class="badge badge--neutral">Fiche en cours de vérification</span>
+      <span class="badge badge--neutral">{{statut}}</span>
     </div>
   </div>
 </section>
@@ -35,22 +35,27 @@
           <svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg>
         </span>
         <h3>Prévisions bientôt disponibles</h3>
-        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou à oublier.</p>
+        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
       </div>
 
       <div class="notice" style="margin-top:24px">
         <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
         <div>
-          <p><strong>Sécurité.</strong> Les prévisions sont des estimations. Avant d'aller à l'eau, observez le spot, surfez de préférence en zone surveillée, respectez les drapeaux et méfiez-vous des baïnes et des courants, très présents sur la côte girondine.</p>
+          <p><strong>Sécurité.</strong> Les prévisions sont des estimations. Avant d'aller à l'eau, observez le spot, surfez de préférence en zone surveillée, respectez les drapeaux et méfiez-vous des courants. <a href="{{base}}/blog/baines-comprendre-et-reagir/">Tout savoir sur les baïnes</a>.</p>
         </div>
       </div>
+
+      <details class="sources">
+        <summary>Sources de cette fiche</summary>
+{{sources}}
+        <p class="muted">Les bancs de sable bougent et les horaires changent chaque année : ces informations restent à confirmer sur place. <a href="{{base}}/a-propos/">Notre méthode</a>.</p>
+      </details>
     </div>
 
     <aside class="card">
       <h2 style="font-size:1.3rem">Fiche du spot</h2>
 {{fiche}}
       <p class="muted" style="font-size:0.85rem;margin:18px 0 0">
-        Dernière vérification : {{verifie_le}}.<br>
         <a href="{{lien_carte}}" rel="noopener">Voir la zone sur OpenStreetMap</a>
       </p>
     </aside>
@@ -62,5 +67,22 @@
       {{precedent}}
       {{suivant}}
     </nav>
+  </div>
+</section>
+
+<!-- Maillage interne : spots proches et articles liés -->
+<section class="section section--sand">
+  <div class="container">
+    <div class="grid grid--2 maillage">
+      <div>
+        <h2>Spots proches</h2>
+{{spots_proches}}
+        <p style="margin-top:20px"><a href="{{base}}/{{departement_slug}}/">Tous les spots de {{departement}} →</a></p>
+      </div>
+      <div>
+        <h2>À lire avant d'y aller</h2>
+{{articles_spot}}
+      </div>
+    </div>
   </div>
 </section>

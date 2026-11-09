@@ -2,6 +2,7 @@
    Swellcome — scripts du site
    1. Menu mobile
    2. Formulaire newsletter
+   3. Vidéo du bandeau
    ========================================================================== */
 
 
@@ -71,3 +72,13 @@ document.querySelectorAll("[data-newsletter]").forEach((formulaire) => {
     }
   });
 });
+
+
+/* 3. Vidéo du bandeau : à l'arrêt si le visiteur a demandé moins d'animations */
+
+const video = document.querySelector(".hero-video");
+
+if (video && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  video.pause();
+  video.removeAttribute("autoplay");
+}
