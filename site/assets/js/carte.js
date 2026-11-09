@@ -131,10 +131,17 @@
     /* 3. Panneau */
 
     const icone = (nom, classe = "icon") => `<svg class="${classe}" aria-hidden="true"><use href="#${nom}"></use></svg>`;
-    const badge = (note) => {
+    const motifDe = (spot) => {
+      const analyse = analyser(spot, jourChoisi);
+      return analyse ? spot.analyse.motif(analyse, spot.analyse.NIVEAUX[niveauChoisi]) : null;
+    };
+
+    // Sur l'accueil, « À oublier » laisse place à la raison : Flat, Vent, Trop gros…
+    const badge = (spot) => {
+      const note = noteDe(spot);
       if (note < 0) return '<span class="badge badge--neutral">Terminé</span>';
       const v = VERDICTS[note];
-      return `<span class="badge badge--${v.badge}">${icone(v.icone, "icon fc-icone-badge")}${v.nom}</span>`;
+      return `<span class="badge badge--${v.badge}">${icone(v.icone, "icon fc-icone-badge")}${motifDe(spot) || v.nom}</span>`;
     };
 
     racine.innerHTML = `
@@ -204,7 +211,7 @@
       zoneFiche.hidden = false;
       zoneFiche.innerHTML = `
         <button type="button" class="carte-fiche-fermer" aria-label="Fermer">${icone("i-close")}</button>
-        <div class="carte-fiche-tete"><h3>${spot.nom}</h3>${badge(noteDe(spot))}</div>
+        <div class="carte-fiche-tete"><h3>${spot.nom}</h3>${badge(spot)}</div>
         <p>${phrase}</p>
         <a class="btn btn--soleil" href="${spot.url}">Voir le spot ${icone("i-arrow-right", "icon icon--fleche")}</a>`;
     }
@@ -230,6 +237,7 @@
       const pluriel = (n) => (n > 1 ? "s" : "");
       if (tops) zoneBilan.innerHTML = `${debut} : <strong>${tops} spot${pluriel(tops)} au top</strong>, ${mieuxPlace().court} en tête.`;
       else if (corrects) zoneBilan.innerHTML = `${debut} : <strong>${corrects} spot${pluriel(corrects)} surfable${pluriel(corrects)}</strong>, ${mieuxPlace().court} en tête.`;
+      else if (avecAnalyse.every((s) => motifDe(s) === "Flat")) zoneBilan.innerHTML = `${debut} : <strong>c'est flat</strong> sur les ${spots.length} spots.`;
       else zoneBilan.innerHTML = `${debut} : <strong>rien de bon</strong> sur les ${spots.length} spots.`;
     }
 
@@ -243,7 +251,7 @@
         const carteSpot = grille.querySelector(`[data-slug="${spot.slug}"]`);
         if (!carteSpot) return;
         const analyse = analyser(spot, jourChoisi);
-        carteSpot.querySelector(".spot-carte-verdict").innerHTML = badge(noteDe(spot));
+        carteSpot.querySelector(".spot-carte-verdict").innerHTML = badge(spot);
         carteSpot.querySelector(".spot-carte-taille").textContent = analyse ? `${nombre(analyse.repere.hauteur)} m au bord` : "";
       });
       const ordre = [...spots].sort((a, b) => {

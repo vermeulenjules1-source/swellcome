@@ -222,15 +222,28 @@ window.SwellcomeVerdict = (function () {
       const utiles = heuresUtiles(jour, niveau);
       if (!utiles.length) return null;
       const dureeMin = Math.min(2, utiles.length);
+      const tailleMax = Math.max(...utiles.map((x) => x.hauteur));
 
       for (const seuil of [2, 1]) {
         const suite = plusLongueSuite(utiles, seuil);
         if (suite.length >= dureeMin) {
-          return { note: seuil, creneau: suite, repere: meilleureHeure(suite) };
+          return { note: seuil, creneau: suite, repere: meilleureHeure(suite), tailleMax };
         }
       }
       const moinsMauvaise = utiles.reduce((a, b) => (somme(b) > somme(a) ? b : a));
-      return { note: 0, creneau: [moinsMauvaise], repere: moinsMauvaise };
+      return { note: 0, creneau: [moinsMauvaise], repere: moinsMauvaise, tailleMax };
+    }
+
+    // Le mot court qui remplace « À oublier » sur l'accueil : dit pourquoi ça ne marche pas
+    function motif(analyse, niveau) {
+      if (analyse.note > 0) return null;
+      const h = analyse.repere;
+      const { notes, sature } = h.eval;
+      if (sature) return "Saturé";
+      if (analyse.tailleMax < TAILLE_MINI + 0.1) return "Flat";
+      const pire = ["hauteur", "vent", "periode"].reduce((a, b) => (notes[b] < notes[a] ? b : a));
+      if (pire === "hauteur") return h.hauteur < niveau.min ? "Trop petit" : "Trop gros";
+      return pire === "vent" ? "Vent" : "Houle courte";
     }
 
     function raison(heure, niveau) {
@@ -274,7 +287,7 @@ window.SwellcomeVerdict = (function () {
 
     return {
       NIVEAUX: niveaux, heures, soleil, jours, aujourdhui, parisMaintenant,
-      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase,
+      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif,
     };
   }
 
