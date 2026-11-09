@@ -11,37 +11,53 @@
   const racine = document.getElementById("jeu-forecast");
   if (!racine || !window.SwellcomeVerdict) return;
 
-  const { NIVEAUX, VERDICTS, LIBELLE_VENT, typeVent, evaluer } = window.SwellcomeVerdict;
+  const V = window.SwellcomeVerdict;
+  const { VERDICTS, LIBELLE_VENT } = V;
 
 
-  /* 1. Situations : plage orientée ouest, donc vent de terre = vent d'est (90°) */
+  /* 1. Situations : plage imaginaire orientée ouest, qui sature à 3 m comme en Gironde.
+     Vent de terre = vent d'est (90°). Les chiffres affichés sont ceux du large. */
 
   const ORIENTATION = 270;
-  const EST = 90, OUEST = 270, SUD = 180;
+  const SATURATION = 3;
+  const EST = 90, OUEST = 270, SUD = 180, SUD_OUEST = 225;
   const MANCHES = 8;
+  const NIVEAUX = Object.fromEntries(
+    Object.entries(V.NIVEAUX).map(([cle, niveau]) => [cle, V.pourSpot(niveau, SATURATION)])
+  );
+  const CARDINAL = { [OUEST]: "ouest", [SUD_OUEST]: "sud-ouest" };
 
   const SITUATIONS = [
-    { niveau: "debutant", hauteur: 0.8, periode: 9, vent: 8, dir: EST, lecon: "Petites vagues et peu de vent : les meilleures conditions pour progresser." },
-    { niveau: "debutant", hauteur: 1.8, periode: 10, vent: 8, dir: EST, lecon: "Une très belle journée, mais pour d'autres : même par vent parfait, c'est trop gros pour débuter." },
-    { niveau: "debutant", hauteur: 0.8, periode: 7, vent: 17, dir: OUEST, lecon: "La taille est bonne, mais le vent commence à gêner. Faisable, moins confortable." },
-    { niveau: "debutant", hauteur: 0.7, periode: 6, vent: 28, dir: OUEST, lecon: "Des vagues petites ne suffisent pas : un fort vent de mer rend l'eau brouillonne et fatigante." },
-    { niveau: "intermediaire", hauteur: 1.4, periode: 11, vent: 10, dir: EST, lecon: "Taille dans la zone, houle bien rangée, vent de terre léger : on y va." },
-    { niveau: "intermediaire", hauteur: 1.4, periode: 6.5, vent: 10, dir: EST, lecon: "Le vent est bon, mais une période courte donne des vagues moins puissantes." },
-    { niveau: "intermediaire", hauteur: 1.3, periode: 10, vent: 30, dir: OUEST, lecon: "La houle est bonne, mais le vent de mer l'écrase. Regardez toujours le vent après la houle." },
-    { niveau: "intermediaire", hauteur: 1.5, periode: 9, vent: 18, dir: SUD, lecon: "Le vent de travers reste acceptable s'il n'est pas trop fort, mais il abîme la vague." },
-    { niveau: "intermediaire", hauteur: 1.2, periode: 5, vent: 8, dir: EST, lecon: "Mer calme ne veut pas dire bonnes vagues : à 5 secondes, la houle n'a presque aucune force." },
-    { niveau: "intermediaire", hauteur: 0.7, periode: 9, vent: 6, dir: EST, lecon: "Un peu petit pour ce niveau, mais propre : de quoi s'amuser avec une planche adaptée." },
-    { niveau: "confirme", hauteur: 2, periode: 13, vent: 12, dir: EST, lecon: "Houle longue, taille solide et vent de terre : le créneau à ne pas rater." },
-    { niveau: "confirme", hauteur: 3.2, periode: 14, vent: 10, dir: EST, lecon: "À 14 secondes, une houle de 3,2 m pousse encore plus fort que le chiffre ne le laisse penser." },
-    { niveau: "confirme", hauteur: 1.8, periode: 9, vent: 8, dir: EST, lecon: "Tout va bien sauf la période, un peu courte pour ce niveau : surfable sans être idéal." },
-    { niveau: "confirme", hauteur: 1.8, periode: 12, vent: 25, dir: EST, lecon: "Un vent fort n'est pas forcément un problème : venu de la terre, il lisse et creuse la vague." },
-    { niveau: "expert", hauteur: 3, periode: 15, vent: 15, dir: EST, lecon: "Grosse houle longue et vent de terre : exactement ce que ce niveau recherche." },
-    { niveau: "expert", hauteur: 3, periode: 15, vent: 20, dir: SUD, lecon: "Même avec une belle houle, un vent de travers de 20 km/h déforme les grosses vagues." },
-    { niveau: "expert", hauteur: 2.5, periode: 11, vent: 15, dir: EST, lecon: "Belle taille et bon vent, mais la période reste juste pour ce niveau." },
-    { niveau: "expert", hauteur: 1.2, periode: 13, vent: 10, dir: EST, lecon: "Propre mais bien trop petit pour ce niveau : autant laisser la place aux autres." },
+    { niveau: "debutant", houle: 1, periode: 10, dirHoule: OUEST, vent: 8, dir: EST, lecon: "Une houle de face bien rangée et peu de vent : les meilleures conditions pour progresser." },
+    { niveau: "debutant", houle: 1.8, periode: 10, dirHoule: OUEST, vent: 8, dir: EST, lecon: "Une très belle journée, mais pour d'autres : même par vent parfait, c'est trop gros pour débuter." },
+    { niveau: "debutant", houle: 1, periode: 9, dirHoule: OUEST, vent: 17, dir: OUEST, lecon: "La taille est bonne, mais le vent commence à gêner. Faisable, moins confortable." },
+    { niveau: "debutant", houle: 1.2, periode: 6, dirHoule: OUEST, vent: 28, dir: OUEST, lecon: "Une houle courte qui n'arrive pas à grand-chose, et un fort vent de mer par-dessus : l'eau sera brouillonne et fatigante." },
+    { niveau: "debutant", houle: 0.8, periode: 5, dirHoule: SUD_OUEST, vent: 8, dir: EST, lecon: "Houle de sud-ouest et période de 5 s : sur une plage orientée ouest, il n'arrive presque rien au bord." },
+    { niveau: "intermediaire", houle: 1.5, periode: 11, dirHoule: OUEST, vent: 10, dir: EST, lecon: "Taille dans la zone, houle bien rangée, vent de terre léger : on y va." },
+    { niveau: "intermediaire", houle: 2, periode: 7, dirHoule: OUEST, vent: 10, dir: EST, lecon: "2 m annoncés à 7 s, c'est à peine plus d'un mètre au bord, et des vagues sans grande force." },
+    { niveau: "intermediaire", houle: 1.4, periode: 10, dirHoule: OUEST, vent: 30, dir: OUEST, lecon: "La houle est bonne, mais le vent de mer l'écrase. Regardez toujours le vent après la houle." },
+    { niveau: "intermediaire", houle: 1.6, periode: 9, dirHoule: OUEST, vent: 18, dir: SUD, lecon: "Le vent de travers reste acceptable s'il n'est pas trop fort, mais il abîme la vague." },
+    { niveau: "intermediaire", houle: 1.2, periode: 5, dirHoule: OUEST, vent: 8, dir: EST, lecon: "Mer calme ne veut pas dire bonnes vagues : à 5 secondes, 1,2 m au large ne donne presque rien au bord." },
+    { niveau: "intermediaire", houle: 0.8, periode: 10, dirHoule: OUEST, vent: 6, dir: EST, lecon: "Un peu petit pour ce niveau, mais propre : de quoi s'amuser avec une planche adaptée." },
+    { niveau: "confirme", houle: 2, periode: 13, dirHoule: OUEST, vent: 12, dir: EST, lecon: "Houle longue, taille solide et vent de terre : le créneau à ne pas rater." },
+    { niveau: "confirme", houle: 3.2, periode: 14, dirHoule: OUEST, vent: 10, dir: EST, lecon: "À partir de 3 m, les bancs saturent : ça ferme partout et il devient quasi impossible de sortir, même avec un vent parfait." },
+    { niveau: "confirme", houle: 2.2, periode: 9, dirHoule: OUEST, vent: 8, dir: EST, lecon: "La taille est là, mais la période reste un peu courte pour ce niveau : surfable sans être idéal." },
+    { niveau: "confirme", houle: 1.7, periode: 12, dirHoule: OUEST, vent: 25, dir: EST, lecon: "Un vent fort n'est pas forcément un problème : venu de la terre, il lisse et creuse la vague." },
+    { niveau: "expert", houle: 2, periode: 14, dirHoule: OUEST, vent: 15, dir: EST, lecon: "2 m à 14 s, c'est plus gros au bord qu'au large : exactement ce que ce niveau recherche." },
+    { niveau: "expert", houle: 2.2, periode: 14, dirHoule: OUEST, vent: 15, dir: EST, lecon: "Ça commence à faire beaucoup : on approche de la saturation, le passage de la barre devient dur." },
+    { niveau: "expert", houle: 3, periode: 15, dirHoule: OUEST, vent: 15, dir: EST, lecon: "Même pour un expert, 3 m sur ces beach breaks, c'est saturé : les vagues ferment et sortir devient quasi impossible." },
+    { niveau: "expert", houle: 1.9, periode: 14, dirHoule: OUEST, vent: 20, dir: SUD, lecon: "Même avec une belle houle, un vent de travers de 20 km/h déforme les grosses vagues." },
+    { niveau: "expert", houle: 2.2, periode: 11, dirHoule: OUEST, vent: 15, dir: EST, lecon: "Belle taille et bon vent, mais la période reste juste pour ce niveau." },
+    { niveau: "expert", houle: 1, periode: 13, dirHoule: OUEST, vent: 10, dir: EST, lecon: "Propre mais bien trop petit pour ce niveau : autant laisser la place aux autres." },
   ].map((s) => {
-    const type = typeVent(s.dir, ORIENTATION);
-    return { ...s, type, resultat: evaluer({ hauteur: s.hauteur, periode: s.periode, vent: s.vent, type }, NIVEAUX[s.niveau]) };
+    const type = V.typeVent(s.dir, ORIENTATION);
+    const taille = V.tailleAuBord([{ hauteur: s.houle, periode: s.periode, direction: s.dirHoule }], ORIENTATION);
+    return {
+      ...s,
+      type,
+      taille,
+      resultat: V.evaluer({ hauteur: taille, houle: s.houle, periode: s.periode, vent: s.vent, type }, NIVEAUX[s.niveau]),
+    };
   });
 
   // Pour tester les règles depuis la console
@@ -111,13 +127,14 @@
       </div>
 
       <div class="stats jeu-chiffres">
-        <div class="stat"><div class="stat-value">${nombre(s.hauteur)} <small>m</small></div><div class="stat-label">Hauteur</div></div>
+        <div class="stat"><div class="stat-value">${nombre(s.houle)} <small>m</small></div><div class="stat-label">Houle au large</div></div>
         <div class="stat"><div class="stat-value">${nombre(s.periode)} <small>s</small></div><div class="stat-label">Période</div></div>
+        <div class="stat"><div class="stat-value">${CARDINAL[s.dirHoule]}</div><div class="stat-label">Houle venant du…</div></div>
         <div class="stat"><div class="stat-value">${s.vent} <small>km/h</small></div><div class="stat-label">${LIBELLE_VENT[s.type]}</div></div>
       </div>
 
       <h3 class="jeu-question" tabindex="-1">Pour un niveau ${niveau.nom.toLowerCase()}, ce créneau est…</h3>
-      <p class="jeu-repere">Repères du niveau : ${repereNiveau(niveau)}</p>
+      <p class="jeu-repere">Repères du niveau, au bord : ${repereNiveau(niveau)}</p>
 
       <div class="jeu-choix" role="group" aria-label="Votre réponse">
         ${[2, 1, 0].map((n) => `
@@ -174,7 +191,9 @@
         <p class="jeu-resultat">${juste ? "Bien vu !" : `Raté : c'était « ${VERDICTS[s.resultat.note].nom} ».`}</p>
         <p>${s.lecon}</p>
         <ul class="jeu-criteres">
-          ${ligneCritere(notes.hauteur, `Vagues de ${nombre(s.hauteur)} m, zone idéale ${zone}`)}
+          ${ligneCritere(notes.hauteur, s.resultat.sature
+            ? `Houle de ${nombre(s.houle)} m : à partir de ${SATURATION} m, les bancs saturent`
+            : `Environ ${nombre(s.taille)} m au bord, zone idéale ${zone}`)}
           ${ligneCritere(notes.periode, textePeriode)}
           ${ligneCritere(notes.vent, `${LIBELLE_VENT[s.type]} à ${s.vent} km/h`)}
         </ul>
@@ -251,7 +270,7 @@
     const ecume = racine.querySelector(".s-ecume");
     const groupeVents = racine.querySelector(".s-vents");
 
-    const amplitude = (s.hauteur * metre) / 2;
+    const amplitude = (s.taille * metre) / 2;
     const longueur = 90 + s.periode * 24;
     const frequence = 1 / (s.periode * 0.35);
     const pointe = 1 + s.periode / 6;

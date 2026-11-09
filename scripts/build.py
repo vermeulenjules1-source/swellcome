@@ -160,6 +160,9 @@ def fiche_html(spot):
     if spot.get("orientation_deg") is not None:
         lignes.append(f"        <div><dt>Orientation de la plage</dt>"
                       f"<dd>{e(spot['orientation_16'])} ({spot['orientation_deg']}°)</dd></div>")
+    if spot.get("saturation_m"):
+        lignes.append(f"        <div><dt>Limite de taille</dt>"
+                      f"<dd>Sature vers {decimale(spot['saturation_m']).replace(',0', '')} m de houle (retour local)</dd></div>")
     for cle, libelle in CHAMPS_FICHE:
         valeur = spot.get(cle)
         if valeur:
@@ -290,14 +293,16 @@ def resume_prevision(prevision):
                  and h["hauteur"][i] is not None and h["vent"][i] is not None]
         if not rangs:
             continue
-        hauteurs = [h["hauteur"][i] for i in rangs]
+        houles = [h["houle"][i] for i in rangs if h["houle"][i] is not None]
+        if not houles:
+            continue
         periodes = [h["periode"][i] for i in rangs if h["periode"][i] is not None]
         vent = sum(h["vent"][i] for i in rangs) / len(rangs)
         periode = f"{sum(periodes) / len(periodes):.0f} s" if periodes else "–"
-        lignes.append(f"          <tr><td>{date_fr(jour)}</td><td>{decimale(min(hauteurs))} à {decimale(max(hauteurs))} m</td>"
+        lignes.append(f"          <tr><td>{date_fr(jour)}</td><td>{decimale(min(houles))} à {decimale(max(houles))} m</td>"
                       f"<td>{periode}</td><td>{vent:.0f} km/h</td></tr>")
     return ('      <div class="table-wrap"><table class="data-table">\n'
-            '        <thead><tr><th scope="col">Jour</th><th scope="col">Hauteur au large</th>'
+            '        <thead><tr><th scope="col">Jour</th><th scope="col">Houle au large</th>'
             '<th scope="col">Période moyenne</th><th scope="col">Vent moyen</th></tr></thead>\n'
             "        <tbody>\n" + "\n".join(lignes) + "\n        </tbody>\n      </table></div>\n"
             f'      <p class="muted" style="font-size:0.85rem;margin-top:12px">Moyennes des heures de jour. Mis à jour le {e(prevision["mis_a_jour"][:10])} (UTC).</p>')
@@ -313,7 +318,10 @@ def bloc_prevision(spot, prevision):
         <h3>Prévisions bientôt disponibles</h3>
         <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
       </div>"""
-    donnees = {"spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg")}, "prevision": prevision}
+    donnees = {
+        "spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg"), "saturation": spot.get("saturation_m")},
+        "prevision": prevision,
+    }
     # Le remplacement de la séquence fermante empêche de sortir de la balise script
     texte = json.dumps(donnees, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return f"""      <div id="prevision" data-guide="{BASE}/comprendre-le-forecast/">

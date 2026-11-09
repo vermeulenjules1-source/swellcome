@@ -19,7 +19,10 @@
   /* 1. Réglages : les critères par niveau sont dans verdict.js */
 
   const V = window.SwellcomeVerdict;
-  const { NIVEAUX, VERDICTS } = V;
+  const { VERDICTS } = V;
+  const NIVEAUX = Object.fromEntries(
+    Object.entries(V.NIVEAUX).map(([cle, niveau]) => [cle, V.pourSpot(niveau, spot.saturation)])
+  );
 
   const CLE_NIVEAU = "swellcome-niveau";
   const HEURE_DEBUT = 6;             // bornes du graphique
@@ -34,7 +37,11 @@
     t,
     jour: t.slice(0, 10),
     heure: Number(t.slice(11, 13)),
-    hauteur: h.hauteur[i],
+    // La taille estimée au bord remplace la hauteur du large dans tout l'affichage
+    hauteur: V.tailleAuBord([
+      { hauteur: h.houle[i], periode: h.periode[i], direction: h.direction[i] },
+      { hauteur: h.houle2[i], periode: h.periode2[i], direction: (h.direction2 || [])[i] },
+    ], spot.orientation),
     houle: h.houle[i],
     periode: h.periode[i],
     direction: h.direction[i],
@@ -75,6 +82,7 @@
     if (heure.hauteur == null || heure.vent == null) return null;
     return V.evaluer({
       hauteur: heure.hauteur,
+      houle: heure.houle,
       periode: heure.periode,
       vent: heure.vent,
       type: typeVent(heure.ventDir),
@@ -136,6 +144,8 @@
     const limite = notes[pire] === 1;
 
     if (pire === "hauteur") {
+      if (heure.eval.sature) return `mer trop grosse, les bancs saturent (houle de ${nombre(heure.houle)} m)`;
+      if (heure.hauteur < V.TAILLE_MINI) return `presque rien au bord (${nombre(heure.hauteur)} m)`;
       const sens = heure.hauteur < niveau.min ? "petites" : "grosses";
       return `vagues ${limite ? "un peu" : "trop"} ${sens} (${nombre(heure.hauteur)} m)`;
     }
@@ -161,7 +171,7 @@
     const r = analyse.repere;
     if (analyse.note === 2) {
       return `Les conditions collent à un niveau ${nom} ${creneauTexte(analyse, jour)}. ` +
-        `Vagues d'environ ${nombre(r.hauteur)} m, ${libelleVent(typeVent(r.ventDir)).toLowerCase()} à ${nombre(r.vent, 0)} km/h.`;
+        `Vagues d'environ ${nombre(r.hauteur)} m au bord, ${libelleVent(typeVent(r.ventDir)).toLowerCase()} à ${nombre(r.vent, 0)} km/h.`;
     }
     if (analyse.note === 1) {
       return `Surfable pour un niveau ${nom} ${creneauTexte(analyse, jour)}, sans être idéal : ${raison(analyse.creneau.find((x) => x.eval.note === 1) || r, niveau)}.`;
@@ -308,12 +318,12 @@
     zoneChiffres.innerHTML = `
       <p class="fc-chiffres-titre">À ${heureTexte(r.heure)}, ${analyse.note === 0 ? "le moins mauvais moment" : "le meilleur moment"} de la journée</p>
       <div class="stats fc-stats">
-        ${tuile(nombre(r.hauteur), "m", "Hauteur estimée au large")}
-        ${tuile(nombre(r.periode, 0), "s", `Période, houle de ${cardinal(r.direction)}`)}
+        ${tuile(nombre(r.hauteur), "m", "Taille estimée au bord")}
+        ${tuile(nombre(r.houle), "m", `Houle au large, de ${cardinal(r.direction)}`)}
+        ${tuile(nombre(r.periode, 0), "s", "Période de la houle")}
         ${tuile(nombre(r.vent, 0), "km/h", `${libelleVent(type)}, rafales ${nombre(r.rafales, 0)}`)}
         ${tuile(nombre(r.eau, 0), "°C", "Température de l'eau")}
-        ${tuile(s.lever.slice(11).replace(":", " h "), "", "Lever du soleil")}
-        ${tuile(s.coucher.slice(11).replace(":", " h "), "", "Coucher du soleil")}
+        ${tuile(`${s.lever.slice(11)} · ${s.coucher.slice(11)}`, "", "Lever et coucher du soleil")}
       </div>`;
   }
 
@@ -336,7 +346,7 @@
       }).join("");
     zoneTableau.innerHTML = `
       <table class="data-table">
-        <thead><tr><th scope="col">Heure</th><th scope="col">Verdict</th><th scope="col">Hauteur</th><th scope="col">Houle</th><th scope="col">Vent</th></tr></thead>
+        <thead><tr><th scope="col">Heure</th><th scope="col">Verdict</th><th scope="col">Au bord</th><th scope="col">Houle au large</th><th scope="col">Vent</th></tr></thead>
         <tbody>${lignes}</tbody>
       </table>`;
   }
@@ -353,7 +363,7 @@
         <div><p><strong>Ces prévisions datent du ${texteMaj}.</strong> La mise à jour automatique a pris du retard : elles peuvent ne plus être fiables.</p></div>
       </div>` : "";
     zoneInfos.innerHTML = `${alerte}
-      <p class="fc-note">Mis à jour le ${texteMaj}, heure de Paris. Hauteurs estimées par modèle au large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), elles peuvent différer de ce que vous verrez au bord. La marée sera ajoutée bientôt : le verdict n'en tient pas encore compte. Critères de départ, en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
+      <p class="fc-note">Mis à jour le ${texteMaj}, heure de Paris. Taille au bord estimée par Swellcome à partir de la houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne. La marée sera ajoutée bientôt : le verdict n'en tient pas encore compte. Critères de départ, en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
   }
 
 
@@ -462,7 +472,7 @@
 
     zoneGraph.innerHTML = `
       <svg class="fc-svg" width="${largeur}" height="${totale}" viewBox="0 0 ${largeur} ${totale}" role="img"
-           aria-label="Hauteur des vagues heure par heure, ${jourLong(jourChoisi)}. Le détail est dans le tableau sous le graphique.">
+           aria-label="Taille estimée des vagues au bord, heure par heure, ${jourLong(jourChoisi)}. Le détail est dans le tableau sous le graphique.">
         ${svg}
         <line class="g-curseur" y1="${marges.haut}" y2="${bas}" visibility="hidden"/>
         <circle class="g-point" r="5" visibility="hidden"/>
@@ -499,7 +509,7 @@
       const type = typeVent(p.ventDir);
       bulle.innerHTML = `
         <strong>${heureTexte(p.heure)}${p.eval ? ` · ${VERDICTS[p.eval.note].nom}` : " · Nuit"}</strong><br>
-        Vagues ${nombre(p.hauteur)} m, période ${nombre(p.periode, 0)} s<br>
+        Au bord ${nombre(p.hauteur)} m · houle ${nombre(p.houle)} m, ${nombre(p.periode, 0)} s<br>
         ${libelleVent(type)} ${nombre(p.vent, 0)} km/h, rafales ${nombre(p.rafales, 0)}`;
       bulle.hidden = false;
       const largeurBulle = bulle.offsetWidth;

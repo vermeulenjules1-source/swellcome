@@ -1128,7 +1128,7 @@ img, svg { max-width: 100%; }
 .jeu-etiquette--plage { right: 8px; }
 .jeu-etiquette--large { left: 8px; }
 
-.jeu-chiffres { margin-top: 12px; }
+.jeu-chiffres { margin-top: 12px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .jeu-chiffres .stat-value small { font-size: 0.85rem; font-weight: 600; }
 .jeu-question { margin: 22px 0 4px; outline: none; }
 .jeu-repere { margin: 0 0 14px; font-size: 0.88rem; color: var(--text-muted); }
@@ -1170,4 +1170,5 @@ img, svg { max-width: 100%; }
 
 @media (max-width: 480px) {
   .jeu-carte { padding: 16px; }
+  .jeu-chiffres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

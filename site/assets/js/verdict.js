@@ -2,6 +2,7 @@
    Swellcome — règles du verdict, partagées par les fiches spots et le jeu
    Critères de départ de docs/contexte.md, à valider avec des surfeurs et des moniteurs.
    Chaque critère vaut 2 (bon), 1 (limite) ou 0 (mauvais) ; le verdict vaut le plus faible.
+   La hauteur jugée n'est pas celle du large, mais la taille estimée au bord (tailleAuBord).
    ========================================================================== */
 
 window.SwellcomeVerdict = (function () {
@@ -19,6 +20,14 @@ window.SwellcomeVerdict = (function () {
   };
 
   const VENT_FAIBLE = 15; // km/h
+  const TAILLE_MINI = 0.5; // m au bord : en dessous, il n'y a presque rien à surfer
+  const ECART_SATURATION = 0.5; // m : le haut de la zone idéale reste sous la saturation
+
+  // Part de la houle du large qui arrive au bord selon sa période (période en s, coefficient).
+  // Une houle courte manque de force : c'est la correction la plus importante du calcul.
+  // Repères à caler avec des observations sur place.
+  const EFFET_PERIODE = [[4, 0.25], [5, 0.35], [6, 0.45], [7, 0.58], [8, 0.7], [10, 0.9], [12, 1.05], [14, 1.2], [16, 1.3], [18, 1.35]];
+  const EFFET_DIRECTION_INCONNUE = 0.6;
 
   const LIBELLE_VENT = { terre: "Vent de terre", mer: "Vent de mer", travers: "Vent de travers" };
 
@@ -32,9 +41,51 @@ window.SwellcomeVerdict = (function () {
     return "travers";
   }
 
-  function noteHauteur(x, niveau) {
+  function effetPeriode(periode) {
+    const table = EFFET_PERIODE;
+    if (periode <= table[0][0]) return table[0][1];
+    for (let i = 1; i < table.length; i++) {
+      const [t0, c0] = table[i - 1];
+      const [t1, c1] = table[i];
+      if (periode <= t1) return c0 + (c1 - c0) * (periode - t0) / (t1 - t0);
+    }
+    return table[table.length - 1][1];
+  }
+
+  // 1 si la houle arrive de face, 0 si elle longe la plage ou vient de derrière
+  function effetDirection(direction, orientation) {
+    if (orientation == null) return 1;
+    if (direction == null) return EFFET_DIRECTION_INCONNUE;
+    const ecart = Math.abs(((direction - orientation + 540) % 360) - 180);
+    return ecart >= 90 ? 0 : Math.cos(ecart * Math.PI / 180) ** 2;
+  }
+
+  // Taille estimée au bord, à partir de chaque houle : { hauteur, periode, direction }.
+  // Les énergies des houles s'additionnent, d'où la racine de la somme des carrés.
+  function tailleAuBord(houles, orientation) {
+    const parts = houles
+      .filter((h) => h.hauteur != null && h.periode != null)
+      .map((h) => h.hauteur * effetPeriode(h.periode) * effetDirection(h.direction, orientation));
+    if (!parts.length) return null;
+    return Math.round(Math.sqrt(parts.reduce((total, x) => total + x * x, 0)) * 10) / 10;
+  }
+
+  // Adapte un niveau à un spot qui sature à partir d'une certaine taille de houle
+  function pourSpot(niveau, saturation) {
+    if (!saturation) return niveau;
+    return {
+      ...niveau,
+      max: Math.min(niveau.max, saturation - ECART_SATURATION),
+      limiteHaute: Number.isFinite(niveau.max) ? niveau.max * 1.1 : saturation,
+      saturation,
+    };
+  }
+
+  function noteHauteur(x, niveau, sature) {
+    if (sature || x < TAILLE_MINI) return 0;
     if (x >= niveau.min && x <= niveau.max) return 2;
-    if (x >= niveau.min - 0.2 && x <= niveau.max * 1.1) return 1;
+    const basse = Math.round((niveau.min - 0.1) * 10) / 10; // évite les erreurs d'arrondi (0,7000…1)
+    if (x >= basse && x <= (niveau.limiteHaute ?? niveau.max * 1.1)) return 1;
     return 0;
   }
 
@@ -61,14 +112,16 @@ window.SwellcomeVerdict = (function () {
     return vitesse < 18 ? 1 : 0;
   }
 
-  function evaluer({ hauteur, periode, vent, type }, niveau) {
+  // hauteur : taille estimée au bord. houle : hauteur annoncée au large.
+  function evaluer({ hauteur, houle, periode, vent, type }, niveau) {
+    const sature = Boolean(niveau.saturation) && Math.max(hauteur, houle || 0) >= niveau.saturation;
     const notes = {
-      hauteur: noteHauteur(hauteur, niveau),
+      hauteur: noteHauteur(hauteur, niveau, sature),
       vent: noteVent(vent, type, niveau),
       periode: notePeriode(periode, niveau),
     };
-    return { notes, note: Math.min(notes.hauteur, notes.vent, notes.periode) };
+    return { notes, sature, note: Math.min(notes.hauteur, notes.vent, notes.periode) };
   }
 
-  return { NIVEAUX, VERDICTS, LIBELLE_VENT, typeVent, evaluer };
+  return { NIVEAUX, VERDICTS, LIBELLE_VENT, TAILLE_MINI, typeVent, tailleAuBord, pourSpot, evaluer };
 })();

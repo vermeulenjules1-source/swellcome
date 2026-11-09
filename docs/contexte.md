@@ -62,7 +62,9 @@ Les critères par défaut ci-dessous sont un point de départ à valider avec de
 | Confirmé | 1,2 à 2,5 m | 10 s et plus | Offshore ou faible | Beach breaks puissants, reefs |
 | Expert | 2 m et plus | 12 s et plus | Offshore | Tous, y compris spots engagés |
 
-Tolérances du verdict (`site/assets/js/forecast.js`), elles aussi à valider : hauteur jusqu'à 0,2 m sous le minimum ou 10 % au-dessus du maximum, période jusqu'à 2 s sous le minimum, vent faible de 15 à 20 km/h pour un débutant, vent de travers sous 22 km/h et vent de mer sous 18 km/h pour les niveaux intermédiaire et confirmé. Au-delà, le créneau est « à oublier ».
+Depuis le 9 novembre 2026, les hauteurs de ce tableau sont des tailles estimées au bord, pas des hauteurs au large. Le calcul (`site/assets/js/verdict.js`) combine chaque houle, sa période (coefficient de 0,35 à 5 s, 0,9 à 10 s, 1,2 à 14 s) et sa direction par rapport à l'orientation de la plage. Il ignore la mer du vent. Ces coefficients sont à caler sur le terrain. Sous 0,5 m au bord, le verdict est « à oublier » pour tous. En Gironde, les spots saturent vers 3 m (`saturation_m` dans les fiches) : à ce seuil, « à oublier » pour tous, et la zone idéale de l'expert s'arrête à 2,5 m.
+
+Tolérances du verdict (`site/assets/js/verdict.js`), elles aussi à valider : hauteur jusqu'à 0,1 m sous le minimum ou 10 % au-dessus du maximum, période jusqu'à 2 s sous le minimum, vent faible de 15 à 20 km/h pour un débutant, vent de travers sous 22 km/h et vent de mer sous 18 km/h pour les niveaux intermédiaire et confirmé. Au-delà, le créneau est « à oublier ».
 
 Chaque fiche spot porte aussi un niveau minimal, par exemple « réservé aux intermédiaires et plus ». Un débutant qui choisit ce spot voit un avertissement et ne reçoit pas d'alerte quand la houle dépasse son niveau.
 
