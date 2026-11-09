@@ -56,4 +56,33 @@ Attribution Open-Meteo (CC BY 4.0) et modèles sous-jacents (Météo-France, ECM
 
 ## Conventions
 
-Interface, contenus et commentaires de code en français. Communication avec Jules concise et directe, formes au masculin. Pas de secrets dans le dépôt (utiliser les secrets GitHub Actions). Petits commits avec des messages clairs en français.
+Interface, contenus et commentaires de code en français. Communication avec Jules concise et directe, formes au masculin. Pas de secrets dans le dépôt (utiliser les secrets GitHub Actions). Petits commits avec des messages clairs en français. Commiter et publier seulement quand Jules le demande, à chaque fois, puis vérifier le site publié.
+
+## État du projet (9 novembre 2026)
+
+En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeulenjules1-source/swellcome`, GitHub Pages, branche `main`). Chaque push publie le site. Aperçu local : configuration `swellcome` de `.claude/launch.json`, port 8000.
+
+**Ce qui existe**
+- Accueil : vidéo, carte 3D, 10 cartes photo qui mènent aux pages spots (`carte.js`, `data` généré par `build.py` dans `assets/data/apercu.json`).
+- Fiches spots : photo, onglets Prévisions, Le spot, Conseils, curseur horaire (`forecast.js`, `main.js`, `templates/spot.html`).
+- Pages Webcams (liens sortants uniquement), Accompagnement, guide avec mini-jeu (`jeu-forecast.js`), blog, pages légales.
+- Calcul commun dans `site/assets/js/verdict.js` : à modifier là, jamais en double.
+- Collecte : `scripts/collecte.py` et `.github/workflows/deploy.yml`, 4 fois par jour.
+- Carte : MapLibre et données IGN, style généré par `scripts/style_carte.py`.
+
+**Retours de Jules à respecter**
+- La hauteur affichée est une taille estimée au bord : houle, période et direction par rapport à la plage. Jamais la hauteur totale du large. Une houle courte ou de sud-ouest donne presque rien en Gironde.
+- Les spots de Gironde saturent vers 3 m (`saturation_m`) : à oublier pour tous les niveaux.
+- Sur l'accueil, pas de « À oublier » : la raison (Flat, Vent, Trop gros, Trop petit, Houle courte, Saturé).
+- Chaque spot a sa propre page ; l'accueil ne fait qu'y mener.
+- Style : pas d'aspect fade ni « fait par une IA ». Fonds sombres, gros verdict, photos, textes courts et directs. Éviter les petits titres en capitales, les blocs à trois icônes, les tuiles beiges, les slogans en antithèse.
+- Pas d'image ni de flux Viewsurf sans autorisation écrite : ses mentions légales l'interdisent. Ne pas se présenter comme un navigateur pour récupérer des fichiers.
+- Vidéo sous CC BY-SA : le crédit doit rester sur la page À propos, reliée depuis le pied de page.
+
+**À faire ou à vérifier**
+- Attendre de Jules : email de contact et choix d'adresse pour les mentions légales (passages `.to-fill`), compte Brevo (`NEWSLETTER_ACTION` dans `build.py`), compte AVISO pour les marées.
+- Vérifier qu'une exécution programmée (`schedule`) de GitHub Actions a bien lieu : la première attendue n'avait pas démarré le 9 novembre à 16 h 40. Le lancement manuel fonctionne.
+- Caler les coefficients de `EFFET_PERIODE` avec des retours de terrain. Premier test : Le Porge, mercredi 11 novembre au matin, le site donne 1,7 m au bord pour 1,9 m au large à 10 s, un autre site annonçait 2,3 m.
+- Marées : solution provisoire demandée par Jules le 9 novembre 2026, en attendant la réponse d'AVISO (demande envoyée). Niveau de la mer d'Open-Meteo (`sea_level_height_msl`, champ `maree` de `data/forecast/`), pleines et basses mers repérées dans `verdict.js`, pas de coefficient. À remplacer par FES2022 et un job GitHub hebdomadaire (choix de Jules), puis remettre les mentions FES2022 sur le site. Le verdict ne tient pas compte de la marée : 9 fiches sur 10 n'ont pas de `maree_favorable`.
+- Tester sur un vrai iPhone : la vidéo n'existe qu'en WebM, avec retour aux vagues animées si elle n'est pas lue.
+- Fiches spots à confirmer sur le terrain, saturation à affiner spot par spot.
