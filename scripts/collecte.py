@@ -40,6 +40,9 @@ VARIABLES_MARINE = {
     "secondary_swell_wave_direction": "direction2",
     "wind_wave_height": "mer_vent",
     "sea_surface_temperature": "eau",
+    # Marée provisoire, en mètres par rapport au niveau moyen, en attendant FES2022.
+    # Open-Meteo précise que cette donnée ne convient pas à la navigation côtière.
+    "sea_level_height_msl": "maree",
 }
 VARIABLES_VENT = {
     "wind_speed_10m": "vent",

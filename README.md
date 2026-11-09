@@ -39,4 +39,4 @@ scripts/build.py  assemble le tout dans dist/ (dossier généré, non commité)
 
 ## Données
 
-Données de prévision : [Open-Meteo](https://open-meteo.com/) (CC BY 4.0). Marées calculées à partir de FES2022 (CNES/AVISO), à titre indicatif.
+Données de prévision : [Open-Meteo](https://open-meteo.com/) (CC BY 4.0). Marées issues du niveau de la mer prévu par Open-Meteo, à titre indicatif.

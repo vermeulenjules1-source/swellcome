@@ -29,7 +29,7 @@
   /* 2 et 3. Données et verdict : le calcul est dans verdict.js, partagé avec la carte de l'accueil */
 
   const {
-    NIVEAUX, heures, soleil, jours, aujourdhui, parisMaintenant,
+    NIVEAUX, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
     typeVent, evaluer, estDeJour, analyserJour, phrase,
   } = V.creerAnalyse({ spot, prevision });
 
@@ -76,6 +76,14 @@
     return jour === aujourdhui ? "Aujourd'hui" : `${NOMS_LONGS[d.getDay()]} ${d.getDate()} ${MOIS[d.getMonth()]}`;
   };
 
+  // Hauteur de marée, signée car elle est donnée par rapport au niveau moyen de la mer
+  const niveauMer = (x) =>
+    x == null ? "–" : x.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: "exceptZero" });
+  const heureMinute = (t) => {
+    const minutes = t.slice(14, 16);
+    return `${Number(t.slice(11, 13))} h${minutes === "00" ? "" : ` ${minutes}`}`;
+  };
+
   racine.innerHTML = `
     <fieldset class="fc-niveaux">
       <legend>Votre niveau</legend>
@@ -93,6 +101,7 @@
       <div class="fc-lecture"></div>
       <div class="fc-graph"></div>
       <input class="fc-curseur" type="range" step="1" aria-label="Choisir une heure">
+      <div class="fc-zone-marees"></div>
       <div class="fc-legende">
         ${[2, 1, 0].map((n) => `<span><i style="background:${VERDICTS[n].couleur}"></i>${VERDICTS[n].nom}</span>`).join("")}
         <span>Faites glisser pour lire chaque heure</span>
@@ -116,6 +125,7 @@
   const zoneGraph = racine.querySelector(".fc-graph");
   const zoneTableau = racine.querySelector(".fc-tableau");
   const zoneInfos = racine.querySelector(".fc-infos");
+  const zoneMarees = racine.querySelector(".fc-zone-marees");
 
   const hauteurMaxSemaine = Math.max(...heures.map((x) => x.hauteur || 0));
 
@@ -191,7 +201,18 @@
         ${valeur(nombre(p.houle), "m", `houle de ${cardinal(p.direction)}, ${nombre(p.periode, 0)} s`)}
         ${valeur(nombre(p.vent, 0), "km/h", `${libelleVent(type).toLowerCase()}, rafales ${nombre(p.rafales, 0)}`)}
         ${valeur(nombre(p.eau, 0), "°C", `eau · soleil ${s.lever.slice(11)}–${s.coucher.slice(11)}`)}
+        ${p.maree != null ? valeur(niveauMer(p.maree), "m", `marée ${p.mareeSens}`) : ""}
       </div>`;
+  }
+
+  // Pleines et basses mers du jour choisi
+  function afficherMarees() {
+    const duJour = marees.filter((m) => m.t.startsWith(jourChoisi));
+    zoneMarees.innerHTML = duJour.length ? `
+      <ul class="fc-marees" aria-label="Marées du jour">
+        ${duJour.map((m) => `<li><strong>${m.type === "pleine" ? "Pleine mer" : "Basse mer"}</strong> vers ${heureMinute(m.t)}, ${niveauMer(m.niveau)} m</li>`).join("")}
+        <li class="fc-marees-note">Indicatif, par rapport au niveau moyen de la mer</li>
+      </ul>` : "";
   }
 
   function choisirHeure(heure) {
@@ -216,11 +237,12 @@
           <td>${nombre(x.hauteur)} m</td>
           <td>${nombre(x.houle)} m, ${nombre(x.periode, 0)} s, ${cardinal(x.direction)}${seconde}</td>
           <td>${nombre(x.vent, 0)} km/h, ${cardinal(x.ventDir)}<br><small class="muted">${libelleVent(type)}, rafales ${nombre(x.rafales, 0)}</small></td>
+          <td>${x.maree != null ? `${niveauMer(x.maree)} m<br><small class="muted">${x.mareeSens}</small>` : "–"}</td>
         </tr>`;
       }).join("");
     zoneTableau.innerHTML = `
       <table class="data-table">
-        <thead><tr><th scope="col">Heure</th><th scope="col">Verdict</th><th scope="col">Au bord</th><th scope="col">Houle au large</th><th scope="col">Vent</th></tr></thead>
+        <thead><tr><th scope="col">Heure</th><th scope="col">Verdict</th><th scope="col">Au bord</th><th scope="col">Houle au large</th><th scope="col">Vent</th><th scope="col">Marée</th></tr></thead>
         <tbody>${lignes}</tbody>
       </table>`;
   }
@@ -241,7 +263,8 @@
     zoneInfos.innerHTML = `
       <p>Mis à jour le ${texteMaj}, heure de Paris.</p>
       <p>La taille au bord est estimée par Swellcome à partir de la houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne.</p>
-      <p>La marée sera ajoutée bientôt : le verdict n'en tient pas encore compte. Les critères sont en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
+      <p>La marée vient du niveau de la mer prévu par Open-Meteo. Elle est indicative, ne convient pas à la navigation et ne remplace pas l'annuaire officiel du Shom. Le verdict n'en tient pas encore compte : son effet dépend de chaque spot.</p>
+      <p>Les critères sont en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
   }
 
 
@@ -408,6 +431,7 @@
     afficherTableau();
     dessinerGraphique();
     afficherLecture();
+    afficherMarees();
   }
 
   racine.querySelector(".fc-niveaux").addEventListener("change", (evenement) => {

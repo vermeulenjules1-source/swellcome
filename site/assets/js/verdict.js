@@ -70,6 +70,36 @@ window.SwellcomeVerdict = (function () {
     return Math.round(Math.sqrt(parts.reduce((total, x) => total + x * x, 0)) * 10) / 10;
   }
 
+  // Pleines et basses mers, repérées sur la courbe horaire du niveau de la mer.
+  // Une parabole passée par trois heures donne un moment plus fin que l'heure ronde,
+  // arrondi au quart d'heure : la donnée ne permet pas mieux. Renvoie [{ t, type, niveau }].
+  function extremesMaree(temps, niveaux) {
+    const extremes = [];
+    for (let i = 1; i < temps.length - 1; i++) {
+      const [a, b, c] = [niveaux[i - 1], niveaux[i], niveaux[i + 1]];
+      if (a == null || b == null || c == null) continue;
+      const pleine = b > a && b >= c;
+      const basse = b < a && b <= c;
+      if (!pleine && !basse) continue;
+      const decalage = (a - c) / (2 * (a - 2 * b + c)); // en heures, entre -0,5 et +0,5
+      const quartsDHeure = Math.round((Date.parse(temps[i] + ":00Z") + decalage * 3600000) / 900000);
+      extremes.push({
+        t: new Date(quartsDHeure * 900000).toISOString().slice(0, 16),
+        type: pleine ? "pleine" : "basse",
+        niveau: b - (a - c) * decalage / 4,
+      });
+    }
+    return extremes;
+  }
+
+  // "montante" ou "descendante" à une heure donnée, d'après l'heure suivante (ou la précédente en fin de série)
+  function sensMaree(niveaux, i) {
+    const avant = niveaux[i + 1] != null ? niveaux[i] : niveaux[i - 1];
+    const apres = niveaux[i + 1] != null ? niveaux[i + 1] : niveaux[i];
+    if (avant == null || apres == null) return null;
+    return apres >= avant ? "montante" : "descendante";
+  }
+
   // Adapte un niveau à un spot qui sature à partir d'une certaine taille de houle
   function pourSpot(niveau, saturation) {
     if (!saturation) return niveau;
@@ -138,6 +168,8 @@ window.SwellcomeVerdict = (function () {
     );
 
     const h = prevision.heures;
+    const niveauxMer = h.maree || []; // absent des fichiers collectés avant l'ajout de la marée
+    const marees = extremesMaree(h.temps, niveauxMer);
     const heures = h.temps.map((t, i) => ({
       t,
       jour: t.slice(0, 10),
@@ -156,6 +188,8 @@ window.SwellcomeVerdict = (function () {
       vent: h.vent[i],
       rafales: h.rafales[i],
       ventDir: h.vent_dir[i],
+      maree: niveauxMer[i] ?? null,
+      mareeSens: sensMaree(niveauxMer, i),
     }));
 
     // Les prévisions sont à l'heure de Paris, quel que soit le fuseau du visiteur
@@ -286,7 +320,7 @@ window.SwellcomeVerdict = (function () {
     }
 
     return {
-      NIVEAUX: niveaux, heures, soleil, jours, aujourdhui, parisMaintenant,
+      NIVEAUX: niveaux, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
       typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif,
     };
   }
