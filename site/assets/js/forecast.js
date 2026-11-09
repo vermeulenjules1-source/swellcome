@@ -16,24 +16,11 @@
   const { spot, prevision } = JSON.parse(source.textContent);
 
 
-  /* 1. Réglages
-     Critères de départ de docs/contexte.md, à valider avec des surfeurs et des moniteurs.
-     Une valeur légèrement hors critères donne « Correct » au lieu de « À oublier ». */
+  /* 1. Réglages : les critères par niveau sont dans verdict.js */
 
-  const NIVEAUX = {
-    debutant: { nom: "Débutant", min: 0.5, max: 1, periode: null, vent: "faible" },
-    intermediaire: { nom: "Intermédiaire", min: 0.8, max: 1.8, periode: 8, vent: "terre-ou-faible" },
-    confirme: { nom: "Confirmé", min: 1.2, max: 2.5, periode: 10, vent: "terre-ou-faible" },
-    expert: { nom: "Expert", min: 2, max: Infinity, periode: 12, vent: "terre" },
-  };
+  const V = window.SwellcomeVerdict;
+  const { NIVEAUX, VERDICTS } = V;
 
-  const VERDICTS = {
-    2: { nom: "Top", badge: "good", icone: "i-check", couleur: "#2D6A63" },
-    1: { nom: "Correct", badge: "warn", icone: "i-minus", couleur: "#E6B96C" },
-    0: { nom: "À oublier", badge: "neutral", icone: "i-close", couleur: "#8A979F" },
-  };
-
-  const VENT_FAIBLE = 15;            // km/h
   const CLE_NIVEAU = "swellcome-niveau";
   const HEURE_DEBUT = 6;             // bornes du graphique
   const HEURE_FIN = 22;
@@ -78,57 +65,20 @@
   const POINTS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
   const cardinal = (deg) => (deg == null ? "–" : POINTS[Math.round(deg / 22.5) % 16]);
 
-  function typeVent(direction) {
-    if (spot.orientation == null || direction == null) return null;
-    const venantDeLaTerre = (spot.orientation + 180) % 360;
-    const ecart = Math.abs(((direction - venantDeLaTerre + 540) % 360) - 180);
-    if (ecart <= 45) return "terre";
-    if (ecart >= 135) return "mer";
-    return "travers";
-  }
-  const LIBELLE_VENT = { terre: "Vent de terre", mer: "Vent de mer", travers: "Vent de travers" };
-  const libelleVent = (type) => LIBELLE_VENT[type] || "Vent";
+  const typeVent = (direction) => V.typeVent(direction, spot.orientation);
+  const libelleVent = (type) => V.LIBELLE_VENT[type] || "Vent";
 
 
-  /* 3. Verdict : chaque critère vaut 2 (bon), 1 (limite) ou 0 (mauvais) */
-
-  function noteHauteur(x, niveau) {
-    if (x >= niveau.min && x <= niveau.max) return 2;
-    if (x >= niveau.min - 0.2 && x <= niveau.max * 1.1) return 1;
-    return 0;
-  }
-
-  function notePeriode(x, niveau) {
-    if (niveau.periode == null) return 2;
-    if (x == null) return 1;
-    if (x >= niveau.periode) return 2;
-    return x >= niveau.periode - 2 ? 1 : 0;
-  }
-
-  function noteVent(vitesse, type, niveau) {
-    if (niveau.vent === "faible") {
-      if (vitesse < VENT_FAIBLE) return 2;
-      return vitesse < 20 ? 1 : 0;
-    }
-    if (niveau.vent === "terre") {
-      if (type === "terre") return vitesse < 40 ? 2 : 1;
-      return vitesse < 12 ? 1 : 0;
-    }
-    // Vent de terre ou vent faible
-    if (vitesse < VENT_FAIBLE) return 2;
-    if (type === "terre") return vitesse < 35 ? 2 : 1;
-    if (type === "travers") return vitesse < 22 ? 1 : 0;
-    return vitesse < 18 ? 1 : 0;
-  }
+  /* 3. Verdict d'une heure, puis d'une journée */
 
   function evaluer(heure, niveau) {
     if (heure.hauteur == null || heure.vent == null) return null;
-    const notes = {
-      hauteur: noteHauteur(heure.hauteur, niveau),
-      vent: noteVent(heure.vent, typeVent(heure.ventDir), niveau),
-      periode: notePeriode(heure.periode, niveau),
-    };
-    return { notes, note: Math.min(notes.hauteur, notes.vent, notes.periode) };
+    return V.evaluer({
+      hauteur: heure.hauteur,
+      periode: heure.periode,
+      vent: heure.vent,
+      type: typeVent(heure.ventDir),
+    }, niveau);
   }
 
   function estDeJour(heure) {
@@ -413,7 +363,7 @@
 
   function dessinerGraphique() {
     const largeur = zoneGraph.clientWidth;
-    if (!largeur) return;
+    if (largeur < 160) return; // zone repliée ou en cours de redimensionnement
 
     const niveau = NIVEAUX[niveauChoisi];
     const etroit = largeur < 480;

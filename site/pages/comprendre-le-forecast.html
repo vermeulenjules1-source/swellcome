@@ -9,6 +9,12 @@ nav: guide
     <span class="eyebrow">Guide</span>
     <h1>Comprendre le forecast</h1>
     <p class="lead">Quatre données suffisent pour savoir si la session vaut le coup : la taille de la houle, sa période, le vent et la marée. Voici comment les lire.</p>
+    <div class="hero-actions" style="margin-top:24px">
+      <a class="btn" href="#jeu">
+        Tester avec le mini-jeu
+        <svg class="icon icon--fleche" aria-hidden="true"><use href="#i-arrow-down"></use></svg>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -70,3 +76,25 @@ nav: guide
     </article>
   </div>
 </section>
+
+<!-- Mini-jeu : conditions fictives, voir site/assets/js/jeu-forecast.js -->
+<section class="section section--mist" id="jeu">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Mini-jeu</span>
+      <h2>Vous y allez ou pas ?</h2>
+      <p>Huit créneaux, huit surfeurs de niveaux différents. À vous de donner le verdict, puis de voir ce que disent les règles de Swellcome.</p>
+    </div>
+
+    <div class="jeu-carte">
+      <div id="jeu-forecast" data-spots="{{base}}/gironde/">
+        <noscript><p>Ce mini-jeu a besoin de JavaScript pour fonctionner.</p></noscript>
+      </div>
+    </div>
+
+    <p class="jeu-mention">Conditions fictives, pour s'entraîner. Plage imaginaire orientée ouest, marée non prise en compte. Critères de départ, en cours de validation avec des surfeurs.</p>
+  </div>
+</section>
+
+<script src="{{base}}/assets/js/verdict.js" defer></script>
+<script src="{{base}}/assets/js/jeu-forecast.js" defer></script>
