@@ -1,14 +1,14 @@
 # Met le site en ligne sur GitHub Pages à chaque push sur main,
 # et récupère les prévisions Open-Meteo quatre fois par jour.
+# Ces lancements viennent de cron-job.org (3 h 17, 9 h 17, 15 h 17 et 21 h 17 UTC),
+# qui appelle workflow_dispatch : le « schedule » de GitHub ne se déclenchait pas sur ce dépôt.
 # Étapes : récupérer le code, collecter (sauf sur un push), lancer scripts/build.py, publier dist/.
 name: Mise en ligne du site
 
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: '17 3,9,15,21 * * *'  # heures UTC, à une minute peu chargée
-  workflow_dispatch:  # permet aussi de lancer la mise en ligne à la main depuis l'onglet Actions
+  workflow_dispatch:  # lancé par cron-job.org, ou à la main depuis l'onglet Actions
 
 permissions:
   contents: write  # pour enregistrer les prévisions dans data/forecast/

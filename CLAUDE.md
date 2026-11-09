@@ -82,7 +82,7 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 
 **À faire ou à vérifier**
 - Attendre de Jules : email de contact et choix d'adresse pour les mentions légales (passages `.to-fill`), compte Brevo (`NEWSLETTER_ACTION` dans `build.py`), compte AVISO pour les marées.
-- Vérifier qu'une exécution programmée (`schedule`) de GitHub Actions a bien lieu : la première attendue n'avait pas démarré le 9 novembre à 16 h 40. Le lancement manuel fonctionne.
+- Collecte automatique : le `schedule` de GitHub ne se déclenchait pas, il est retiré depuis le 9 novembre 2026. Une tâche cron-job.org (compte de Jules) appelle `workflow_dispatch` de `deploy.yml` à 3 h 17, 9 h 17, 15 h 17 et 21 h 17 UTC, avec un jeton GitHub limité à Actions sur ce dépôt. Le jeton expire : le renouveler à temps. Vérifier le premier lancement automatique. `alertes.yml`, non publié, utilise encore `schedule` et devra passer par le même déclencheur.
 - Caler les coefficients de `EFFET_PERIODE` avec des retours de terrain. Premier test : Le Porge, mercredi 11 novembre au matin, le site donne 1,7 m au bord pour 1,9 m au large à 10 s, un autre site annonçait 2,3 m.
 - Marées : solution provisoire demandée par Jules le 9 novembre 2026, en attendant la réponse d'AVISO (demande envoyée). Niveau de la mer d'Open-Meteo (`sea_level_height_msl`, champ `maree` de `data/forecast/`), pleines et basses mers repérées dans `verdict.js`, pas de coefficient. À remplacer par FES2022 et un job GitHub hebdomadaire (choix de Jules), puis remettre les mentions FES2022 sur le site. Le verdict ne tient pas compte de la marée : 9 fiches sur 10 n'ont pas de `maree_favorable`.
 - Tester sur un vrai iPhone : la vidéo n'existe qu'en WebM, avec retour aux vagues animées si elle n'est pas lue.
