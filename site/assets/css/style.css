@@ -904,3 +904,8 @@ img, svg { max-width: 100%; }
 
 .maillage .grid--3 { grid-template-columns: 1fr; gap: 14px; }
 .maillage .article-card p { margin-bottom: 8px; }
+
+/* Très petits téléphones : la pastille d'orientation ne doit pas faire déborder la liste */
+@media (max-width: 420px) {
+  .spot-link .badge { display: none; }
+}
