@@ -57,7 +57,7 @@ Les critères par défaut ci-dessous sont un point de départ à valider avec de
 
 | Niveau | Taille de vague | Période | Vent | Spots proposés |
 | --- | --- | --- | --- | --- |
-| Débutant | 0,5 à 1 m | Peu importante | Faible, moins de 15 km/h | Plages surveillées, fond sableux |
+| Débutant | 0,5 à 1 m | Peu importante | Faible, moins de 15 km/h | Fond sableux, avec une école, hors zone de baignade |
 | Intermédiaire | 0,8 à 1,8 m | 8 s et plus | Offshore ou faible | Beach breaks |
 | Confirmé | 1,2 à 2,5 m | 10 s et plus | Offshore ou faible | Beach breaks puissants, reefs |
 | Expert | 2 m et plus | 12 s et plus | Offshore | Tous, y compris spots engagés |
@@ -70,7 +70,7 @@ Chaque fiche spot porte aussi un niveau minimal, par exemple « réservé aux in
 
 Chaque créneau reçoit un verdict en trois états (top, correct, à oublier) et une phrase d'explication, par exemple « houle de 1,2 m à 11 s, vent offshore jusqu'à 10 h, marée montante ». L'alerte part la veille à 18 h et le matin à 7 h. Elle est limitée à une par jour et par spot pour ne pas lasser.
 
-Une mention de sécurité figure sur chaque page : le forecast est une estimation, et il faut vérifier les conditions sur place, les baignades surveillées et les drapeaux.
+Une mention de sécurité figure sur chaque page : le forecast est une estimation, et il faut vérifier les conditions sur place et les drapeaux. Le surf est interdit dans les zones de baignade surveillées : ne jamais conseiller d'y surfer.
 
 ## Blog et infos locales
 

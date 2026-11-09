@@ -156,7 +156,7 @@
 
     const v = VERDICTS[analyse.note];
     const conseil = niveauChoisi === "debutant"
-      ? `<p class="fc-conseil">Débutant : choisissez une zone surveillée ou un cours encadré.</p>` : "";
+      ? `<p class="fc-conseil">Débutant : prenez un cours avec une école de surf, et restez toujours hors de la zone de baignade.</p>` : "";
     zoneVerdict.className = `fc-verdict fc-verdict--${v.badge}`;
     zoneVerdict.innerHTML = `
       <div class="fc-verdict-haut">

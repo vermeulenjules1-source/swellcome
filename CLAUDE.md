@@ -52,7 +52,7 @@ Logo : `assets/logo.png` (icône carrée bleu marine avec une vague blanche, « 
 
 ## Mentions obligatoires sur le site
 
-Attribution Open-Meteo (CC BY 4.0) et modèles sous-jacents (Météo-France, ECMWF, NOAA, DWD) ; « Marées calculées à partir de FES2022 (CNES/AVISO), indicatives, ne remplacent pas l'annuaire du Shom » ; avertissement de sécurité sur chaque page (prévisions indicatives, vérifier les conditions sur place, baignades surveillées, drapeaux, baïnes). Plus tard, si on les utilise : Copernicus Marine (« Generated using E.U. Copernicus Marine Service Information ») et Candhis (Cerema et partenaires).
+Attribution Open-Meteo (CC BY 4.0) et modèles sous-jacents (Météo-France, ECMWF, NOAA, DWD) ; « Marées calculées à partir de FES2022 (CNES/AVISO), indicatives, ne remplacent pas l'annuaire du Shom » ; avertissement de sécurité sur chaque page (prévisions indicatives, vérifier les conditions sur place, drapeaux, baïnes). Ne jamais conseiller de surfer en zone surveillée : le surf y est interdit et met les baigneurs en danger. Plus tard, si on les utilise : Copernicus Marine (« Generated using E.U. Copernicus Marine Service Information ») et Candhis (Cerema et partenaires).
 
 ## Conventions
 
