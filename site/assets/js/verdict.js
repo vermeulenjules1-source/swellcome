@@ -16,7 +16,7 @@ window.SwellcomeVerdict = (function () {
   const VERDICTS = {
     2: { nom: "Top", badge: "good", icone: "i-check", couleur: "#2D6A63" },
     1: { nom: "Correct", badge: "warn", icone: "i-minus", couleur: "#E6B96C" },
-    0: { nom: "À oublier", badge: "neutral", icone: "i-close", couleur: "#8A979F" },
+    0: { nom: "Jour off", badge: "neutral", icone: "i-cafe", couleur: "#8A979F" },
   };
 
   const VENT_FAIBLE = 15; // km/h

@@ -21,8 +21,7 @@
   const { VERDICTS, nombre, cardinal, libelleVent, heureTexte } = V;
 
   const CLE_NIVEAU = "swellcome-niveau";
-  const HEURE_DEBUT = 6;             // bornes du graphique
-  const HEURE_FIN = 22;
+  const COULEURS_BARRES = { 2: "#77B9B1", 1: "#E6B96C", 0: "#5F7480" }; // Top, Correct, Jour off, sur fond sombre
   const DONNEES_ANCIENNES_H = 14;    // au-delà, on prévient que les données datent
 
 
@@ -58,6 +57,9 @@
     return; // données trop anciennes : le résumé écrit par build.py reste affiché
   }
 
+  const bornesNiveau = (n) =>
+    Number.isFinite(n.max) ? `${nombre(n.min)} à ${nombre(n.max)} m` : `${nombre(n.min)} m et plus`;
+
   const icone = (nom, classe = "icon") =>
     `<svg class="${classe}" aria-hidden="true"><use href="#${nom}"></use></svg>`;
 
@@ -91,7 +93,7 @@
         ${Object.entries(NIVEAUX).map(([cle, n]) => `
           <label class="fc-pilule">
             <input type="radio" name="niveau" value="${cle}" ${cle === niveauChoisi ? "checked" : ""}>
-            <span>${n.nom}</span>
+            <span><strong>${n.nom}</strong><small>${bornesNiveau(n)} au bord</small></span>
           </label>`).join("")}
       </div>
     </fieldset>
@@ -103,13 +105,14 @@
       <input class="fc-curseur" type="range" step="1" aria-label="Choisir une heure">
       <div class="fc-zone-marees"></div>
       <div class="fc-legende">
-        ${[2, 1, 0].map((n) => `<span><i style="background:${VERDICTS[n].couleur}"></i>${VERDICTS[n].nom}</span>`).join("")}
-        <span>Faites glisser pour lire chaque heure</span>
+        ${[2, 1, 0].map((n) => `<span><i style="background:${COULEURS_BARRES[n]}"></i>${VERDICTS[n].nom}</span>`).join("")}
+        <span><i class="fc-legende-zone"></i><span class="fc-zone-ideale"></span></span>
+        <span>Touchez une barre pour lire l'heure</span>
       </div>
     </div>
-    <details class="fc-detail">
+    <details class="fc-detail" open>
       <summary>Détail heure par heure</summary>
-      <div class="table-wrap fc-tableau"></div>
+      <div class="fc-tableau"></div>
     </details>
     <details class="fc-detail">
       <summary>Comment c'est calculé</summary>
@@ -126,28 +129,21 @@
   const zoneTableau = racine.querySelector(".fc-tableau");
   const zoneInfos = racine.querySelector(".fc-infos");
   const zoneMarees = racine.querySelector(".fc-zone-marees");
+  const zoneIdeale = racine.querySelector(".fc-zone-ideale");
 
   const hauteurMaxSemaine = Math.max(...heures.map((x) => x.hauteur || 0));
-
-  function miniCourbe(jour) {
-    const points = heures.filter((x) => x.jour === jour && x.heure >= HEURE_DEBUT && x.heure <= HEURE_FIN && x.hauteur != null);
-    const haut = Math.max(hauteurMaxSemaine, 0.5);
-    const trace = points.map((x, i) =>
-      `${(i / (points.length - 1 || 1) * 100).toFixed(1)},${(26 - x.hauteur / haut * 22).toFixed(1)}`).join(" ");
-    return `<svg class="fc-mini" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="${trace}"/></svg>`;
-  }
 
   function afficherJours() {
     const niveau = NIVEAUX[niveauChoisi];
     zoneJours.innerHTML = jours.map((jour) => {
       const analyse = analyserJour(jour, niveau);
       const duJour = heures.filter((x) => x.jour === jour && estDeJour(x) && x.hauteur != null).map((x) => x.hauteur);
-      const plage = duJour.length ? `${nombre(Math.min(...duJour))} à ${nombre(Math.max(...duJour))} m` : "–";
+      const [mini, maxi] = duJour.length ? [Math.min(...duJour), Math.max(...duJour)] : [null, null];
+      const plage = mini == null ? "–" : mini === maxi ? `${nombre(mini)} m` : `${nombre(mini)} à ${nombre(maxi)} m`;
       return `
         <button type="button" class="fc-jour" data-jour="${jour}" aria-pressed="${jour === jourChoisi}">
           <span class="fc-jour-nom">${jourCourt(jour)} <small>${dateDe(jour).getDate()}</small></span>
           ${analyse ? badge(analyse.note) : '<span class="badge badge--neutral">Terminé</span>'}
-          ${miniCourbe(jour)}
           <span class="fc-jour-plage">${plage}</span>
         </button>`;
     }).join("");
@@ -222,29 +218,34 @@
     placerCurseur();
   }
 
+  // Le détail d'une journée : une ligne par heure, chaque valeur porte son propre libellé
   function afficherTableau() {
     const niveau = NIVEAUX[niveauChoisi];
+    const flecheVent = (direction) => direction == null ? "" :
+      `<svg class="fc-fleche" viewBox="-10 -10 20 20" aria-hidden="true" style="transform:rotate(${(direction + 180) % 360}deg)"><path d="M0,8 L0,-7 M-4,-2.5 L0,-7 L4,-2.5"/></svg>`;
+    const colonne = (classe, principal, detail) =>
+      `<div class="fc-c ${classe}"><strong>${principal}</strong><small>${detail}</small></div>`;
+
     const lignes = heures
       .filter((x) => x.jour === jourChoisi && estDeJour(x))
       .map((x) => {
         const ev = evaluer(x, niveau);
         const type = typeVent(x.ventDir);
-        const seconde = x.houle2 != null && x.houle2 >= 0.2
-          ? `<br><small class="muted">2e houle ${nombre(x.houle2)} m, ${nombre(x.periode2, 0)} s</small>` : "";
-        return `<tr>
-          <td>${heureTexte(x.heure)}</td>
-          <td>${ev ? badge(ev.note) : "–"}</td>
-          <td>${nombre(x.hauteur)} m</td>
-          <td>${nombre(x.houle)} m, ${nombre(x.periode, 0)} s, ${cardinal(x.direction)}${seconde}</td>
-          <td>${nombre(x.vent, 0)} km/h, ${cardinal(x.ventDir)}<br><small class="muted">${libelleVent(type)}, rafales ${nombre(x.rafales, 0)}</small></td>
-          <td>${x.maree != null ? `${niveauMer(x.maree)} m<br><small class="muted">${x.mareeSens}</small>` : "–"}</td>
-        </tr>`;
+        const seconde = x.houle2 != null && x.houle2 >= 0.2 ? `, 2e houle ${nombre(x.houle2)} m` : "";
+        const maree = x.maree != null
+          ? colonne("fc-c-maree", `${x.mareeSens === "montante" ? "↗" : "↘"} ${niveauMer(x.maree)} m`, `marée ${x.mareeSens}`)
+          : colonne("fc-c-maree", "–", "marée");
+        return `
+          <li class="fc-ligne fc-ligne--${ev ? VERDICTS[ev.note].badge : "neutral"}">
+            <strong class="fc-ligne-heure">${heureTexte(x.heure)}</strong>
+            <div class="fc-ligne-verdict">${ev ? badge(ev.note) : "–"}</div>
+            ${colonne("fc-c-taille", `${nombre(x.hauteur)} m`, "au bord")}
+            ${colonne("fc-c-houle", `${nombre(x.houle)} m, ${nombre(x.periode, 0)} s`, `houle de ${cardinal(x.direction)}${seconde}`)}
+            ${colonne("fc-c-vent", `${flecheVent(x.ventDir)}${nombre(x.vent, 0)} km/h`, `${libelleVent(type)}, rafales ${nombre(x.rafales, 0)}`)}
+            ${maree}
+          </li>`;
       }).join("");
-    zoneTableau.innerHTML = `
-      <table class="data-table">
-        <thead><tr><th scope="col">Heure</th><th scope="col">Verdict</th><th scope="col">Au bord</th><th scope="col">Houle au large</th><th scope="col">Vent</th><th scope="col">Marée</th></tr></thead>
-        <tbody>${lignes}</tbody>
-      </table>`;
+    zoneTableau.innerHTML = `<ol class="fc-lignes">${lignes}</ol>`;
   }
 
   function afficherInfos() {
@@ -268,43 +269,77 @@
   }
 
 
-  /* 5. Graphique : hauteur des vagues heure par heure, avec la zone idéale du niveau */
+  /* 5. Graphique : une barre par heure de jour, et la course du soleil au-dessus */
 
+  const mouvementReduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let dernierCalcul = null;
+  let echelles = null;
+  let soleilPosition = 0;      // 0 au lever, 1 au coucher
+  let animationSoleil = null;
 
   function dessinerGraphique() {
     const largeur = zoneGraph.clientWidth;
     if (largeur < 160) return; // zone repliée ou en cours de redimensionnement
 
     const niveau = NIVEAUX[niveauChoisi];
+    zoneIdeale.textContent = `Zone idéale ${niveau.nom.toLowerCase()} : ${bornesNiveau(niveau)}`;
+
+    const points = heures
+      .filter((p) => p.jour === jourChoisi && estDeJour(p) && p.hauteur != null)
+      .map((p) => ({ ...p, eval: evaluer(p, niveau) }));
+    if (!points.length) {
+      zoneGraph.innerHTML = "";
+      echelles = null;
+      return;
+    }
+
     const etroit = largeur < 480;
-    const marges = { gauche: 34, droite: 22, haut: 22 };
-    const hauteurTrace = etroit ? 150 : 190;
+    const hauteurCiel = etroit ? 44 : 58;
+    const horizon = hauteurCiel + 24;
+    const marges = { gauche: 34, droite: 8, haut: horizon + 26 };
+    const hauteurTrace = etroit ? 130 : 170;
     const bas = marges.haut + hauteurTrace;
     const totale = bas + 150;
-
-    const donnees = heures
-      .filter((x) => x.jour === jourChoisi && x.heure >= HEURE_DEBUT && x.heure <= HEURE_FIN)
-      .map((x) => ({ ...x, eval: estDeJour(x) ? evaluer(x, niveau) : null }));
-    const points = donnees.filter((x) => x.hauteur != null);
 
     // L'échelle verticale est la même toute la semaine, pour comparer les jours d'un coup d'œil
     const repereZone = Number.isFinite(niveau.max) ? niveau.max : niveau.min + 1;
     const sommet = Math.ceil(Math.max(hauteurMaxSemaine, repereZone) * 1.15 * 2) / 2;
     const pas = sommet <= 2.5 ? 0.5 : 1;
 
-    const x = (heure) => marges.gauche + (heure - HEURE_DEBUT) / (HEURE_FIN - HEURE_DEBUT) * (largeur - marges.gauche - marges.droite);
+    const premiere = points[0].heure;
+    const colonne = (largeur - marges.gauche - marges.droite) / points.length;
+    const xHeure = (t) => marges.gauche + (t - premiere) * colonne;
+    const centre = (heure) => xHeure(heure + 0.5);
     const y = (valeur) => bas - valeur / sommet * hauteurTrace;
+
+    // Course du soleil : l'abscisse suit l'heure, la hauteur dessine un arc
     const s = soleil[jourChoisi];
     const enHeures = (t) => Number(t.slice(11, 13)) + Number(t.slice(14, 16)) / 60;
+    const lever = enHeures(s.lever);
+    const coucher = enHeures(s.coucher);
+    const xLever = xHeure(Math.max(lever, premiere));
+    const xCoucher = xHeure(Math.min(coucher, premiere + points.length));
+    const positionSoleil = (p) => ({
+      x: xLever + p * (xCoucher - xLever),
+      y: horizon - Math.sin(Math.PI * p) * hauteurCiel,
+    });
+    const cibleSoleil = (heure) => Math.min(1, Math.max(0, (heure + 0.5 - lever) / (coucher - lever)));
 
     let svg = "";
 
-    // Nuit
-    const finNuit = Math.max(HEURE_DEBUT, enHeures(s.lever));
-    const debutNuit = Math.min(HEURE_FIN, enHeures(s.coucher));
-    if (finNuit > HEURE_DEBUT) svg += `<rect class="g-nuit" x="${x(HEURE_DEBUT)}" y="${marges.haut}" width="${x(finNuit) - x(HEURE_DEBUT)}" height="${hauteurTrace}"/>`;
-    if (debutNuit < HEURE_FIN) svg += `<rect class="g-nuit" x="${x(debutNuit)}" y="${marges.haut}" width="${x(HEURE_FIN) - x(debutNuit)}" height="${hauteurTrace}"/>`;
+    const course = Array.from({ length: 41 }, (_, i) => {
+      const point = positionSoleil(i / 40);
+      return `${point.x.toFixed(1)},${point.y.toFixed(1)}`;
+    }).join(" ");
+    svg += `<line class="g-horizon" x1="${marges.gauche}" x2="${largeur - marges.droite}" y1="${horizon}" y2="${horizon}"/>`;
+    svg += `<polyline class="g-course" points="${course}"/>`;
+    svg += `<text x="${xLever}" y="${horizon + 16}">Lever ${heureMinute(s.lever)}</text>`;
+    svg += `<text x="${xCoucher}" y="${horizon + 16}" text-anchor="end">Coucher ${heureMinute(s.coucher)}</text>`;
+    svg += `<g class="g-soleil" aria-hidden="true">
+      <circle class="g-soleil-halo" r="19"/>
+      <g class="g-soleil-rayons">${Array.from({ length: 8 }, (_, i) => `<line y1="-14" y2="-18" transform="rotate(${i * 45})"/>`).join("")}</g>
+      <circle class="g-soleil-coeur" r="10"/>
+    </g>`;
 
     // Grille et axe des hauteurs
     for (let v = 0; v <= sommet + 0.001; v += pas) {
@@ -312,113 +347,114 @@
       svg += `<text x="${marges.gauche - 6}" y="${y(v) + 4}" text-anchor="end">${v === 0 ? "0" : nombre(v) + " m"}</text>`;
     }
 
-    // Aire et courbe de la hauteur
-    if (points.length > 1) {
-      const trace = points.map((p) => `${x(p.heure).toFixed(1)},${y(p.hauteur).toFixed(1)}`).join(" L");
-      svg += `<path class="g-aire" d="M${x(points[0].heure)},${bas} L${trace} L${x(points[points.length - 1].heure)},${bas} Z"/>`;
-    }
-
     // Zone idéale du niveau choisi
     const hautZone = Math.min(niveau.max, sommet);
     svg += `<rect class="g-zone" x="${marges.gauche}" y="${y(hautZone)}" width="${largeur - marges.gauche - marges.droite}" height="${y(niveau.min) - y(hautZone)}"/>`;
-    svg += `<line class="g-zone-bord" x1="${marges.gauche}" x2="${largeur - marges.droite}" y1="${y(niveau.min)}" y2="${y(niveau.min)}"/>`;
-    if (Number.isFinite(niveau.max)) svg += `<line class="g-zone-bord" x1="${marges.gauche}" x2="${largeur - marges.droite}" y1="${y(hautZone)}" y2="${y(hautZone)}"/>`;
-    const bornes = Number.isFinite(niveau.max) ? `${nombre(niveau.min)} à ${nombre(niveau.max)} m` : `${nombre(niveau.min)} m et plus`;
-    svg += `<text class="g-zone-texte" x="${marges.gauche + 8}" y="${Number.isFinite(niveau.max) ? y(hautZone) - 6 : y(hautZone) + 15}">${largeur < 420 ? "Idéal" : `Zone idéale ${niveau.nom.toLowerCase()}`} : ${bornes}</text>`;
 
-    if (points.length > 1) {
-      const trace = points.map((p) => `${x(p.heure).toFixed(1)},${y(p.hauteur).toFixed(1)}`).join(" L");
-      svg += `<path class="g-ligne" d="M${trace}"/>`;
-    }
+    // Une colonne sur 2 ou 3 sur téléphone, pour que les chiffres restent lisibles
+    const ecart = colonne >= 40 ? 1 : colonne >= 20 ? 2 : 3;
+    const lisible = (p) => (p.heure - premiere) % ecart === 0;
+    const largeurBarre = Math.min(colonne - 6, 46);
 
-    // Repère « maintenant »
-    if (jourChoisi === aujourdhui) {
-      const instant = enHeures(parisMaintenant);
-      if (instant >= HEURE_DEBUT && instant <= HEURE_FIN) {
-        svg += `<line class="g-maintenant" x1="${x(instant)}" x2="${x(instant)}" y1="${marges.haut}" y2="${bas}"/>`;
-      }
-    }
+    points.forEach((p) => {
+      const gauche = centre(p.heure) - largeurBarre / 2;
+      const haut = Math.min(y(p.hauteur), bas - 3);
+      const rayon = Math.min(5, largeurBarre / 2, bas - haut);
+      const couleur = COULEURS_BARRES[p.eval ? p.eval.note : 0];
+      const valeur = colonne >= 24 || lisible(p)
+        ? `<text class="g-barre-valeur" x="${centre(p.heure)}" y="${haut - 6}" text-anchor="middle">${nombre(p.hauteur)}</text>` : "";
+      svg += `<g class="g-colonne" data-heure="${p.heure}">
+        <rect class="g-colonne-fond" x="${xHeure(p.heure) + 1}" y="${marges.haut}" width="${colonne - 2}" height="${hauteurTrace}" rx="6"/>
+        <path class="g-barre" fill="${couleur}" d="M${gauche},${bas}V${haut + rayon}Q${gauche},${haut} ${gauche + rayon},${haut}H${gauche + largeurBarre - rayon}Q${gauche + largeurBarre},${haut} ${gauche + largeurBarre},${haut + rayon}V${bas}Z"/>
+        ${valeur}
+      </g>`;
+    });
 
-    // Heures
-    // Une colonne toutes les 2 heures, toutes les 3 heures sur téléphone pour rester lisible
-    const ecartColonnes = largeur < 420 ? 3 : 2;
-    const colonnes = donnees.filter((p) => (p.heure - HEURE_DEBUT) % ecartColonnes === 0);
+    // Heures et rangées de chiffres
+    const colonnes = points.filter(lisible);
     colonnes.forEach((p) => {
-      svg += `<text x="${x(p.heure)}" y="${bas + 16}" text-anchor="middle">${p.heure} h</text>`;
+      svg += `<text class="g-heure" x="${centre(p.heure)}" y="${bas + 18}" text-anchor="middle">${p.heure} h</text>`;
     });
 
-    // Ruban de verdict : une case par heure de jour
-    const case_ = (x(HEURE_DEBUT + 1) - x(HEURE_DEBUT));
-    donnees.forEach((p) => {
-      if (!p.eval) return;
-      svg += `<rect x="${x(p.heure) - case_ / 2 + 1}" y="${bas + 24}" width="${case_ - 2}" height="8" rx="2" fill="${VERDICTS[p.eval.note].couleur}"/>`;
-    });
-
-    // Rangées de chiffres
-    svg += `<text class="g-rangee" x="0" y="${bas + 52}">Période (secondes)</text>`;
+    svg += `<text class="g-rangee" x="0" y="${bas + 46}">Période (secondes)</text>`;
     colonnes.forEach((p) => {
-      svg += `<text class="g-valeur" x="${x(p.heure)}" y="${bas + 69}" text-anchor="middle">${nombre(p.periode, 0)}</text>`;
+      svg += `<text class="g-valeur" x="${centre(p.heure)}" y="${bas + 64}" text-anchor="middle">${nombre(p.periode, 0)}</text>`;
     });
 
-    svg += `<text class="g-rangee" x="0" y="${bas + 92}">Vent (km/h)</text>`;
+    svg += `<text class="g-rangee" x="0" y="${bas + 88}">Vent (km/h)</text>`;
     colonnes.forEach((p) => {
       const type = typeVent(p.ventDir);
       const court = { terre: "Terre", mer: "Mer", travers: etroit ? "Trav." : "Travers" }[type] || "";
       if (p.ventDir != null) {
-        svg += `<g transform="translate(${x(p.heure)},${bas + 106}) rotate(${(p.ventDir + 180) % 360})"><path class="g-fleche" d="M0,8 L0,-7 M-4,-2.5 L0,-7 L4,-2.5"/></g>`;
+        svg += `<g transform="translate(${centre(p.heure)},${bas + 104}) rotate(${(p.ventDir + 180) % 360})"><path class="g-fleche" d="M0,8 L0,-7 M-4,-2.5 L0,-7 L4,-2.5"/></g>`;
       }
-      svg += `<text class="g-valeur" x="${x(p.heure)}" y="${bas + 131}" text-anchor="middle">${nombre(p.vent, 0)}</text>`;
-      svg += `<text x="${x(p.heure)}" y="${bas + 146}" text-anchor="middle">${court}</text>`;
+      svg += `<text class="g-valeur" x="${centre(p.heure)}" y="${bas + 130}" text-anchor="middle">${nombre(p.vent, 0)}</text>`;
+      svg += `<text x="${centre(p.heure)}" y="${bas + 145}" text-anchor="middle">${court}</text>`;
     });
 
     zoneGraph.innerHTML = `
       <svg class="fc-svg" width="${largeur}" height="${totale}" viewBox="0 0 ${largeur} ${totale}" role="img"
-           aria-label="Taille estimée des vagues au bord, heure par heure, ${jourLong(jourChoisi)}. Le détail est dans le tableau sous le graphique.">
+           aria-label="Taille estimée des vagues au bord, heure par heure, ${jourLong(jourChoisi)}. Le détail est dans la liste sous le graphique.">
         ${svg}
-        <line class="g-curseur" y1="${marges.haut}" y2="${bas}" visibility="hidden"/>
-        <circle class="g-point" r="5" visibility="hidden"/>
-        <rect class="g-capteur" x="${marges.gauche}" y="0" width="${largeur - marges.gauche - marges.droite}" height="${bas + 40}"/>
-      </svg>
-`;
+        <rect class="g-capteur" x="${marges.gauche}" y="${marges.haut}" width="${largeur - marges.gauche - marges.droite}" height="${hauteurTrace + 26}"/>
+      </svg>`;
 
-    // Le curseur s'aligne sur l'axe des heures
-    const deJour = points.filter((p) => estDeJour(p));
-    curseurHeure.min = deJour.length ? deJour[0].heure : HEURE_DEBUT;
-    curseurHeure.max = deJour.length ? deJour[deJour.length - 1].heure : HEURE_FIN;
+    // Le curseur s'aligne sur le centre des barres
+    const derniere = points[points.length - 1].heure;
+    curseurHeure.min = premiere;
+    curseurHeure.max = derniere;
     curseurHeure.value = heureChoisie;
-    curseurHeure.style.marginLeft = `${x(Number(curseurHeure.min)) - 10}px`;
-    curseurHeure.style.width = `${x(Number(curseurHeure.max)) - x(Number(curseurHeure.min)) + 20}px`;
+    curseurHeure.style.marginLeft = `${centre(premiere) - 10}px`;
+    curseurHeure.style.width = `${centre(derniere) - centre(premiere) + 20}px`;
 
-    echelles = { x, y, marges, points };
+    echelles = { centre, marges, points, positionSoleil, cibleSoleil };
+    poserSoleil(soleilPosition);
     brancherGraphique();
     placerCurseur();
     dernierCalcul = largeur;
   }
 
-  let echelles = null;
+  function poserSoleil(position) {
+    soleilPosition = position;
+    const groupe = zoneGraph.querySelector(".g-soleil");
+    if (!groupe || !echelles) return;
+    const { x, y } = echelles.positionSoleil(position);
+    groupe.setAttribute("transform", `translate(${x.toFixed(1)},${y.toFixed(1)})`);
+  }
+
+  // Fait glisser le soleil le long de son arc jusqu'à l'heure lue
+  function deplacerSoleil(cible) {
+    cancelAnimationFrame(animationSoleil);
+    if (mouvementReduit) {
+      poserSoleil(cible);
+      return;
+    }
+    const depart = soleilPosition;
+    const debut = performance.now();
+    const duree = Math.min(900, 250 + Math.abs(cible - depart) * 1400);
+    const etape = (instant) => {
+      const avancement = Math.min((instant - debut) / duree, 1);
+      poserSoleil(depart + (cible - depart) * (1 - (1 - avancement) ** 3));
+      if (avancement < 1) animationSoleil = requestAnimationFrame(etape);
+    };
+    animationSoleil = requestAnimationFrame(etape);
+  }
 
   function placerCurseur() {
     if (!echelles) return;
-    const p = echelles.points.find((q) => q.heure === heureChoisie);
-    const curseur = zoneGraph.querySelector(".g-curseur");
-    const point = zoneGraph.querySelector(".g-point");
-    if (!p || !curseur) return;
-    curseur.setAttribute("x1", echelles.x(p.heure));
-    curseur.setAttribute("x2", echelles.x(p.heure));
-    curseur.setAttribute("visibility", "visible");
-    point.setAttribute("cx", echelles.x(p.heure));
-    point.setAttribute("cy", echelles.y(p.hauteur));
-    point.setAttribute("visibility", "visible");
+    zoneGraph.querySelectorAll(".g-colonne").forEach((colonne) => {
+      colonne.classList.toggle("g-choisie", Number(colonne.dataset.heure) === heureChoisie);
+    });
+    deplacerSoleil(echelles.cibleSoleil(heureChoisie));
   }
 
   // Survoler ou toucher le graphique change l'heure lue
   function brancherGraphique() {
     const capteur = zoneGraph.querySelector(".g-capteur");
-    if (!echelles.points.length) return;
     const lire = (evenement) => {
       const position = evenement.clientX - capteur.getBoundingClientRect().left + echelles.marges.gauche;
       const plusProche = echelles.points.reduce((a, b) =>
-        (Math.abs(echelles.x(b.heure) - position) < Math.abs(echelles.x(a.heure) - position) ? b : a));
+        (Math.abs(echelles.centre(b.heure) - position) < Math.abs(echelles.centre(a.heure) - position) ? b : a));
       if (plusProche.heure !== heureChoisie) choisirHeure(plusProche.heure);
     };
     capteur.addEventListener("pointermove", lire);
@@ -446,6 +482,7 @@
     const bouton = evenement.target.closest(".fc-jour");
     if (!bouton) return;
     jourChoisi = bouton.dataset.jour;
+    soleilPosition = 0; // le soleil repart du lever à chaque changement de jour
     toutAfficher();
     zoneJours.querySelector(`[data-jour="${jourChoisi}"]`).focus();
   });

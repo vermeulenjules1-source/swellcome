@@ -384,7 +384,7 @@ def bloc_prevision(spot, prevision):
           <svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg>
         </span>
         <h3>Prévisions bientôt disponibles</h3>
-        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
+        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou jour off. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
       </div>"""
     donnees = {
         "spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg"), "saturation": spot.get("saturation_m")},
