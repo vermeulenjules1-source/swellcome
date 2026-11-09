@@ -308,6 +308,39 @@ def resume_prevision(prevision):
             f'      <p class="muted" style="font-size:0.85rem;margin-top:12px">Moyennes des heures de jour. Mis à jour le {e(prevision["mis_a_jour"][:10])} (UTC).</p>')
 
 
+def apercu_carte(spots):
+    """Données légères de la carte de l'accueil : 4 jours de prévisions par spot."""
+    garder = ["temps", "houle", "periode", "direction", "houle2", "periode2", "direction2",
+              "eau", "vent", "rafales", "vent_dir"]
+    apercu = []
+    for spot in spots:
+        prevision = charger_prevision(spot["slug"])
+        reduite = None
+        if prevision:
+            h, s = prevision["heures"], prevision["soleil"]
+            reduite = {
+                "mis_a_jour": prevision["mis_a_jour"],
+                "heures": {cle: h[cle][:96] for cle in garder if cle in h},
+                "soleil": {cle: s[cle][:4] for cle in ("jours", "lever", "coucher")},
+            }
+        photo = spot.get("photo")
+        cams = spot.get("webcams") or []
+        apercu.append({
+            "slug": spot["slug"],
+            "nom": spot["nom"],
+            "commune": spot["commune"],
+            "lat": spot["coordonnees"]["lat"],
+            "lon": spot["coordonnees"]["lon"],
+            "url": url_spot(spot),
+            "vignette": f"{BASE}/assets/img/spots/vignettes/{photo['fichier']}" if photo else None,
+            "orientation": spot.get("orientation_deg"),
+            "saturation": spot.get("saturation_m"),
+            "webcam": cams[0]["url"] if cams else None,
+            "prevision": reduite,
+        })
+    return json.dumps(apercu, ensure_ascii=False, separators=(",", ":"))
+
+
 def bloc_prevision(spot, prevision):
     """Le bloc de prévisions de la fiche, ou un message si la collecte n'a pas encore tourné."""
     if prevision is None:
@@ -515,9 +548,11 @@ def construire():
             "article_spots": liens_spots(article["spots"], spots),
             "article_autres": grille_articles(autres, "D'autres articles arrivent bientôt."),
         })
-        infos = {"titre": f"{article['titre']} | Swellcome", "description": article["description"], "nav": "blog"}
+        infos = {"titre": f"{article['titre']} | Swellcome", "description": article["description"], "nav": "accompagnement"}
         chemin = f"blog/{article['slug']}/"
         ecrire(chemin + "index.html", page_complete(gabarit, morceaux, infos, contenu, chemin))
+
+    ecrire("assets/data/apercu.json", apercu_carte(gironde))
 
     # 6. Plan du site pour les moteurs de recherche
     urls = "\n".join(f"  <url><loc>{SITE_URL}{BASE}/{c}</loc></url>"

@@ -95,3 +95,7 @@ Les mentions légales de Viewsurf interdisent de reproduire ou réutiliser le si
 ## Photos et vidéo
 
 Fichiers issus de Wikimedia Commons, avec auteur, licence et source dans le champ `photo` des fiches et dans `data/video-hero.json`. Crédits visibles sur chaque fiche et sur la page À propos, reliée depuis le pied de page. La licence CC BY-SA impose ce crédit : ne pas le retirer du site. Réutilisation sous CC BY-SA : attribution et même licence.
+
+## Carte de l'accueil
+
+Fond Plan IGN de la Géoplateforme (WMTS, sans clé, Licence Ouverte), affiché avec Leaflet 1.9.4 (licence BSD, copie dans `site/assets/vendor/leaflet/`). Google Maps écarté : clé d'API liée à un compte de facturation. Les visiteurs contactent `data.geopf.fr` pour les images, ce qui est indiqué dans les pages Cookies et Confidentialité.

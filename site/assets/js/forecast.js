@@ -1,9 +1,8 @@
 /* ==========================================================================
    Swellcome — prévisions d'une fiche spot
    Les données sont écrites dans la page par build.py (balise #donnees-prevision).
-   1. Réglages : critères par niveau
-   2. Préparation des données
-   3. Verdict d'une heure, puis d'une journée
+   1. Réglages
+   2 et 3. Données et verdict (verdict.js)
    4. Affichage (niveau, jours, verdict, chiffres, tableau)
    5. Graphique
    ========================================================================== */
@@ -16,13 +15,10 @@
   const { spot, prevision } = JSON.parse(source.textContent);
 
 
-  /* 1. Réglages : les critères par niveau sont dans verdict.js */
+  /* 1. Réglages */
 
   const V = window.SwellcomeVerdict;
-  const { VERDICTS } = V;
-  const NIVEAUX = Object.fromEntries(
-    Object.entries(V.NIVEAUX).map(([cle, niveau]) => [cle, V.pourSpot(niveau, spot.saturation)])
-  );
+  const { VERDICTS, nombre, cardinal, libelleVent, heureTexte } = V;
 
   const CLE_NIVEAU = "swellcome-niveau";
   const HEURE_DEBUT = 6;             // bornes du graphique
@@ -30,154 +26,12 @@
   const DONNEES_ANCIENNES_H = 14;    // au-delà, on prévient que les données datent
 
 
-  /* 2. Préparation des données */
+  /* 2 et 3. Données et verdict : le calcul est dans verdict.js, partagé avec la carte de l'accueil */
 
-  const h = prevision.heures;
-  const heures = h.temps.map((t, i) => ({
-    t,
-    jour: t.slice(0, 10),
-    heure: Number(t.slice(11, 13)),
-    // La taille estimée au bord remplace la hauteur du large dans tout l'affichage
-    hauteur: V.tailleAuBord([
-      { hauteur: h.houle[i], periode: h.periode[i], direction: h.direction[i] },
-      { hauteur: h.houle2[i], periode: h.periode2[i], direction: (h.direction2 || [])[i] },
-    ], spot.orientation),
-    houle: h.houle[i],
-    periode: h.periode[i],
-    direction: h.direction[i],
-    houle2: h.houle2[i],
-    periode2: h.periode2[i],
-    eau: h.eau[i],
-    vent: h.vent[i],
-    rafales: h.rafales[i],
-    ventDir: h.vent_dir[i],
-  }));
-
-  // Les prévisions sont à l'heure de Paris, quel que soit le fuseau du visiteur
-  const parisMaintenant = new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short",
-  }).format(new Date()).replace(" ", "T");
-  const aujourdhui = parisMaintenant.slice(0, 10);
-  const heureEnCours = parisMaintenant.slice(0, 13) + ":00";
-
-  const soleil = {};
-  prevision.soleil.jours.forEach((jour, i) => {
-    soleil[jour] = { lever: prevision.soleil.lever[i], coucher: prevision.soleil.coucher[i] };
-  });
-  const jours = prevision.soleil.jours.filter((jour) => jour >= aujourdhui);
-
-  const nombre = (x, decimales = 1) =>
-    x == null ? "–" : x.toLocaleString("fr-FR", { maximumFractionDigits: decimales });
-
-  const POINTS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
-  const cardinal = (deg) => (deg == null ? "–" : POINTS[Math.round(deg / 22.5) % 16]);
-
-  const typeVent = (direction) => V.typeVent(direction, spot.orientation);
-  const libelleVent = (type) => V.LIBELLE_VENT[type] || "Vent";
-
-
-  /* 3. Verdict d'une heure, puis d'une journée */
-
-  function evaluer(heure, niveau) {
-    if (heure.hauteur == null || heure.vent == null) return null;
-    return V.evaluer({
-      hauteur: heure.hauteur,
-      houle: heure.houle,
-      periode: heure.periode,
-      vent: heure.vent,
-      type: typeVent(heure.ventDir),
-    }, niveau);
-  }
-
-  function estDeJour(heure) {
-    const s = soleil[heure.jour];
-    return s && heure.t >= s.lever.slice(0, 14) + "00" && heure.t <= s.coucher;
-  }
-
-  // Heures encore utiles d'une journée : de jour, et pas déjà passées
-  function heuresUtiles(jour, niveau) {
-    return heures
-      .filter((x) => x.jour === jour && estDeJour(x) && x.t >= heureEnCours)
-      .map((x) => ({ ...x, eval: evaluer(x, niveau) }))
-      .filter((x) => x.eval);
-  }
-
-  function plusLongueSuite(liste, seuil) {
-    let meilleure = [];
-    let courante = [];
-    liste.forEach((x) => {
-      courante = x.eval.note >= seuil ? [...courante, x] : [];
-      if (courante.length > meilleure.length) meilleure = courante;
-    });
-    return meilleure;
-  }
-
-  const somme = (x) => x.eval.notes.hauteur + x.eval.notes.vent + x.eval.notes.periode;
-
-  // L'heure la mieux notée du créneau ; à égalité, la plus proche du milieu
-  function meilleureHeure(suite) {
-    const milieu = (suite.length - 1) / 2;
-    return suite
-      .map((x, i) => ({ x, distance: Math.abs(i - milieu) }))
-      .sort((a, b) => somme(b.x) - somme(a.x) || a.distance - b.distance)[0].x;
-  }
-
-  // Une journée vaut son meilleur créneau d'au moins 2 heures
-  function analyserJour(jour, niveau) {
-    const utiles = heuresUtiles(jour, niveau);
-    if (!utiles.length) return null;
-    const dureeMin = Math.min(2, utiles.length);
-
-    for (const seuil of [2, 1]) {
-      const suite = plusLongueSuite(utiles, seuil);
-      if (suite.length >= dureeMin) {
-        return { note: seuil, creneau: suite, repere: meilleureHeure(suite) };
-      }
-    }
-    const moinsMauvaise = utiles.reduce((a, b) => (somme(b) > somme(a) ? b : a));
-    return { note: 0, creneau: [moinsMauvaise], repere: moinsMauvaise };
-  }
-
-  function raison(heure, niveau) {
-    const { notes } = heure.eval;
-    const pire = ["hauteur", "vent", "periode"].reduce((a, b) => (notes[b] < notes[a] ? b : a));
-    const limite = notes[pire] === 1;
-
-    if (pire === "hauteur") {
-      if (heure.eval.sature) return `mer trop grosse, les bancs saturent (houle de ${nombre(heure.houle)} m)`;
-      if (heure.hauteur < V.TAILLE_MINI) return `presque rien au bord (${nombre(heure.hauteur)} m)`;
-      const sens = heure.hauteur < niveau.min ? "petites" : "grosses";
-      return `vagues ${limite ? "un peu" : "trop"} ${sens} (${nombre(heure.hauteur)} m)`;
-    }
-    if (pire === "vent") {
-      return `${libelleVent(typeVent(heure.ventDir)).toLowerCase()} ${limite ? "à surveiller" : "défavorable"} (${nombre(heure.vent, 0)} km/h)`;
-    }
-    return limite
-      ? `houle un peu courte (${nombre(heure.periode, 0)} s)`
-      : `houle trop courte (${nombre(heure.periode, 0)} s), vagues molles`;
-  }
-
-  const heureTexte = (n) => `${n} h`;
-
-  function creneauTexte(analyse, jour) {
-    const debut = analyse.creneau[0].heure;
-    const dernier = analyse.creneau[analyse.creneau.length - 1].heure;
-    const coucher = Number(soleil[jour].coucher.slice(11, 13));
-    return `de ${heureTexte(debut)} à ${heureTexte(Math.min(dernier + 1, coucher + 1))}`;
-  }
-
-  function phrase(analyse, jour, niveau) {
-    const nom = niveau.nom.toLowerCase();
-    const r = analyse.repere;
-    if (analyse.note === 2) {
-      return `Les conditions collent à un niveau ${nom} ${creneauTexte(analyse, jour)}. ` +
-        `Vagues d'environ ${nombre(r.hauteur)} m au bord, ${libelleVent(typeVent(r.ventDir)).toLowerCase()} à ${nombre(r.vent, 0)} km/h.`;
-    }
-    if (analyse.note === 1) {
-      return `Surfable pour un niveau ${nom} ${creneauTexte(analyse, jour)}, sans être idéal : ${raison(analyse.creneau.find((x) => x.eval.note === 1) || r, niveau)}.`;
-    }
-    return `Pas de créneau adapté à un niveau ${nom}. Le moins mauvais moment, vers ${heureTexte(r.heure)} : ${raison(r, niveau)}.`;
-  }
+  const {
+    NIVEAUX, heures, soleil, jours, aujourdhui, parisMaintenant,
+    typeVent, evaluer, estDeJour, analyserJour, phrase,
+  } = V.creerAnalyse({ spot, prevision });
 
 
   /* 4. Affichage */
