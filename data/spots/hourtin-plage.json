@@ -58,5 +58,27 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "hourtin-plage.jpg",
+    "legende": "La plage centrale d'Hourtin",
+    "auteur": "Anthony Baratier",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hourtin,_plage_centrale.jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Hourtin-Plage",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/plage/vue/11106-france-aquitaine-hourtin-plage",
+      "note": null
+    },
+    {
+      "nom": "Hourtin",
+      "exploitant": "Office de tourisme Médoc Atlantique (page en anglais)",
+      "url": "https://www.medoc-atlantique.co.uk/hourtin/webcam-and-weather-in-hourtin/",
+      "note": null
+    }
+  ]
 }

@@ -64,5 +64,21 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "soulac-amelie.jpg",
+    "legende": "La côte à Soulac-sur-Mer (photo de la commune, pas de la plage de l'Amélie)",
+    "auteur": "Touam (Hervé Agnoux)",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:La_plage_de_Soulac-sur-Mer_embrum%C3%A9e_%C3%A0_l%27horizon.jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Plage de Soulac",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/surf/vue/15744-france-aquitaine-soulac-sur-mer-la-plage",
+      "note": "Caméra sur la plage de Soulac, elle ne montre pas L'Amélie."
+    }
+  ]
 }

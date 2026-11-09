@@ -58,5 +58,14 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "le-gurp.jpg",
+    "legende": "La plage du Gurp et ses bunkers",
+    "auteur": "Eggvert",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Exp-p1070789_-_Grayan_-_Plage_du_Gurp_(Bunkers).jpg"
+  },
+  "webcams": []
 }

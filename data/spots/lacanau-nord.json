@@ -65,5 +65,21 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "lacanau-nord.jpg",
+    "legende": "La plage nord de Lacanau",
+    "auteur": "Maxime Homme",
+    "licence": "CC0",
+    "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Lacanau-Plage-Nord.jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Lacanau Surf Club",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/surf/vue/658-france-aquitaine-lacanau-lacanau-surf-club",
+      "note": "Caméra sur la plage centrale, plus au sud que ce spot."
+    }
+  ]
 }

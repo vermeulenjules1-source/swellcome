@@ -63,5 +63,27 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "soulac-centrale.jpg",
+    "legende": "La plage de Soulac-sur-Mer",
+    "auteur": "Céréales Killer",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Soulac-sur-Mer_(plage).jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Plage de Soulac",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/surf/vue/15744-france-aquitaine-soulac-sur-mer-la-plage",
+      "note": null
+    },
+    {
+      "nom": "Soulac-sur-Mer",
+      "exploitant": "Office de tourisme Médoc Atlantique (page en anglais)",
+      "url": "https://www.medoc-atlantique.co.uk/soulac-sur-mer/webcam-and-weather-at-soulac-sur-mer/",
+      "note": null
+    }
+  ]
 }

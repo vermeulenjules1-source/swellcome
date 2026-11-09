@@ -66,5 +66,21 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "le-porge-ocean.jpg",
+    "legende": "Coucher de soleil au Porge Océan",
+    "auteur": "Michel BUZE",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Porge_Ocean_Coucher_de_soleil.JPG"
+  },
+  "webcams": [
+    {
+      "nom": "Le Porge Océan",
+      "exploitant": "Office de tourisme Médoc Plein Sud",
+      "url": "https://www.medocpleinsud.com/organiser/webcam-le-porge-ocean/",
+      "note": null
+    }
+  ]
 }

@@ -55,5 +55,27 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "montalivet.jpg",
+    "legende": "La plage de Montalivet en mai 2024",
+    "auteur": "Renhour48",
+    "licence": "CC0",
+    "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Montalivet_-_La_plage_mai_2024.jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Vue panoramique",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/surf/vue/13896-france-aquitaine-vendays-montalivet-panoramique-hd",
+      "note": null
+    },
+    {
+      "nom": "La plage",
+      "exploitant": "Viewsurf",
+      "url": "https://www.viewsurf.com/univers/surf/vue/13902-france-aquitaine-vendays-montalivet-plage",
+      "note": null
+    }
+  ]
 }

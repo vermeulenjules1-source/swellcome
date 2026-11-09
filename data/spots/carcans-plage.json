@@ -65,5 +65,27 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "carcans-plage.jpg",
+    "legende": "Le littoral de Carcans-Plage",
+    "auteur": "Matzetatz",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Costline_of_Carcans_Plage.jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Carcans, la plage",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/surf/vue/1255-france-aquitaine-carcans-la-plage",
+      "note": null
+    },
+    {
+      "nom": "Carcans-Maubuisson",
+      "exploitant": "Office de tourisme Médoc Atlantique (page en anglais)",
+      "url": "https://www.medoc-atlantique.co.uk/carcans-maubuisson/webcam-and-weather-at-carcans-maubuisson/",
+      "note": null
+    }
+  ]
 }

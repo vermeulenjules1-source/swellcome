@@ -64,5 +64,14 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "faible",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "le-pin-sec.jpg",
+    "legende": "Le Pin Sec en 1995",
+    "auteur": "qwesy qwesy",
+    "licence": "CC BY 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Le_Pin_Sec_(1995)_-_panoramio.jpg"
+  },
+  "webcams": []
 }

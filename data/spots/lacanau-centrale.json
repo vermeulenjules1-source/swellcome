@@ -65,5 +65,27 @@
   ],
   "verifie_le": "2026-11-09",
   "confiance": "moyenne",
-  "mode_verification": "documentaire"
+  "mode_verification": "documentaire",
+  "photo": {
+    "fichier": "lacanau-centrale.jpg",
+    "legende": "Surfeurs à Lacanau-Océan",
+    "auteur": "Pierre André Leclercq",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lacanau_oc%C3%A9an_surfeurs_(1).jpg"
+  },
+  "webcams": [
+    {
+      "nom": "Lacanau Surf Club",
+      "exploitant": "Viewsurf",
+      "url": "https://viewsurf.com/univers/surf/vue/658-france-aquitaine-lacanau-lacanau-surf-club",
+      "note": null
+    },
+    {
+      "nom": "Lacanau",
+      "exploitant": "Office de tourisme Médoc Atlantique (page en anglais)",
+      "url": "https://www.medoc-atlantique.co.uk/lacanau/webcam-and-weather-in-lacanau/",
+      "note": null
+    }
+  ]
 }
