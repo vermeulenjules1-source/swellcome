@@ -18,6 +18,8 @@
     14. Blog et maillage interne
     15. Prévisions d'une fiche spot
     16. Photos et webcams
+    17. Vidéo du bandeau sur petit écran
+    18. Mini-jeu
    ========================================================================== */
 
 
@@ -1058,9 +1060,6 @@ img, svg { max-width: 100%; }
 .spot-photo figcaption { margin-top: 8px; font-size: 0.78rem; color: var(--text-muted); }
 .spot-photo figcaption a { color: inherit; }
 
-.hero-credit { margin: 22px 0 0; font-size: 0.75rem; color: #C9D6DD; }
-.hero-credit a { color: inherit; }
-
 .webcam-titre { display: flex; align-items: center; gap: 8px; margin: 24px 0 10px; padding-top: 18px; border-top: 1px solid var(--border); }
 .webcam-titre .icon { width: 20px; height: 20px; }
 .webcam-liens { list-style: none; margin: 0; padding: 0; }
@@ -1072,3 +1071,103 @@ img, svg { max-width: 100%; }
 .webcam-carte h3 { display: flex; align-items: center; gap: 12px; }
 .webcam-carte h3 a { text-decoration: none; }
 .webcam-carte .spot-vignette { width: 48px; height: 48px; }
+
+
+/* 17. Vidéo du bandeau sur petit écran
+   Le bandeau y est très haut : en plein fond, la vidéo serait fortement agrandie et le surfeur sortirait
+   du cadre. Elle devient une bande entière au format 16/9, au-dessus du texte. */
+
+@media (max-width: 900px) {
+  .hero--video { padding-top: calc(56.25vw + 28px); }
+  .hero--video .hero-video {
+    bottom: auto;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    -webkit-mask-image: linear-gradient(#000 88%, transparent);
+    mask-image: linear-gradient(#000 88%, transparent);
+  }
+  .hero--video .hero-media::after { display: none; }
+}
+
+
+/* 18. Mini-jeu « Vous y allez ou pas ? » */
+
+.jeu-carte {
+  max-width: 720px;
+  padding: 24px;
+  background: var(--white);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+}
+.jeu-tete { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; color: var(--text-muted); }
+.jeu-tete strong { color: var(--deep-ocean); font-family: var(--font-titre); }
+.jeu-progression { height: 4px; margin: 10px 0 16px; border-radius: 2px; background: var(--sea-mist); overflow: hidden; }
+.jeu-progression i { display: block; height: 100%; background: var(--teal-dark); transition: width 0.3s; }
+
+.jeu-scene { position: relative; overflow: hidden; border-radius: var(--rayon-petit); }
+.jeu-scene svg { display: block; width: 100%; height: clamp(180px, 42vw, 280px); }
+.s-ciel { fill: var(--sea-mist); }
+.s-soleil { fill: var(--warm-sun); }
+.s-mer-fond { fill: var(--ocean-teal); opacity: 0.6; }
+.s-mer { fill: var(--teal-dark); }
+.s-ecume { fill: none; stroke: var(--white); stroke-width: 3; stroke-linecap: round; }
+.s-plage { fill: #E8DFC9; }
+.s-vents line { stroke: var(--deep-ocean); stroke-width: 1.5; stroke-linecap: round; opacity: 0.35; }
+.s-surfeur rect { fill: var(--white); stroke: var(--deep-ocean); stroke-width: 2; }
+.s-surfeur circle { fill: var(--deep-ocean); }
+.s-surfeur path { fill: none; stroke: var(--deep-ocean); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.jeu-etiquette {
+  position: absolute;
+  top: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.jeu-etiquette--plage { right: 8px; }
+.jeu-etiquette--large { left: 8px; }
+
+.jeu-chiffres { margin-top: 12px; }
+.jeu-chiffres .stat-value small { font-size: 0.85rem; font-weight: 600; }
+.jeu-question { margin: 22px 0 4px; outline: none; }
+.jeu-repere { margin: 0 0 14px; font-size: 0.88rem; color: var(--text-muted); }
+
+.jeu-choix { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.jeu-bouton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--rayon-petit);
+  background: var(--white);
+  color: var(--deep-ocean);
+  font-family: var(--font-titre);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.jeu-bouton:hover:not(:disabled) { border-color: var(--teal-dark); transform: translateY(-1px); }
+.jeu-bouton:disabled { cursor: default; opacity: 0.55; }
+.jeu-bouton small { font-family: var(--font-texte); font-size: 0.74rem; font-weight: 500; }
+.jeu-bouton.is-juste { opacity: 1; background: #D3EBE7; border-color: var(--teal-dark); }
+.jeu-bouton.is-faux { opacity: 1; background: var(--sun-light); border-color: #C9973F; }
+
+.jeu-explication { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+.jeu-resultat { font-family: var(--font-titre); font-weight: 700; font-size: 1.25rem; margin-bottom: 6px; }
+.jeu-criteres { list-style: none; margin: 0 0 10px; padding: 0; font-size: 0.92rem; }
+.jeu-criteres li { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; }
+.jeu-criteres .badge { flex: 0 0 72px; justify-content: center; }
+.jeu-regle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+
+.jeu-fin { padding: 12px 0; }
+.jeu-score { font-family: var(--font-titre); font-weight: 700; font-size: 4rem; line-height: 1; margin: 0 0 12px; outline: none; }
+.jeu-score small { font-size: 1.3rem; font-weight: 600; color: var(--text-muted); }
+.jeu-mention { max-width: 720px; margin: 14px 0 0; font-size: 0.82rem; color: var(--text-muted); }
+
+@media (max-width: 480px) {
+  .jeu-carte { padding: 16px; }
+}

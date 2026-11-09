@@ -94,4 +94,4 @@ Les mentions légales de Viewsurf interdisent de reproduire ou réutiliser le si
 
 ## Photos et vidéo
 
-Fichiers issus de Wikimedia Commons, avec auteur, licence et source dans le champ `photo` des fiches et dans `data/video-hero.json`. Crédits visibles sur chaque fiche, dans le bandeau et sur la page À propos. Réutilisation sous CC BY-SA : attribution et même licence.
+Fichiers issus de Wikimedia Commons, avec auteur, licence et source dans le champ `photo` des fiches et dans `data/video-hero.json`. Crédits visibles sur chaque fiche et sur la page À propos, reliée depuis le pied de page. La licence CC BY-SA impose ce crédit : ne pas le retirer du site. Réutilisation sous CC BY-SA : attribution et même licence.

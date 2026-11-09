@@ -320,6 +320,7 @@ def bloc_prevision(spot, prevision):
 {resume_prevision(prevision)}
       </div>
       <script type="application/json" id="donnees-prevision">{texte}</script>
+      <script src="{BASE}/assets/js/verdict.js" defer></script>
       <script src="{BASE}/assets/js/forecast.js" defer></script>"""
 
 
@@ -430,8 +431,6 @@ def construire():
         # La vidéo n'est insérée que si le fichier site/assets/video/hero.webm existe
         "hero_video": (f'<video class="hero-video" autoplay muted loop playsinline preload="metadata">'
                        f'<source src="{BASE}/assets/video/hero.webm" type="video/webm"></video>') if video else "",
-        "hero_credit": (f'<p class="hero-credit">Vidéo : {e(credit_video["legende"])}, {credit_html(credit_video)}.</p>'
-                        if video else ""),
         "credits_medias": credits_medias_html(spots, credit_video),
         "liste_webcams": page_webcams_html(gironde),
     }

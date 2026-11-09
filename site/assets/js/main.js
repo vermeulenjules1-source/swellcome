@@ -78,7 +78,25 @@ document.querySelectorAll("[data-newsletter]").forEach((formulaire) => {
 
 const video = document.querySelector(".hero-video");
 
-if (video && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  video.pause();
-  video.removeAttribute("autoplay");
+if (video) {
+  const bandeau = video.closest(".hero");
+
+  // Si le navigateur ne sait pas lire la vidéo, on revient à l'animation de vagues
+  const revenirAuxVagues = () => {
+    bandeau.classList.remove("hero--video");
+    video.remove();
+  };
+
+  if (!video.canPlayType('video/webm; codecs="vp9"')) {
+    revenirAuxVagues();
+  } else {
+    video.querySelector("source").addEventListener("error", revenirAuxVagues);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      video.pause();
+      video.removeAttribute("autoplay");
+    } else {
+      video.play().catch(() => { /* lecture automatique refusée : la première image reste affichée */ });
+    }
+  }
 }
