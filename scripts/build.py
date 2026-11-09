@@ -156,25 +156,46 @@ CHAMPS_FICHE = [
 
 
 def fiche_html(spot):
-    lignes = []
+    """Les faits connus du spot ; ce qui manque tient sur une seule ligne."""
+    faits, manquants = [], []
     if spot.get("orientation_deg") is not None:
-        lignes.append(f"        <div><dt>Orientation de la plage</dt>"
-                      f"<dd>{e(spot['orientation_16'])} ({spot['orientation_deg']}°)</dd></div>")
+        faits.append(("Orientation", f"{spot['orientation_16']} ({spot['orientation_deg']}°)"))
     if spot.get("saturation_m"):
-        lignes.append(f"        <div><dt>Limite de taille</dt>"
-                      f"<dd>Sature vers {decimale(spot['saturation_m']).replace(',0', '')} m de houle (retour local)</dd></div>")
+        faits.append(("Limite de taille", f"Sature vers {decimale(spot['saturation_m']).replace(',0', '')} m de houle"))
     for cle, libelle in CHAMPS_FICHE:
-        valeur = spot.get(cle)
-        if valeur:
-            dd = e(valeur)
+        if spot.get(cle):
+            faits.append((libelle, spot[cle]))
         else:
-            dd = '<span class="empty">À confirmer</span>'
-        lignes.append(f"        <div><dt>{libelle}</dt><dd>{dd}</dd></div>")
+            manquants.append(libelle.lower())
+    if spot.get("dangers"):
+        faits.append(("Dangers", ", ".join(spot["dangers"])))
+    lignes = "\n".join(f"      <div><dt>{libelle}</dt><dd>{e(valeur)}</dd></div>" for libelle, valeur in faits)
+    html = f'    <dl class="fiche-faits">\n{lignes}\n    </dl>'
+    if manquants:
+        html += f'\n    <p class="muted fiche-manque">À confirmer sur place : {e(", ".join(manquants))}.</p>'
+    return html
 
-    dangers = ", ".join(spot.get("dangers") or [])
-    dd = e(dangers) if dangers else '<span class="empty">À confirmer</span>'
-    lignes.append(f"        <div><dt>Dangers</dt><dd>{dd}</dd></div>")
-    return "      <dl class=\"fact-list\">\n" + "\n".join(lignes) + "\n      </dl>"
+
+def carte_spot_html(spot):
+    """Carte photo de l'accueil : mène à la page du spot, le verdict est ajouté par carte.js."""
+    photo = spot.get("photo")
+    image = (f'<img src="{BASE}/assets/img/spots/moyennes/{e(photo["fichier"])}" alt="" '
+             f'width="480" height="640" loading="lazy">') if photo else ""
+    return f"""      <li data-slug="{spot['slug']}">
+        <a class="spot-carte" href="{url_spot(spot)}">
+          {image}
+          <span class="spot-carte-verdict"></span>
+          <span class="spot-carte-bas">
+            <span class="spot-carte-nom">{e(spot['nom'])}</span>
+            <span class="spot-carte-lieu">{e(spot['commune'])}</span>
+            <span class="spot-carte-taille"></span>
+          </span>
+        </a>
+      </li>"""
+
+
+def grille_spots_html(spots):
+    return '    <ul class="spots-grille" id="grille-spots">\n' + "\n".join(carte_spot_html(s) for s in spots) + "\n    </ul>"
 
 
 def sources_html(spot):
@@ -215,14 +236,28 @@ def credit_html(media):
             f'<a href="{e(media["source"])}" rel="noopener">Wikimedia Commons</a>')
 
 
-def photo_html(spot):
+def style_photo(spot):
     photo = spot.get("photo")
     if not photo:
         return ""
-    return f"""    <figure class="spot-photo">
-      <img src="{BASE}/assets/img/spots/{e(photo['fichier'])}" alt="{e(photo['legende'])}" width="1280" height="853">
-      <figcaption>{e(photo['legende'])}. Photo : {credit_html(photo)}, redimensionnée.</figcaption>
-    </figure>"""
+    return f'style="background-image:url(\'{BASE}/assets/img/spots/{e(photo["fichier"])}\')"'
+
+
+def credit_photo(spot):
+    photo = spot.get("photo")
+    if not photo:
+        return ""
+    return f'  <p class="spot-une-credit">{e(photo["legende"])}. Photo : {credit_html(photo)}, redimensionnée.</p>'
+
+
+def bouton_webcam(spot):
+    cams = spot.get("webcams") or []
+    if not cams:
+        return ""
+    return f"""      <a class="btn btn--soleil" href="{e(cams[0]['url'])}" target="_blank" rel="noopener">
+        <svg class="icon" aria-hidden="true"><use href="#i-camera"></use></svg>
+        Webcam <span class="visually-hidden">(nouvelle fenêtre)</span>
+      </a>"""
 
 
 def credits_medias_html(spots, video):
@@ -470,6 +505,7 @@ def construire():
         "rubriques_blog": rubriques_blog(articles),
         "hero_classe": "hero--video" if video else "",
         # La vidéo n'est insérée que si le fichier site/assets/video/hero.webm existe
+        "grille_spots": grille_spots_html(gironde),
         "hero_video": (f'<video class="hero-video" autoplay muted loop playsinline preload="metadata">'
                        f'<source src="{BASE}/assets/video/hero.webm" type="video/webm"></video>') if video else "",
         "credits_medias": credits_medias_html(spots, credit_video),
@@ -512,7 +548,10 @@ def construire():
             "departement": e(spot["departement"]),
             "departement_slug": spot["departement_slug"],
             "fiche": fiche_html(spot),
-            "photo": photo_html(spot),
+            "style_photo": style_photo(spot),
+            "credit_photo": credit_photo(spot),
+            "bouton_webcam": bouton_webcam(spot),
+            "chips_voisins": "".join(f'<a class="chip" href="{url_spot(s)}">{e(s["nom"])}</a>' for s in spots_proches(spot, spots)),
             "webcam": webcam_fiche_html(spot),
             "bloc_prevision": bloc_prevision(spot, charger_prevision(spot["slug"])),
             "description": e(spot["description"]) if spot.get("description") else
@@ -521,7 +560,6 @@ def construire():
             "statut": (f"Recherche documentaire du {date_fr(spot['verifie_le'])}, pas encore vérifiée sur le terrain"
                        if spot.get("verifie_le") else "Fiche pas encore vérifiée"),
             "sources": sources_html(spot),
-            "spots_proches": liste_spots_html(spots_proches(spot, spots)),
             "articles_spot": grille_articles(
                 [a for a in articles if spot["slug"] in a["spots"]] or articles[:3]),
             "precedent": lien_voisin(au_nord, "nord"),

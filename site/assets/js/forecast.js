@@ -51,6 +51,7 @@
   }
 
   let niveauChoisi = lireNiveau();
+  let heureChoisie = 12;
   let jourChoisi = jours.find((j) => analyserJour(j, NIVEAUX[niveauChoisi])) || jours[0];
 
   if (!jours.length) {
@@ -88,27 +89,31 @@
     </fieldset>
     <div class="fc-jours" role="group" aria-label="Choisir un jour"></div>
     <div class="fc-verdict" aria-live="polite"></div>
-    <div class="fc-chiffres"></div>
     <div class="fc-carte">
-      <h3 class="fc-titre-graph"></h3>
+      <div class="fc-lecture"></div>
       <div class="fc-graph"></div>
+      <input class="fc-curseur" type="range" step="1" aria-label="Choisir une heure">
       <div class="fc-legende">
         ${[2, 1, 0].map((n) => `<span><i style="background:${VERDICTS[n].couleur}"></i>${VERDICTS[n].nom}</span>`).join("")}
-        <span><i class="fc-nuit"></i>Nuit</span>
+        <span>Faites glisser pour lire chaque heure</span>
       </div>
-      <p class="fc-note">Les flèches montrent où va le vent, nord en haut. Survolez ou touchez le graphique pour lire chaque heure.</p>
     </div>
     <details class="fc-detail">
-      <summary>Voir le détail heure par heure</summary>
+      <summary>Détail heure par heure</summary>
       <div class="table-wrap fc-tableau"></div>
     </details>
-    <div class="fc-infos"></div>`;
+    <details class="fc-detail">
+      <summary>Comment c'est calculé</summary>
+      <div class="fc-infos"></div>
+    </details>
+    <div class="fc-alerte"></div>`;
 
   const zoneJours = racine.querySelector(".fc-jours");
   const zoneVerdict = racine.querySelector(".fc-verdict");
-  const zoneChiffres = racine.querySelector(".fc-chiffres");
+  const zoneLecture = racine.querySelector(".fc-lecture");
+  const curseurHeure = racine.querySelector(".fc-curseur");
+  const zoneAlerte = racine.querySelector(".fc-alerte");
   const zoneGraph = racine.querySelector(".fc-graph");
-  const titreGraph = racine.querySelector(".fc-titre-graph");
   const zoneTableau = racine.querySelector(".fc-tableau");
   const zoneInfos = racine.querySelector(".fc-infos");
 
@@ -145,7 +150,7 @@
     if (!analyse) {
       zoneVerdict.className = "fc-verdict fc-verdict--neutral";
       zoneVerdict.innerHTML = `<p class="fc-phrase">Il ne reste plus d'heure de jour aujourd'hui. Choisissez un autre jour.</p>`;
-      zoneChiffres.innerHTML = "";
+      heureChoisie = 12;
       return;
     }
 
@@ -161,24 +166,39 @@
       <p class="fc-phrase">${phrase(analyse, jourChoisi, niveau)}</p>
       ${conseil}`;
 
-    const r = analyse.repere;
-    const type = typeVent(r.ventDir);
-    const tuile = (valeur, unite, libelle) => `
-      <div class="stat">
-        <div class="stat-value">${valeur}${unite ? ` <small>${unite}</small>` : ""}</div>
-        <div class="stat-label">${libelle}</div>
-      </div>`;
+    heureChoisie = analyse.repere.heure;
+  }
+
+  // Les chiffres de l'heure choisie sur le graphique ou le curseur
+  function afficherLecture() {
+    const p = heures.find((x) => x.jour === jourChoisi && x.heure === heureChoisie);
+    if (!p) return;
+    const ev = estDeJour(p) ? evaluer(p, NIVEAUX[niveauChoisi]) : null;
     const s = soleil[jourChoisi];
-    zoneChiffres.innerHTML = `
-      <p class="fc-chiffres-titre">À ${heureTexte(r.heure)}, ${analyse.note === 0 ? "le moins mauvais moment" : "le meilleur moment"} de la journée</p>
-      <div class="stats fc-stats">
-        ${tuile(nombre(r.hauteur), "m", "Taille estimée au bord")}
-        ${tuile(nombre(r.houle), "m", `Houle au large, de ${cardinal(r.direction)}`)}
-        ${tuile(nombre(r.periode, 0), "s", "Période de la houle")}
-        ${tuile(nombre(r.vent, 0), "km/h", `${libelleVent(type)}, rafales ${nombre(r.rafales, 0)}`)}
-        ${tuile(nombre(r.eau, 0), "°C", "Température de l'eau")}
-        ${tuile(`${s.lever.slice(11)} · ${s.coucher.slice(11)}`, "", "Lever et coucher du soleil")}
+    const type = typeVent(p.ventDir);
+    const valeur = (chiffre, unite, libelle) => `
+      <div class="fc-valeur">
+        <strong>${chiffre}${unite ? `<small> ${unite}</small>` : ""}</strong>
+        <span>${libelle}</span>
       </div>`;
+    zoneLecture.innerHTML = `
+      <div class="fc-heure">
+        <strong>${heureTexte(p.heure)}</strong>
+        ${ev ? badge(ev.note) : '<span class="badge badge--neutral">Nuit</span>'}
+      </div>
+      <div class="fc-valeurs">
+        ${valeur(nombre(p.hauteur), "m", "au bord")}
+        ${valeur(nombre(p.houle), "m", `houle de ${cardinal(p.direction)}, ${nombre(p.periode, 0)} s`)}
+        ${valeur(nombre(p.vent, 0), "km/h", `${libelleVent(type).toLowerCase()}, rafales ${nombre(p.rafales, 0)}`)}
+        ${valeur(nombre(p.eau, 0), "°C", `eau · soleil ${s.lever.slice(11)}–${s.coucher.slice(11)}`)}
+      </div>`;
+  }
+
+  function choisirHeure(heure) {
+    heureChoisie = heure;
+    curseurHeure.value = heure;
+    afficherLecture();
+    placerCurseur();
   }
 
   function afficherTableau() {
@@ -211,13 +231,17 @@
     const texteMaj = new Intl.DateTimeFormat("fr-FR", {
       timeZone: "Europe/Paris", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
     }).format(maj);
-    const alerte = ancien ? `
-      <div class="notice" style="margin-bottom:14px">
-        ${icone("i-alert")}
-        <div><p><strong>Ces prévisions datent du ${texteMaj}.</strong> La mise à jour automatique a pris du retard : elles peuvent ne plus être fiables.</p></div>
-      </div>` : "";
-    zoneInfos.innerHTML = `${alerte}
-      <p class="fc-note">Mis à jour le ${texteMaj}, heure de Paris. Taille au bord estimée par Swellcome à partir de la houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne. La marée sera ajoutée bientôt : le verdict n'en tient pas encore compte. Critères de départ, en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
+    if (ancien) {
+      zoneAlerte.innerHTML = `
+        <div class="notice">
+          ${icone("i-alert")}
+          <div><p><strong>Ces prévisions datent du ${texteMaj}.</strong> La mise à jour automatique a pris du retard : elles peuvent ne plus être fiables.</p></div>
+        </div>`;
+    }
+    zoneInfos.innerHTML = `
+      <p>Mis à jour le ${texteMaj}, heure de Paris.</p>
+      <p>La taille au bord est estimée par Swellcome à partir de la houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne.</p>
+      <p>La marée sera ajoutée bientôt : le verdict n'en tient pas encore compte. Les critères sont en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
   }
 
 
@@ -332,63 +356,58 @@
         <circle class="g-point" r="5" visibility="hidden"/>
         <rect class="g-capteur" x="${marges.gauche}" y="0" width="${largeur - marges.gauche - marges.droite}" height="${bas + 40}"/>
       </svg>
-      <div class="fc-bulle" hidden></div>`;
+`;
 
-    brancherSurvol(points, x, y, marges, largeur);
+    // Le curseur s'aligne sur l'axe des heures
+    const deJour = points.filter((p) => estDeJour(p));
+    curseurHeure.min = deJour.length ? deJour[0].heure : HEURE_DEBUT;
+    curseurHeure.max = deJour.length ? deJour[deJour.length - 1].heure : HEURE_FIN;
+    curseurHeure.value = heureChoisie;
+    curseurHeure.style.marginLeft = `${x(Number(curseurHeure.min)) - 10}px`;
+    curseurHeure.style.width = `${x(Number(curseurHeure.max)) - x(Number(curseurHeure.min)) + 20}px`;
+
+    echelles = { x, y, marges, points };
+    brancherGraphique();
+    placerCurseur();
     dernierCalcul = largeur;
   }
 
-  // Curseur et bulle d'information
-  function brancherSurvol(points, x, y, marges, largeur) {
-    const capteur = zoneGraph.querySelector(".g-capteur");
+  let echelles = null;
+
+  function placerCurseur() {
+    if (!echelles) return;
+    const p = echelles.points.find((q) => q.heure === heureChoisie);
     const curseur = zoneGraph.querySelector(".g-curseur");
     const point = zoneGraph.querySelector(".g-point");
-    const bulle = zoneGraph.querySelector(".fc-bulle");
-    if (!points.length) return;
+    if (!p || !curseur) return;
+    curseur.setAttribute("x1", echelles.x(p.heure));
+    curseur.setAttribute("x2", echelles.x(p.heure));
+    curseur.setAttribute("visibility", "visible");
+    point.setAttribute("cx", echelles.x(p.heure));
+    point.setAttribute("cy", echelles.y(p.hauteur));
+    point.setAttribute("visibility", "visible");
+  }
 
-    function montrer(evenement) {
-      const rect = capteur.getBoundingClientRect();
-      const position = evenement.clientX - rect.left + marges.gauche;
-      const p = points.reduce((a, b) => (Math.abs(x(b.heure) - position) < Math.abs(x(a.heure) - position) ? b : a));
-      const px = x(p.heure);
-      const py = y(p.hauteur);
-
-      curseur.setAttribute("x1", px);
-      curseur.setAttribute("x2", px);
-      curseur.setAttribute("visibility", "visible");
-      point.setAttribute("cx", px);
-      point.setAttribute("cy", py);
-      point.setAttribute("visibility", "visible");
-
-      const type = typeVent(p.ventDir);
-      bulle.innerHTML = `
-        <strong>${heureTexte(p.heure)}${p.eval ? ` · ${VERDICTS[p.eval.note].nom}` : " · Nuit"}</strong><br>
-        Au bord ${nombre(p.hauteur)} m · houle ${nombre(p.houle)} m, ${nombre(p.periode, 0)} s<br>
-        ${libelleVent(type)} ${nombre(p.vent, 0)} km/h, rafales ${nombre(p.rafales, 0)}`;
-      bulle.hidden = false;
-      const largeurBulle = bulle.offsetWidth;
-      const gauche = px + 14 + largeurBulle > largeur ? px - 14 - largeurBulle : px + 14;
-      bulle.style.left = Math.max(0, Math.min(gauche, largeur - largeurBulle)) + "px";
-      bulle.style.top = Math.max(0, py - bulle.offsetHeight - 8) + "px";
-    }
-
-    function cacher() {
-      curseur.setAttribute("visibility", "hidden");
-      point.setAttribute("visibility", "hidden");
-      bulle.hidden = true;
-    }
-
-    capteur.addEventListener("pointermove", montrer);
-    capteur.addEventListener("pointerdown", montrer);
-    capteur.addEventListener("pointerleave", cacher);
+  // Survoler ou toucher le graphique change l'heure lue
+  function brancherGraphique() {
+    const capteur = zoneGraph.querySelector(".g-capteur");
+    if (!echelles.points.length) return;
+    const lire = (evenement) => {
+      const position = evenement.clientX - capteur.getBoundingClientRect().left + echelles.marges.gauche;
+      const plusProche = echelles.points.reduce((a, b) =>
+        (Math.abs(echelles.x(b.heure) - position) < Math.abs(echelles.x(a.heure) - position) ? b : a));
+      if (plusProche.heure !== heureChoisie) choisirHeure(plusProche.heure);
+    };
+    capteur.addEventListener("pointermove", lire);
+    capteur.addEventListener("pointerdown", lire);
   }
 
   function toutAfficher() {
     afficherJours();
     afficherVerdict();
     afficherTableau();
-    titreGraph.textContent = `Vagues et vent · ${jourLong(jourChoisi)}`;
     dessinerGraphique();
+    afficherLecture();
   }
 
   racine.querySelector(".fc-niveaux").addEventListener("change", (evenement) => {
@@ -396,6 +415,8 @@
     garderNiveau(niveauChoisi);
     toutAfficher();
   });
+
+  curseurHeure.addEventListener("input", () => choisirHeure(Number(curseurHeure.value)));
 
   zoneJours.addEventListener("click", (evenement) => {
     const bouton = evenement.target.closest(".fc-jour");

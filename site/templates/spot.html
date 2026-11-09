@@ -1,91 +1,74 @@
 <!--
   Gabarit d'une fiche spot. build.py le remplit avec les données de data/spots/<slug>.json.
+  Trois onglets (main.js) : sans JavaScript, ils s'affichent les uns sous les autres.
 -->
-<section class="page-head">
-  <div class="container page-head-grid">
-    <div>
+<section class="spot-une" {{style_photo}}>
+  <div class="container">
     <nav class="breadcrumb" aria-label="Fil d'Ariane">
       <ol>
         <li><a href="{{base}}/">Accueil</a></li>
         <li><a href="{{base}}/spots/">Spots</a></li>
         <li><a href="{{base}}/{{departement_slug}}/">{{departement}}</a></li>
-        <li aria-current="page">{{nom}}</li>
       </ol>
     </nav>
-    <span class="eyebrow">Spot de surf · {{departement}}</span>
     <h1>{{nom}}</h1>
-    <p class="lead">{{commune}}, {{departement}}. {{description}}</p>
-    <div class="badges">
-      <span class="badge badge--neutral">
-        <svg class="icon" aria-hidden="true" style="width:16px;height:16px"><use href="#i-pin"></use></svg>
-        Position de la plage (IGN)
-      </span>
-      <span class="badge badge--neutral">{{statut}}</span>
+    <p class="spot-une-lieu">{{commune}}, {{departement}}</p>
+    <div class="spot-une-actions">
+{{bouton_webcam}}
+      <a class="btn btn--clair" href="{{lien_carte}}" rel="noopener">
+        <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+        Voir sur la carte
+      </a>
     </div>
-    </div>
-{{photo}}
   </div>
+{{credit_photo}}
 </section>
 
-<section class="section">
-  <div class="container spot-layout">
+<div class="onglets" role="tablist" aria-label="Sections de la fiche" data-onglets>
+  <div class="container">
+    <button type="button" role="tab" id="onglet-previsions" aria-controls="panneau-previsions" aria-selected="true">Prévisions</button>
+    <button type="button" role="tab" id="onglet-le-spot" aria-controls="panneau-le-spot" aria-selected="false">Le spot</button>
+    <button type="button" role="tab" id="onglet-conseils" aria-controls="panneau-conseils" aria-selected="false">Conseils</button>
+  </div>
+</div>
 
-    <div>
-      <h2>Prévisions sur 7 jours</h2>
+<section class="panneau panneau--sombre" id="panneau-previsions" role="tabpanel" aria-labelledby="onglet-previsions">
+  <div class="container">
 {{bloc_prevision}}
+    <p class="spot-securite">
+      <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
+      <span>Prévisions indicatives : observez le spot avant d'y aller, surfez en zone surveillée, respectez les drapeaux, méfiez-vous des baïnes.</span>
+    </p>
+  </div>
+</section>
 
-      <div class="notice" style="margin-top:24px">
-        <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
-        <div>
-          <p><strong>Sécurité.</strong> Les prévisions sont des estimations. Avant d'aller à l'eau, observez le spot, surfez de préférence en zone surveillée, respectez les drapeaux et méfiez-vous des courants. <a href="{{base}}/blog/baines-comprendre-et-reagir/">Tout savoir sur les baïnes</a>.</p>
-        </div>
-      </div>
-
-      <details class="sources">
-        <summary>Sources de cette fiche</summary>
-{{sources}}
-        <p class="muted">Les bancs de sable bougent et les horaires changent chaque année : ces informations restent à confirmer sur place. <a href="{{base}}/a-propos/">Notre méthode</a>.</p>
-      </details>
-    </div>
-
-    <aside class="card">
-      <h2 style="font-size:1.3rem">Fiche du spot</h2>
+<section class="panneau" id="panneau-le-spot" role="tabpanel" aria-labelledby="onglet-le-spot">
+  <div class="container spot-infos">
+    <p class="spot-description">{{description}}</p>
 {{fiche}}
-      <p class="muted" style="font-size:0.85rem;margin:18px 0 0">
-        <a href="{{lien_carte}}" rel="noopener">Voir la zone sur OpenStreetMap</a>
-      </p>
-      <h3 class="webcam-titre">
-        <svg class="icon" aria-hidden="true"><use href="#i-camera"></use></svg>
-        Webcam
-      </h3>
+    <h2>Webcam</h2>
 {{webcam}}
-    </aside>
-
-  </div>
-
-  <div class="container">
-    <nav class="spot-nav" aria-label="Spots voisins">
-      {{precedent}}
-      {{suivant}}
-    </nav>
+    <h2>À côté</h2>
+    <div class="chips">{{chips_voisins}}</div>
+    <details class="sources">
+      <summary>Sources de cette fiche</summary>
+{{sources}}
+      <p class="muted">{{statut}}. Les bancs de sable bougent : ces informations restent à confirmer sur place. <a href="{{base}}/a-propos/">Notre méthode</a>.</p>
+    </details>
   </div>
 </section>
 
-<!-- Maillage interne : spots proches et articles liés -->
-<section class="section section--sand">
-  <div class="container">
-    <div class="grid grid--2 maillage">
-      <div>
-        <h2>Spots proches</h2>
-{{spots_proches}}
-        <p style="margin-top:20px"><a href="{{base}}/{{departement_slug}}/">Tous les spots de {{departement}} →</a></p>
-      </div>
-      <div>
-        <span class="eyebrow">Accompagnement</span>
-        <h2>À lire avant d'y aller</h2>
+<section class="panneau" id="panneau-conseils" role="tabpanel" aria-labelledby="onglet-conseils">
+  <div class="container spot-infos">
+    <h2>À lire avant d'y aller</h2>
 {{articles_spot}}
-        <p style="margin-top:20px"><a href="{{base}}/accompagnement/">Tous nos conseils pour progresser →</a></p>
-      </div>
-    </div>
+    <p style="margin-top:20px"><a href="{{base}}/accompagnement/">Tout l'accompagnement →</a></p>
   </div>
 </section>
+
+<div class="container">
+  <nav class="spot-nav" aria-label="Spots voisins">
+    {{precedent}}
+    {{suivant}}
+  </nav>
+</div>

@@ -3,6 +3,7 @@
    1. Menu mobile
    2. Formulaire newsletter
    3. Vidéo du bandeau
+   4. Onglets des fiches spots
    ========================================================================== */
 
 
@@ -99,4 +100,40 @@ if (video) {
       video.play().catch(() => { /* lecture automatique refusée : la première image reste affichée */ });
     }
   }
+}
+
+
+/* 4. Onglets des fiches spots : l'adresse garde l'onglet ouvert (#le-spot, #conseils) */
+
+const barreOnglets = document.querySelector("[data-onglets]");
+
+if (barreOnglets) {
+  const onglets = [...barreOnglets.querySelectorAll('[role="tab"]')];
+
+  function ouvrir(onglet, majAdresse) {
+    onglets.forEach((autre) => {
+      const actif = autre === onglet;
+      autre.setAttribute("aria-selected", String(actif));
+      autre.tabIndex = actif ? 0 : -1;
+      document.getElementById(autre.getAttribute("aria-controls")).hidden = !actif;
+    });
+    if (majAdresse) {
+      const nom = onglet.id.replace("onglet-", "");
+      history.replaceState(null, "", nom === "previsions" ? window.location.pathname : `#${nom}`);
+    }
+  }
+
+  onglets.forEach((onglet, rang) => {
+    onglet.addEventListener("click", () => ouvrir(onglet, true));
+    onglet.addEventListener("keydown", (evenement) => {
+      const pas = { ArrowRight: 1, ArrowLeft: -1 }[evenement.key];
+      if (!pas) return;
+      const suivant = onglets[(rang + pas + onglets.length) % onglets.length];
+      ouvrir(suivant, true);
+      suivant.focus();
+    });
+  });
+
+  const demande = document.getElementById(`onglet-${window.location.hash.slice(1)}`);
+  ouvrir(onglets.includes(demande) ? demande : onglets[0], false);
 }
