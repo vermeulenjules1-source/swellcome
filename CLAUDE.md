@@ -74,8 +74,9 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 - La hauteur affichée est une taille estimée au bord : houle, période et direction par rapport à la plage. Jamais la hauteur totale du large. Une houle courte ou de sud-ouest donne presque rien en Gironde.
 - Les spots de Gironde saturent vers 3 m (`saturation_m`) : à oublier pour tous les niveaux.
 - Sur l'accueil, pas de « À oublier » : la raison (Flat, Vent, Trop gros, Trop petit, Houle courte, Saturé).
+- Le verdict le plus bas s'affiche « Jour off » (`VERDICTS` dans `verdict.js`).
 - Chaque spot a sa propre page ; l'accueil ne fait qu'y mener.
-- Style : pas d'aspect fade ni « fait par une IA ». Fonds sombres, gros verdict, photos, textes courts et directs. Éviter les petits titres en capitales, les blocs à trois icônes, les tuiles beiges, les slogans en antithèse.
+- Style : pas d'aspect fade ni « fait par une IA ». Fonds sombres, verdict lisible sans être géant (demande de Jules du 9 novembre 2026), photos, textes courts et directs. Éviter les petits titres en capitales, les blocs à trois icônes, les tuiles beiges, les slogans en antithèse.
 - Pas d'image ni de flux Viewsurf sans autorisation écrite : ses mentions légales l'interdisent. Ne pas se présenter comme un navigateur pour récupérer des fichiers.
 - Vidéo sous CC BY-SA : le crédit doit rester sur la page À propos, reliée depuis le pied de page.
 
