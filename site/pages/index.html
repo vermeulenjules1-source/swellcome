@@ -4,8 +4,8 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
 -->
 
 <!-- Bandeau d'accueil animé.
-     Pour passer à une vraie vidéo de surf : déposer le fichier dans site/assets/video/hero.mp4,
-     build.py l'insère tout seul derrière le texte. -->
+     Pour passer à une vraie vidéo de surf : déposer le fichier dans site/assets/video/hero.webm,
+     décrire ses droits dans data/video-hero.json, build.py l'insère tout seul derrière le texte. -->
 <section class="hero hero--anime {{hero_classe}}">
   <div class="hero-media" aria-hidden="true">
     {{hero_video}}
@@ -29,6 +29,7 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
         </a>
         <a class="btn btn--secondary" href="{{base}}/comprendre-le-forecast/">Lire un forecast</a>
       </div>
+      {{hero_credit}}
     </div>
 
     <!-- Carte d'exemple : valeurs fictives, signalées comme telles -->

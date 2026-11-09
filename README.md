@@ -24,6 +24,7 @@ site/partials/    header, footer + newsletter, icônes : communs à toutes les p
 site/templates/   gabarit général (base.html) et gabarit d'une fiche spot (spot.html)
 site/assets/      CSS, JavaScript, polices, images
 data/spots/       une fiche JSON par spot
+data/forecast/    prévisions générées par scripts/collecte.py
 scripts/build.py  assemble le tout dans dist/ (dossier généré, non commité)
 ```
 
@@ -31,7 +32,9 @@ scripts/build.py  assemble le tout dans dist/ (dossier généré, non commité)
 - **Ajouter une page** : créer `site/pages/ma-page.html` avec l'en-tête `titre` / `description` ; elle sera servie à `/ma-page/`.
 - **Compléter un spot** : remplir les champs de `data/spots/<slug>.json` (laisser `null` ce qui n'est pas vérifié), indiquer `sources` et `verifie_le`.
 - **Écrire un article** : copier `site/blog/_modele.html` sous un nouveau nom et remplir l'en-tête ; indiquer `spots` pour l'afficher sur les fiches concernées.
-- **Mettre une vraie vidéo dans le bandeau** : déposer le fichier dans `site/assets/video/hero.mp4` (court, compressé, sans son) et relancer `build.py`.
+- **Mettre une vraie vidéo dans le bandeau** : déposer le fichier dans `site/assets/video/hero.webm` (court, compressé, sans son), décrire ses droits dans `data/video-hero.json` et relancer `build.py`.
+- **Mettre à jour les prévisions à la main** : `python3 scripts/collecte.py`, puis relancer `build.py`. En ligne, GitHub Actions le fait quatre fois par jour.
+- **Ajouter une webcam** : compléter le champ `webcams` de la fiche du spot. Uniquement un lien vers la page officielle, jamais d'image ni de flux repris sans autorisation écrite.
 - **Brancher la newsletter** : coller l'adresse du formulaire (Brevo par exemple) dans `NEWSLETTER_ACTION` en haut de `scripts/build.py`.
 
 ## Données

@@ -62,6 +62,8 @@ Les critères par défaut ci-dessous sont un point de départ à valider avec de
 | Confirmé | 1,2 à 2,5 m | 10 s et plus | Offshore ou faible | Beach breaks puissants, reefs |
 | Expert | 2 m et plus | 12 s et plus | Offshore | Tous, y compris spots engagés |
 
+Tolérances du verdict (`site/assets/js/forecast.js`), elles aussi à valider : hauteur jusqu'à 0,2 m sous le minimum ou 10 % au-dessus du maximum, période jusqu'à 2 s sous le minimum, vent faible de 15 à 20 km/h pour un débutant, vent de travers sous 22 km/h et vent de mer sous 18 km/h pour les niveaux intermédiaire et confirmé. Au-delà, le créneau est « à oublier ».
+
 Chaque fiche spot porte aussi un niveau minimal, par exemple « réservé aux intermédiaires et plus ». Un débutant qui choisit ce spot voit un avertissement et ne reçoit pas d'alerte quand la houle dépasse son niveau.
 
 Chaque créneau reçoit un verdict en trois états (top, correct, à oublier) et une phrase d'explication, par exemple « houle de 1,2 m à 11 s, vent offshore jusqu'à 10 h, marée montante ». L'alerte part la veille à 18 h et le matin à 7 h. Elle est limitée à une par jour et par spot pour ne pas lasser.

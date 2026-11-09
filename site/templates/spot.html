@@ -2,7 +2,8 @@
   Gabarit d'une fiche spot. build.py le remplit avec les données de data/spots/<slug>.json.
 -->
 <section class="page-head">
-  <div class="container">
+  <div class="container page-head-grid">
+    <div>
     <nav class="breadcrumb" aria-label="Fil d'Ariane">
       <ol>
         <li><a href="{{base}}/">Accueil</a></li>
@@ -21,6 +22,8 @@
       </span>
       <span class="badge badge--neutral">{{statut}}</span>
     </div>
+    </div>
+{{photo}}
   </div>
 </section>
 
@@ -29,14 +32,7 @@
 
     <div>
       <h2>Prévisions sur 7 jours</h2>
-      <!-- Ce bloc sera remplacé par les données de data/forecast/ dès que la collecte Open-Meteo sera en place. -->
-      <div class="forecast-pending">
-        <span class="icon-wrap">
-          <svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg>
-        </span>
-        <h3>Prévisions bientôt disponibles</h3>
-        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
-      </div>
+{{bloc_prevision}}
 
       <div class="notice" style="margin-top:24px">
         <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
@@ -58,6 +54,11 @@
       <p class="muted" style="font-size:0.85rem;margin:18px 0 0">
         <a href="{{lien_carte}}" rel="noopener">Voir la zone sur OpenStreetMap</a>
       </p>
+      <h3 class="webcam-titre">
+        <svg class="icon" aria-hidden="true"><use href="#i-camera"></use></svg>
+        Webcam
+      </h3>
+{{webcam}}
     </aside>
 
   </div>

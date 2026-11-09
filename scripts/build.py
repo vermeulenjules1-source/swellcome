@@ -8,6 +8,9 @@ Ce que fait le script, dans l'ordre :
   4. Génère une page par spot à partir de site/templates/spot.html.
   5. Génère les articles de site/blog/ et le plan du site (sitemap.xml).
 
+Les prévisions de data/forecast/ (écrites par scripts/collecte.py) sont insérées
+dans chaque fiche spot ; site/assets/js/forecast.js les affiche.
+
 Utilisation (depuis la racine du dépôt) :
     python3 scripts/build.py
     python3 -m http.server 8000 -d dist     # puis ouvrir http://localhost:8000
@@ -109,15 +112,26 @@ def url_spot(spot):
     return f"{BASE}/{spot['departement_slug']}/{spot['slug']}/"
 
 
+def vignette_html(spot):
+    """Petite photo décorative : le nom du spot est déjà écrit à côté."""
+    if not spot.get("photo"):
+        return ""
+    return (f'<img class="spot-vignette" src="{BASE}/assets/img/spots/vignettes/{e(spot["photo"]["fichier"])}" '
+            f'alt="" width="64" height="64" loading="lazy">')
+
+
 def liste_spots_html(spots):
     """Liste des spots le long de la côte, pour les pages Spots et Gironde."""
     lignes = []
     for spot in spots:
         lignes.append(f"""      <li>
         <a class="spot-link" href="{url_spot(spot)}">
-          <span>
-            <span class="spot-title">{e(spot['nom'])}</span><br>
-            <span class="spot-commune">{e(spot['commune'])}</span>
+          <span class="spot-identite">
+            {vignette_html(spot)}
+            <span>
+              <span class="spot-title">{e(spot['nom'])}</span><br>
+              <span class="spot-commune">{e(spot['commune'])}</span>
+            </span>
           </span>
           <span class="spot-meta">
             <span class="badge badge--neutral">Plage orientée {e(spot['orientation_16'] or '?')}</span>
@@ -184,6 +198,129 @@ def lien_voisin(spot, sens):
                 f'<svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg> {e(spot["nom"])}</a>')
     return (f'<a href="{url_spot(spot)}" style="text-align:right"><small>Au sud</small>'
             f'{e(spot["nom"])} <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>')
+
+
+def lien_licence(media):
+    """Nom de la licence, avec un lien si l'adresse est connue."""
+    if media.get("licence_url"):
+        return f'<a href="{e(media["licence_url"])}" rel="noopener">{e(media["licence"])}</a>'
+    return e(media["licence"])
+
+
+def credit_html(media):
+    return (f'{e(media["auteur"])}, {lien_licence(media)}, '
+            f'<a href="{e(media["source"])}" rel="noopener">Wikimedia Commons</a>')
+
+
+def photo_html(spot):
+    photo = spot.get("photo")
+    if not photo:
+        return ""
+    return f"""    <figure class="spot-photo">
+      <img src="{BASE}/assets/img/spots/{e(photo['fichier'])}" alt="{e(photo['legende'])}" width="1280" height="853">
+      <figcaption>{e(photo['legende'])}. Photo : {credit_html(photo)}, redimensionnée.</figcaption>
+    </figure>"""
+
+
+def credits_medias_html(spots, video):
+    """Liste de toutes les photos et de la vidéo, avec auteur et licence."""
+    lignes = [f'        <li><strong>{e(s["nom"])}</strong> : {credit_html(s["photo"])}.</li>'
+              for s in spots if s.get("photo")]
+    if video:
+        lignes.append(f'        <li><strong>Vidéo du bandeau</strong> ({e(video["legende"])}) : {credit_html(video)}.</li>')
+    return "      <ul>\n" + "\n".join(lignes) + "\n      </ul>"
+
+
+# --- Webcams ----------------------------------------------------------------
+
+def liens_webcams(spot):
+    """Liens vers les pages officielles : aucune image de webcam n'est reprise ici."""
+    lignes = []
+    for cam in spot.get("webcams") or []:
+        note = f'<small class="muted">{e(cam["note"])}</small>' if cam.get("note") else ""
+        lignes.append(f"""          <li>
+            <a href="{e(cam['url'])}" target="_blank" rel="noopener">
+              {e(cam['nom'])}
+              <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg>
+              <span class="visually-hidden">(nouvelle fenêtre)</span>
+            </a>
+            <small class="muted">{e(cam['exploitant'])}</small>
+            {note}
+          </li>""")
+    return '        <ul class="webcam-liens">\n' + "\n".join(lignes) + "\n        </ul>"
+
+
+def webcam_fiche_html(spot):
+    if spot.get("webcams"):
+        return liens_webcams(spot)
+    return ('        <p class="muted" style="font-size:0.9rem;margin:0">Pas de webcam publique repérée pour ce spot. '
+            f'<a href="{BASE}/webcams/">Voir les webcams de la côte</a>.</p>')
+
+
+def page_webcams_html(spots):
+    cartes = []
+    for spot in spots:
+        contenu = (liens_webcams(spot) if spot.get("webcams")
+                   else '        <p class="muted" style="margin:0">Pas de webcam publique repérée pour l\'instant.</p>')
+        cartes.append(f"""      <article class="card webcam-carte">
+        <h3>{vignette_html(spot)}<a href="{url_spot(spot)}">{e(spot['nom'])}</a></h3>
+{contenu}
+      </article>""")
+    return '    <div class="grid grid--2">\n' + "\n".join(cartes) + "\n    </div>"
+
+
+# --- Prévisions -------------------------------------------------------------
+
+def charger_prevision(slug):
+    chemin = RACINE / "data" / "forecast" / f"{slug}.json"
+    return json.loads(lire(chemin)) if chemin.exists() else None
+
+
+def decimale(x):
+    return f"{x:.1f}".replace(".", ",")
+
+
+def resume_prevision(prevision):
+    """Résumé par jour : visible sans JavaScript et lisible par les moteurs de recherche."""
+    h = prevision["heures"]
+    soleil = prevision["soleil"]
+    lignes = []
+    for jour, lever, coucher in zip(soleil["jours"], soleil["lever"], soleil["coucher"]):
+        rangs = [i for i, t in enumerate(h["temps"]) if lever[:14] + "00" <= t <= coucher and t.startswith(jour)
+                 and h["hauteur"][i] is not None and h["vent"][i] is not None]
+        if not rangs:
+            continue
+        hauteurs = [h["hauteur"][i] for i in rangs]
+        periodes = [h["periode"][i] for i in rangs if h["periode"][i] is not None]
+        vent = sum(h["vent"][i] for i in rangs) / len(rangs)
+        periode = f"{sum(periodes) / len(periodes):.0f} s" if periodes else "–"
+        lignes.append(f"          <tr><td>{date_fr(jour)}</td><td>{decimale(min(hauteurs))} à {decimale(max(hauteurs))} m</td>"
+                      f"<td>{periode}</td><td>{vent:.0f} km/h</td></tr>")
+    return ('      <div class="table-wrap"><table class="data-table">\n'
+            '        <thead><tr><th scope="col">Jour</th><th scope="col">Hauteur au large</th>'
+            '<th scope="col">Période moyenne</th><th scope="col">Vent moyen</th></tr></thead>\n'
+            "        <tbody>\n" + "\n".join(lignes) + "\n        </tbody>\n      </table></div>\n"
+            f'      <p class="muted" style="font-size:0.85rem;margin-top:12px">Moyennes des heures de jour. Mis à jour le {e(prevision["mis_a_jour"][:10])} (UTC).</p>')
+
+
+def bloc_prevision(spot, prevision):
+    """Le bloc de prévisions de la fiche, ou un message si la collecte n'a pas encore tourné."""
+    if prevision is None:
+        return """      <div class="forecast-pending">
+        <span class="icon-wrap">
+          <svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg>
+        </span>
+        <h3>Prévisions bientôt disponibles</h3>
+        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
+      </div>"""
+    donnees = {"spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg")}, "prevision": prevision}
+    # Le remplacement de la séquence fermante empêche de sortir de la balise script
+    texte = json.dumps(donnees, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return f"""      <div id="prevision" data-guide="{BASE}/comprendre-le-forecast/">
+{resume_prevision(prevision)}
+      </div>
+      <script type="application/json" id="donnees-prevision">{texte}</script>
+      <script src="{BASE}/assets/js/forecast.js" defer></script>"""
 
 
 # --- Blog -------------------------------------------------------------------
@@ -277,7 +414,8 @@ def construire():
     spots = charger_spots()
     gironde = [s for s in spots if s["departement_slug"] == "gironde"]
     articles = charger_articles()
-    video = (SITE / "assets" / "video" / "hero.mp4").exists()
+    video = (SITE / "assets" / "video" / "hero.webm").exists()
+    credit_video = json.loads(lire(RACINE / "data" / "video-hero.json")) if video else None
 
     communs = {
         "base": BASE,
@@ -289,9 +427,13 @@ def construire():
         "derniers_articles": grille_articles(articles[:3]),
         "rubriques_blog": rubriques_blog(articles),
         "hero_classe": "hero--video" if video else "",
-        # La vidéo n'est insérée que si le fichier site/assets/video/hero.mp4 existe
+        # La vidéo n'est insérée que si le fichier site/assets/video/hero.webm existe
         "hero_video": (f'<video class="hero-video" autoplay muted loop playsinline preload="metadata">'
-                       f'<source src="{BASE}/assets/video/hero.mp4" type="video/mp4"></video>') if video else "",
+                       f'<source src="{BASE}/assets/video/hero.webm" type="video/webm"></video>') if video else "",
+        "hero_credit": (f'<p class="hero-credit">Vidéo : {e(credit_video["legende"])}, {credit_html(credit_video)}.</p>'
+                        if video else ""),
+        "credits_medias": credits_medias_html(spots, credit_video),
+        "liste_webcams": page_webcams_html(gironde),
     }
     morceaux = {
         "icones": lire(SITE / "partials" / "icons.html"),
@@ -330,6 +472,9 @@ def construire():
             "departement": e(spot["departement"]),
             "departement_slug": spot["departement_slug"],
             "fiche": fiche_html(spot),
+            "photo": photo_html(spot),
+            "webcam": webcam_fiche_html(spot),
+            "bloc_prevision": bloc_prevision(spot, charger_prevision(spot["slug"])),
             "description": e(spot["description"]) if spot.get("description") else
                 "La fiche détaillée de ce spot est en cours de rédaction : orientation, fond, marée qui fonctionne et niveau conseillé seront relevés sur le terrain.",
             "lien_carte": f"https://www.openstreetmap.org/?mlat={lat}&amp;mlon={lon}#map=14/{lat}/{lon}",

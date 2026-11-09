@@ -87,3 +87,11 @@ Ce qui suit n'est pas un avis juridique ; les clauses marquées non vérifiées 
 Le risque de Swellcome ne vient pas des prévisions, devenues largement libres depuis l'ouverture de Météo-France en 2024 et de l'ECMWF en 2025, mais de deux raccourcis tentants : reprendre la liste de spots d'un concurrent et afficher les marées officielles sans licence. La valeur défendable du projet est précisément là où les concurrents investissent : une base de spots vérifiée à la main et des marées calculées soi-même. Construite ainsi, elle devient un actif protégé au même titre que celles qu'il ne faut pas copier, et sa publication éventuelle sous licence ouverte peut servir le référencement.
 
 Le passage à la monétisation est un changement de régime, pas un réglage : il fait tomber la gratuité d'Open-Meteo, peut changer la catégorie tarifaire Shom et rend les widgets tiers encore moins accessibles. Concevoir dès le prototype un pipeline capable de lire directement Météo-France, ECMWF et Copernicus évite de reconstruire le site le jour où une publicité apparaît.
+
+## Webcams (vérifié le 9 novembre 2026)
+
+Les mentions légales de Viewsurf interdisent de reproduire ou réutiliser le site et ses vidéos sans autorisation préalable, et le site bloque l'intégration en iframe. Swellcome ne publie donc que des liens sortants vers les pages officielles : ni intégration, ni flux, ni capture. Une intégration demanderait une autorisation écrite de Viewsurf.
+
+## Photos et vidéo
+
+Fichiers issus de Wikimedia Commons, avec auteur, licence et source dans le champ `photo` des fiches et dans `data/video-hero.json`. Crédits visibles sur chaque fiche, dans le bandeau et sur la page À propos. Réutilisation sous CC BY-SA : attribution et même licence.
