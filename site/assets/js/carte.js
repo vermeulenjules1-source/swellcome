@@ -6,7 +6,7 @@
    Si la carte ne peut pas s'afficher, le panneau et la liste restent utilisables.
    1. Réglages
    2. Calculs
-   3. Panneau (commandes, détail, liste)
+   3. Panneau (commandes, petite fiche, cartes photo)
    4. Carte (fond, satellite, vol vers un spot)
    5. Étiquettes reliées aux spots
    6. Houle animée
@@ -17,7 +17,7 @@
   if (!racine || !window.SwellcomeVerdict) return;
 
   const V = window.SwellcomeVerdict;
-  const { VERDICTS, nombre, libelleVent, heureTexte, cardinal } = V;
+  const { VERDICTS, nombre, cardinal } = V;
 
 
   /* 1. Réglages */
@@ -161,99 +161,119 @@
         </fieldset>
       </div>
 
-      <div class="carte-grille">
-        <div class="carte-map-zone">
-          <div class="carte-cadre">
-            <div class="carte-map" id="carte-gl"></div>
-            <div class="carte-calque">
-              <svg class="carte-liaisons" aria-hidden="true"></svg>
-              <div class="carte-etiquettes" role="group" aria-label="Spots sur la carte"></div>
-            </div>
-            <p class="carte-houle" hidden></p>
-            <div class="carte-boutons">
-              <div class="carte-fonds" role="group" aria-label="Fond de carte">
-                <button type="button" data-fond="plan" aria-pressed="true">Plan</button>
-                <button type="button" data-fond="satellite" aria-pressed="false">Satellite</button>
-              </div>
-              <button type="button" class="carte-reset">Toute la côte</button>
-            </div>
-          </div>
-          <div class="carte-legende">
-            <span><i style="background:${VERDICTS[2].couleur}"></i>Top</span>
-            <span><i style="background:${VERDICTS[1].couleur}"></i>Correct</span>
-            <span><i style="background:#fff;border:1px solid #8A979F"></i>À oublier</span>
-            <span>Touchez une étiquette pour voler vers le spot</span>
-          </div>
-        </div>
+      <p class="carte-bilan" aria-live="polite"></p>
 
-        <div class="carte-panneau">
-          <div class="carte-detail" aria-live="polite"></div>
-          <ol class="carte-liste"></ol>
+      <div class="carte-map-zone">
+        <div class="carte-cadre">
+          <div class="carte-map" id="carte-gl"></div>
+          <div class="carte-calque">
+            <svg class="carte-liaisons" aria-hidden="true"></svg>
+            <div class="carte-etiquettes" role="group" aria-label="Spots sur la carte"></div>
+          </div>
+          <p class="carte-houle" hidden></p>
+          <div class="carte-boutons">
+            <div class="carte-fonds" role="group" aria-label="Fond de carte">
+              <button type="button" data-fond="plan" aria-pressed="true">Plan</button>
+              <button type="button" data-fond="satellite" aria-pressed="false">Satellite</button>
+            </div>
+            <button type="button" class="carte-reset">Toute la côte</button>
+          </div>
+          <div class="carte-fiche" hidden></div>
         </div>
       </div>
       <p class="carte-note"></p>`;
 
-    const zoneDetail = racine.querySelector(".carte-detail");
-    const zoneListe = racine.querySelector(".carte-liste");
+    const zoneFiche = racine.querySelector(".carte-fiche");
+    const zoneBilan = racine.querySelector(".carte-bilan");
     const zoneEtiquettes = racine.querySelector(".carte-etiquettes");
     const zoneLiaisons = racine.querySelector(".carte-liaisons");
     const zoneHoule = racine.querySelector(".carte-houle");
     const zoneCarte = racine.querySelector(".carte-map-zone");
 
-    function afficherDetail(spot, automatique) {
+    // Petite fiche sur la carte : le détail complet est sur la page du spot
+    function afficherFiche(spot) {
+      if (!spot) {
+        zoneFiche.hidden = true;
+        return;
+      }
       const analyse = analyser(spot, jourChoisi);
       const niveau = spot.analyse ? spot.analyse.NIVEAUX[niveauChoisi] : null;
-      const webcam = spot.webcam
-        ? `<a class="btn btn--secondary" href="${spot.webcam}" target="_blank" rel="noopener">
-             ${icone("i-camera")} Webcam <span class="visually-hidden">(nouvelle fenêtre)</span>
-           </a>` : "";
-      const vignette = spot.vignette ? `<img src="${spot.vignette}" alt="" width="56" height="56">` : "";
-
-      let corps = `<p class="carte-detail-phrase">Plus d'heure de jour ${texteJour(jourChoisi)}. Choisissez un autre jour.</p>`;
-      if (analyse) {
-        const r = analyse.repere;
-        const type = spot.analyse.typeVent(r.ventDir);
-        const moment = analyse.note === 0 ? "Moins mauvais moment" : "Meilleur moment";
-        corps = `
-          ${badge(analyse.note)}
-          <p class="carte-detail-phrase">${spot.analyse.phrase(analyse, jourChoisi, niveau)}</p>
-          <div class="stats">
-            <div class="stat"><div class="stat-value">${nombre(r.hauteur)} <small>m</small></div><div class="stat-label">Au bord, ${heureTexte(r.heure)}</div></div>
-            <div class="stat"><div class="stat-value">${nombre(r.periode, 0)} <small>s</small></div><div class="stat-label">Période</div></div>
-            <div class="stat"><div class="stat-value">${nombre(r.vent, 0)} <small>km/h</small></div><div class="stat-label">${libelleVent(type)}</div></div>
-          </div>
-          <span class="visually-hidden">${moment} : ${heureTexte(r.heure)}.</span>`;
-      }
-
-      let repere = "";
-      if (automatique && analyse) {
-        repere = analyse.note > 0
-          ? `<span class="carte-detail-repere">Le mieux placé ${texteJour(jourChoisi)} pour votre niveau</span>`
-          : `<span class="carte-detail-repere">Aucun spot adapté à votre niveau ${texteJour(jourChoisi)}. Le moins mauvais :</span>`;
-      }
-
-      zoneDetail.innerHTML = `
-        ${repere}
-        <div class="carte-detail-tete">
-          ${vignette}
-          <div><h3>${spot.rang}. ${spot.nom}</h3><p>${spot.commune}</p></div>
-        </div>
-        ${corps}
-        <div class="carte-detail-actions">
-          <a class="btn" href="${spot.url}">Voir les prévisions ${icone("i-arrow-right", "icon icon--fleche")}</a>
-          ${webcam}
-        </div>`;
+      const phrase = analyse
+        ? spot.analyse.phrase(analyse, jourChoisi, niveau)
+        : `Plus d'heure de jour ${texteJour(jourChoisi)}.`;
+      zoneFiche.hidden = false;
+      zoneFiche.innerHTML = `
+        <button type="button" class="carte-fiche-fermer" aria-label="Fermer">${icone("i-close")}</button>
+        <div class="carte-fiche-tete"><h3>${spot.nom}</h3>${badge(noteDe(spot))}</div>
+        <p>${phrase}</p>
+        <a class="btn btn--soleil" href="${spot.url}">Voir le spot ${icone("i-arrow-right", "icon icon--fleche")}</a>`;
     }
 
-    function afficherListe(actif) {
-      zoneListe.innerHTML = spots.map((spot) => `
-        <li>
-          <button type="button" class="carte-ligne" data-slug="${spot.slug}" aria-pressed="${spot === actif}">
-            <span class="carte-ligne-rang">${spot.rang}</span>
-            <span class="carte-ligne-nom">${spot.nom}<small>${spot.commune}</small></span>
-            ${badge(noteDe(spot))}
-          </button>
-        </li>`).join("");
+    zoneFiche.addEventListener("click", (evenement) => {
+      if (!evenement.target.closest(".carte-fiche-fermer")) return;
+      spotChoisi = null;
+      voirTout();
+      afficher();
+    });
+
+    function afficherBilan() {
+      const avecAnalyse = spots.filter((s) => analyser(s, jourChoisi));
+      const niveau = V.NIVEAUX[niveauChoisi].nom.toLowerCase();
+      const debut = `${nomJour(jourChoisi)}, niveau ${niveau}`;
+      if (!avecAnalyse.length) {
+        zoneBilan.textContent = `${debut} : plus d'heure de jour.`;
+        return;
+      }
+      const nombreNote = (note) => avecAnalyse.filter((s) => noteDe(s) === note).length;
+      const tops = nombreNote(2);
+      const corrects = nombreNote(1);
+      const pluriel = (n) => (n > 1 ? "s" : "");
+      if (tops) zoneBilan.innerHTML = `${debut} : <strong>${tops} spot${pluriel(tops)} au top</strong>, ${mieuxPlace().court} en tête.`;
+      else if (corrects) zoneBilan.innerHTML = `${debut} : <strong>${corrects} spot${pluriel(corrects)} surfable${pluriel(corrects)}</strong>, ${mieuxPlace().court} en tête.`;
+      else zoneBilan.innerHTML = `${debut} : <strong>rien de bon</strong> sur les ${spots.length} spots.`;
+    }
+
+    // Cartes photo de l'accueil, chacune mène à la page du spot
+    const grille = document.getElementById("grille-spots");
+    let tri = "nord";
+
+    function afficherGrille() {
+      if (!grille) return;
+      spots.forEach((spot) => {
+        const carteSpot = grille.querySelector(`[data-slug="${spot.slug}"]`);
+        if (!carteSpot) return;
+        const analyse = analyser(spot, jourChoisi);
+        carteSpot.querySelector(".spot-carte-verdict").innerHTML = badge(noteDe(spot));
+        carteSpot.querySelector(".spot-carte-taille").textContent = analyse ? `${nombre(analyse.repere.hauteur)} m au bord` : "";
+      });
+      const ordre = [...spots].sort((a, b) => {
+        if (tri === "nord") return a.rang - b.rang;
+        return noteDe(b) - noteDe(a) || tailleDe(b) - tailleDe(a) || a.rang - b.rang;
+      });
+      ordre.forEach((spot) => {
+        const carteSpot = grille.querySelector(`[data-slug="${spot.slug}"]`);
+        if (carteSpot) grille.appendChild(carteSpot);
+      });
+    }
+
+    document.getElementById("tri-spots")?.addEventListener("click", (evenement) => {
+      const bouton = evenement.target.closest("[data-tri]");
+      if (!bouton) return;
+      tri = bouton.dataset.tri;
+      evenement.currentTarget.querySelectorAll("[data-tri]").forEach((b) => {
+        b.setAttribute("aria-pressed", String(b === bouton));
+      });
+      afficherGrille();
+    });
+
+    function afficherDirect() {
+      const zone = document.getElementById("aujourdhui");
+      const ref = spots.find((s) => s.slug === "hourtin-plage" && s.analyse) || reference;
+      const limite = ref.analyse.parisMaintenant.slice(0, 13) + ":00";
+      const h = ref.analyse.heures.find((x) => x.t >= limite && x.houle != null);
+      if (!zone || !h) return;
+      zone.textContent = `En ce moment au large du Médoc : houle de ${cardinal(h.direction)}, ${nombre(h.houle)} m à ${nombre(h.periode, 0)} s · vent ${nombre(h.vent, 0)} km/h · eau ${nombre(h.eau, 0)} °C`;
+      zone.hidden = false;
     }
 
     function afficherNote() {
@@ -264,14 +284,14 @@
       const ancien = (Date.now() - maj.getTime()) / 3600000 > DONNEES_ANCIENNES_H;
       racine.querySelector(".carte-note").textContent =
         `${ancien ? "Attention, données anciennes : mises" : "Mis"} à jour le ${texte}, heure de Paris. ` +
-        "Verdict hors marée, tailles estimées au bord à partir du large. Vérifiez toujours les conditions sur place.";
+        "Verdict hors marée, à vérifier sur place.";
     }
 
     function afficher() {
-      const actif = spotChoisi || mieuxPlace();
-      afficherDetail(actif, !spotChoisi);
-      afficherListe(actif);
-      afficherEtiquettes(actif);
+      afficherFiche(spotChoisi);
+      afficherBilan();
+      afficherGrille();
+      afficherEtiquettes(spotChoisi);
       afficherHoule();
     }
 
@@ -289,17 +309,6 @@
         jourChoisi = evenement.target.value;
       }
       afficher();
-    });
-
-    zoneListe.addEventListener("click", (evenement) => {
-      const ligne = evenement.target.closest(".carte-ligne");
-      if (!ligne) return;
-      const spot = spots.find((s) => s.slug === ligne.dataset.slug);
-      choisir(spot, true);
-      zoneListe.querySelector(`[data-slug="${spot.slug}"]`).focus({ preventScroll: true });
-      if (carte && window.matchMedia("(max-width: 900px)").matches) {
-        zoneCarte.scrollIntoView({ block: "start", behavior: reduit ? "auto" : "smooth" });
-      }
     });
 
     racine.querySelector(".carte-reset").addEventListener("click", () => {
@@ -326,7 +335,12 @@
     function voirTout() {
       if (!carte) return;
       carte.fitBounds(limites, {
-        padding: { top: zoneCarte.clientWidth < 480 ? 104 : 56, bottom: 34, left: largeurEtiquettes() + 44, right: 40 },
+        padding: {
+          top: zoneCarte.clientWidth < 480 ? 104 : 56,
+          bottom: 34,
+          left: Math.max(largeurEtiquettes() + 44, zoneCarte.clientWidth * 0.3),
+          right: 40,
+        },
         pitch: 0,
         bearing: 0,
         duration: reduit ? 0 : 1200,
@@ -347,7 +361,6 @@
 
     function masquerCarte() {
       zoneCarte.hidden = true;
-      racine.querySelector(".carte-grille").classList.add("carte-grille--sans-carte");
     }
 
     function chargerBibliotheque() {
@@ -632,29 +645,39 @@
       }
     }
 
-    function dessinerHoule(temps) {
-      if (!houle || !carte.getSource("houle")) return;
-      const propagation = ((houle.direction + 180) % 360) * Math.PI / 180;
+    // Forme des fronts. Repère : x = distance à la côte, y = le long de la côte vers le nord.
+    // La houle arrive avec son angle du large, puis se redresse près du bord (réfraction),
+    // comme le ferait une vraie houle sur un fond qui remonte.
+    const REDRESSEMENT = 0.3;       // à la côte, il reste 30 % de l'inclinaison du large
+    const ZONE_REFRACTION = 0.5;    // en degrés, environ 40 km
+
+    function distanceDepuisPhase(g) {
+      const b = 1 - REDRESSEMENT;
+      const gBord = (ZONE_REFRACTION / b) * Math.log(1 + b / REDRESSEMENT);
+      if (g <= gBord) return (REDRESSEMENT * ZONE_REFRACTION / b) * (Math.exp(g * b / ZONE_REFRACTION) - 1);
+      return ZONE_REFRACTION + (g - gBord);
+    }
+
+    // Renvoie les lignes de vagues : le temps qui passe les rapproche de la côte
+    function frontsHoule(temps) {
+      let angle = ((houle.direction - 270 + 540) % 360) - 180;   // 0 : de face, positif : du nord
+      angle = Math.max(-75, Math.min(75, angle)) * Math.PI / 180;
       const echelleLon = 1 / Math.cos(45 * Math.PI / 180);
-      const px = Math.sin(propagation) * echelleLon;
-      const py = Math.cos(propagation);
-      const qx = Math.cos(propagation) * echelleLon;
-      const qy = -Math.sin(propagation);
 
       const espacement = 0.05 + houle.periode * 0.009;   // plus la période est longue, plus les vagues sont espacées
-      const phase = (temps * 0.1) % 1;
-      const nombreLignes = Math.ceil(1.4 / espacement);
+      const avance = (temps * (0.07 + houle.periode * 0.008)) % 1;
+      const nombreLignes = Math.ceil(2.6 / espacement);
       const lignes = [];
 
       for (let k = -nombreLignes; k <= nombreLignes; k++) {
+        const phase = (k - avance) * espacement;
         let courante = [];
-        for (let u = -1.6; u <= 1.6; u += 0.035) {
-          const s = (k + phase) * espacement + 0.012 * Math.sin(u * 7 + k * 1.3);
-          const lon = -1.75 + px * s + qx * u;
-          const lat = 45 + py * s + qy * u;
-          const cote = lat > 44.2 && lat < 45.76 ? longitudeCote(lat) : null;
-          if (cote !== null && lon < cote) {
-            courante.push([lon, lat]);
+        for (let lat = 44.22; lat <= 45.74; lat += 0.02) {
+          const g = (phase - (lat - 45) * Math.sin(angle)) / Math.cos(angle);
+          const x = g > 0 ? distanceDepuisPhase(g) : -1;
+          if (x > 0.008 && x < 1.8) {
+            const ondulation = 0.004 * Math.sin(lat * 70);
+            courante.push([longitudeCote(lat) - (x + ondulation) * echelleLon, lat]);
           } else if (courante.length) {
             if (courante.length > 1) lignes.push(courante);
             courante = [];
@@ -662,8 +685,18 @@
         }
         if (courante.length > 1) lignes.push(courante);
       }
+      return lignes;
+    }
 
-      carte.getSource("houle").setData({ type: "Feature", properties: {}, geometry: { type: "MultiLineString", coordinates: lignes } });
+    racine.frontsHoule = frontsHoule;   // sert à vérifier le sens depuis la console
+
+    function dessinerHoule(temps) {
+      if (!houle || !carte.getSource("houle")) return;
+      carte.getSource("houle").setData({
+        type: "Feature",
+        properties: {},
+        geometry: { type: "MultiLineString", coordinates: frontsHoule(temps) },
+      });
     }
 
     function animerHoule() {
@@ -682,6 +715,7 @@
 
     afficher();
     afficherNote();
+    afficherDirect();
 
     // La bibliothèque de carte pèse lourd : on ne la charge qu'à l'approche de la section
     const approche = new IntersectionObserver((entrees) => {

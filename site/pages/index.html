@@ -1,10 +1,10 @@
 <!--
-titre: Swellcome · Prévisions surf en France, adaptées à votre niveau
-description: Houle, vent et marée pour chaque spot de France, avec un verdict selon votre niveau. Gratuit, sans publicité. Know before you go.
+titre: Swellcome · Prévisions surf en Gironde, adaptées à votre niveau
+description: Houle, vent et verdict selon votre niveau pour les spots de Gironde, de Soulac au Porge. Gratuit, sans publicité. Know before you go.
 -->
 
-<!-- Bandeau d'accueil animé.
-     Pour passer à une vraie vidéo de surf : déposer le fichier dans site/assets/video/hero.webm,
+<!-- Bandeau d'accueil.
+     Pour changer la vidéo : déposer le fichier dans site/assets/video/hero.webm,
      décrire ses droits dans data/video-hero.json, build.py l'insère tout seul derrière le texte. -->
 <section class="hero hero--anime {{hero_classe}}">
   <div class="hero-media" aria-hidden="true">
@@ -17,135 +17,60 @@ description: Houle, vent et marée pour chaque spot de France, avec un verdict s
     </div>
   </div>
 
-  <div class="container hero-grid">
-    <div>
-      <span class="eyebrow">Surf forecast · France</span>
-      <h1>Know before you go.</h1>
-      <p class="lead">Les prévisions surf de chaque spot français, traduites selon votre niveau. Vous savez en un coup d'œil si la session vaut le déplacement.</p>
-      <div class="hero-actions">
-        <a class="btn btn--brillant" href="#previsions">
-          Voir les prévisions
-          <svg class="icon icon--fleche" aria-hidden="true"><use href="#i-arrow-down"></use></svg>
-        </a>
-        <a class="btn btn--secondary" href="{{base}}/accompagnement/">Être accompagné</a>
-      </div>
+  <div class="container hero-texte">
+    <h1>Know before you go.</h1>
+    <p class="lead">Dites votre niveau, on vous dit si ça vaut le coup de sortir la planche. Gironde, gratuit, sans pub.</p>
+    <p class="hero-direct" id="aujourdhui" hidden></p>
+    <div class="hero-actions">
+      <a class="btn btn--soleil" href="#previsions">
+        Voir où ça rentre
+        <svg class="icon icon--fleche" aria-hidden="true"><use href="#i-arrow-down"></use></svg>
+      </a>
+      <a class="btn btn--secondary" href="{{base}}/accompagnement/">Je débute</a>
     </div>
-
-    <!-- Carte d'exemple : valeurs fictives, signalées comme telles -->
-    <figure class="card card--shadow forecast-card" style="margin:0" aria-label="Exemple de carte de prévision, valeurs fictives">
-      <div class="card-top">
-        <div>
-          <p class="spot-name">Lacanau – Plage centrale</p>
-          <p class="spot-place">Gironde · demain, 9 h</p>
-        </div>
-        <span class="badge badge--good"><span class="dot"></span>Bon pour vous</span>
-      </div>
-      <div class="big-value">1,2<small>m</small></div>
-      <div class="value-label">Hauteur de houle</div>
-      <div class="stats">
-        <div class="stat"><div class="stat-value">9 s</div><div class="stat-label">Période</div></div>
-        <div class="stat"><div class="stat-value">NO</div><div class="stat-label">Direction</div></div>
-        <div class="stat"><div class="stat-value">12 km/h</div><div class="stat-label">Vent offshore</div></div>
-      </div>
-      <figcaption class="example-flag">Exemple illustratif : ce ne sont pas des prévisions réelles.</figcaption>
-    </figure>
   </div>
 </section>
 
-<!-- Espace Prévisions : la carte interactive (site/assets/js/carte.js).
-     Sans JavaScript, la liste des spots reste affichée. -->
-<section class="section zone-previsions" id="previsions">
+<!-- Prévisions : la carte interactive (site/assets/js/carte.js) -->
+<section class="section panneau--sombre" id="previsions">
   <div class="container">
-    <div class="section-header">
-      <span class="eyebrow"><svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg> Prévisions</span>
-      <h2>Où surfer ? Les conditions, spot par spot</h2>
-      <p>Choisissez votre niveau et votre jour, puis touchez une étiquette pour voler vers le spot : les {{nombre_spots}} spots de Gironde, de Soulac au Porge.</p>
-    </div>
+    <h2>Où ça rentre ?</h2>
 
     <div id="carte-spots" class="carte-bloc" data-apercu="{{base}}/assets/data/apercu.json"
          data-style="{{base}}/assets/data/style-carte.json" data-vendor="{{base}}/assets/vendor/maplibre">
-{{liste_spots_gironde}}
+      <noscript><p>La carte a besoin de JavaScript. Les spots restent accessibles juste en dessous.</p></noscript>
     </div>
-
-    <p class="carte-liens">
-      <a href="{{base}}/spots/">Tous les spots →</a>
-      <a href="{{base}}/webcams/">Les webcams →</a>
-    </p>
   </div>
 </section>
 
 <script src="{{base}}/assets/js/verdict.js" defer></script>
 <script src="{{base}}/assets/js/carte.js" defer></script>
 
-<!-- Espace Accompagnement : tout ce qui aide à progresser et à se préparer -->
-<section class="section section--mist zone-accompagnement" id="accompagnement">
+<!-- Les spots : chacun mène à sa propre page -->
+<section class="section" id="spots">
   <div class="container">
-    <div class="section-header">
-      <span class="eyebrow"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg> Accompagnement</span>
-      <h2>Les chiffres, c'est bien. Savoir quoi en faire, c'est mieux.</h2>
-      <p>Niveau, lecture du forecast, sécurité : on vous guide pas à pas, du canapé jusqu'à la mise à l'eau.</p>
+    <div class="spots-tete">
+      <h2>Les {{nombre_spots}} spots</h2>
+      <div class="tri" id="tri-spots" role="group" aria-label="Trier les spots">
+        <button type="button" data-tri="nord" aria-pressed="true">Du nord au sud</button>
+        <button type="button" data-tri="mieux" aria-pressed="false">Les meilleurs d'abord</button>
+      </div>
     </div>
-
-    <div class="grid accomp-grille">
-      <a class="accomp-carte" href="{{base}}/accompagnement/#niveau">
-        <span class="accomp-etape">1</span>
-        <h3>Trouver mon niveau</h3>
-        <p>Quatre profils, et les conditions qui vous conviennent vraiment.</p>
-      </a>
-      <a class="accomp-carte" href="{{base}}/comprendre-le-forecast/">
-        <span class="accomp-etape">2</span>
-        <h3>Lire un forecast</h3>
-        <p>Houle, période, vent, marée : ce que chaque chiffre change à l'eau.</p>
-      </a>
-      <a class="accomp-carte" href="{{base}}/comprendre-le-forecast/#jeu">
-        <span class="accomp-etape">3</span>
-        <h3>M'entraîner au mini-jeu</h3>
-        <p>Huit créneaux : vous y allez ou pas ? Testez votre œil.</p>
-      </a>
-      <a class="accomp-carte" href="{{base}}/accompagnement/#securite">
-        <span class="accomp-etape">4</span>
-        <h3>Me préparer en sécurité</h3>
-        <p>Baïnes, drapeaux, courants : les réflexes avant d'aller à l'eau.</p>
-      </a>
-    </div>
-
-    <p style="margin-top:28px">
-      <a class="btn" href="{{base}}/accompagnement/">
-        Découvrir l'accompagnement
-        <svg class="icon icon--fleche" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-      </a>
-    </p>
-
-    <h3 class="accomp-sous-titre">Derniers guides</h3>
-{{derniers_articles}}
+{{grille_spots}}
+    <p class="spots-bas"><a href="{{base}}/webcams/">Voir les webcams →</a></p>
   </div>
 </section>
 
-<!-- Les trois promesses -->
-<!-- Les trois promesses -->
-<section class="section">
+<!-- Accompagnement -->
+<section class="section section--sand" id="accompagnement">
   <div class="container">
-    <div class="section-header">
-      <span class="eyebrow">Pourquoi Swellcome</span>
-      <h2>Un forecast qui parle votre langue</h2>
-      <p>La même houle n'a pas le même effet pour un débutant et pour un surfeur confirmé. Swellcome traduit les chiffres en réponse simple.</p>
-    </div>
-    <div class="grid grid--3">
-      <article class="card">
-        <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg></span>
-        <h3>Ouvert à tous</h3>
-        <p class="muted">Houle, période, vent et marée sur 7 jours pour chaque spot, sans compte et sans publicité.</p>
-      </article>
-      <article class="card">
-        <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg></span>
-        <h3>Adapté à votre niveau</h3>
-        <p class="muted">Choisissez votre niveau : chaque créneau reçoit un verdict, top, correct ou à oublier, avec une phrase d'explication.</p>
-      </article>
-      <article class="card">
-        <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></span>
-        <h3>Alerté au bon moment</h3>
-        <p class="muted">Bientôt : une alerte gratuite la veille au soir quand votre spot correspond à vos critères.</p>
-      </article>
-    </div>
+    <h2>Pas encore à l'aise avec un forecast ?</h2>
+    <ol class="rangs">
+      <li><a href="{{base}}/accompagnement/#niveau"><b>1</b><strong>Trouver mon niveau</strong><span>Quatre profils, de la mousse aux gros jours.</span></a></li>
+      <li><a href="{{base}}/comprendre-le-forecast/"><b>2</b><strong>Lire un forecast</strong><span>Pourquoi 1 m à 5 s, ça ne fait presque rien.</span></a></li>
+      <li><a href="{{base}}/comprendre-le-forecast/#jeu"><b>3</b><strong>Mini-jeu : j'y vais ou pas ?</strong><span>Huit créneaux pour tester votre œil.</span></a></li>
+      <li><a href="{{base}}/accompagnement/#securite"><b>4</b><strong>Baïnes et courants</strong><span>Ce qu'il faut savoir avant de se mettre à l'eau.</span></a></li>
+      <li><a href="{{base}}/blog/"><b>5</b><strong>Les guides</strong><span>Notes de spot et articles.</span></a></li>
+    </ol>
   </div>
 </section>
