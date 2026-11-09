@@ -179,7 +179,7 @@ img, svg { max-width: 100%; }
   gap: 24px;
 }
 .grid--3 { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-.grid--2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
 
 .muted { color: var(--text-muted); }
 
