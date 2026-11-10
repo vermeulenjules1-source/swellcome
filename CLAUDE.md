@@ -83,6 +83,8 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 - Pas d'image ni de flux Viewsurf sans autorisation écrite : ses mentions légales l'interdisent. Ne pas se présenter comme un navigateur pour récupérer des fichiers.
 - Vidéo sous CC BY-SA : le crédit doit rester sur la page À propos, reliée depuis le pied de page.
 
+**Landes et Pays basque (10 novembre 2026)** : fiches créées par `scripts/importer_plages_ign.py` depuis la BD TOPO de l'IGN : position, orientation et prévisions. Fond, vague, dangers et photos restent à compléter avec des sources publiques ou du terrain. Surf-Report et les autres sites de spots restent exclus, même pour une simple liste. La carte de l'accueil et sa grille restent sur la Gironde : à revoir pour plus de spots.
+
 **À faire ou à vérifier**
 - Attendre de Jules : email de contact et choix d'adresse pour les mentions légales (passages `.to-fill`), compte Brevo (`NEWSLETTER_ACTION` dans `build.py`), compte AVISO pour les marées.
 - Collecte automatique : le `schedule` de GitHub ne se déclenchait pas, il est retiré depuis le 9 novembre 2026. Une tâche cron-job.org (compte de Jules) appelle `workflow_dispatch` de `deploy.yml` à 3 h 17, 9 h 17, 15 h 17 et 21 h 17 UTC, avec un jeton GitHub limité à Actions sur ce dépôt. Le jeton expire : le renouveler à temps. Vérifier le premier lancement automatique. `alertes.yml`, non publié, utilise encore `schedule` et devra passer par le même déclencheur.
