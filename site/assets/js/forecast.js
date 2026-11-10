@@ -18,7 +18,7 @@
   /* 1. Réglages */
 
   const V = window.SwellcomeVerdict;
-  const { VERDICTS, nombre, cardinal, libelleVent, heureTexte } = V;
+  const { VERDICTS, nombre, deDirection, libelleVent, heureTexte } = V;
 
   const CLE_NIVEAU = "swellcome-niveau";
   const COULEURS_BARRES = { 2: "#77B9B1", 1: "#E6B96C", 0: "#5F7480" }; // Top, Correct, Jour off, sur fond sombre
@@ -29,7 +29,7 @@
 
   const {
     NIVEAUX, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
-    typeVent, evaluer, estDeJour, analyserJour, phrase,
+    typeVent, evaluer, estDeJour, analyserJour, phrase, motif, creneauTexte,
   } = V.creerAnalyse({ spot, prevision });
 
 
@@ -78,9 +78,8 @@
     return jour === aujourdhui ? "Aujourd'hui" : `${NOMS_LONGS[d.getDay()]} ${d.getDate()} ${MOIS[d.getMonth()]}`;
   };
 
-  // Hauteur de marée, signée car elle est donnée par rapport au niveau moyen de la mer
-  const niveauMer = (x) =>
-    x == null ? "–" : x.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: "exceptZero" });
+  // « Mi-marée », « Marée haute », « Marée basse »
+  const libelleMaree = (etat) => (etat === "mi-marée" ? "Mi-marée" : `Marée ${etat}`);
   const heureMinute = (t) => {
     const minutes = t.slice(14, 16);
     return `${Number(t.slice(11, 13))} h${minutes === "00" ? "" : ` ${minutes}`}`;
@@ -149,6 +148,29 @@
     }).join("");
   }
 
+  // Le verdict du prochain jour utile, repris tout en haut de la fiche
+  function afficherUne() {
+    const zone = document.getElementById("verdict-une");
+    if (!zone) return;
+    const niveau = NIVEAUX[niveauChoisi];
+    const jour = jours.find((j) => analyserJour(j, niveau));
+    if (!jour) {
+      zone.hidden = true;
+      return;
+    }
+    const analyse = analyserJour(jour, niveau);
+    const v = VERDICTS[analyse.note];
+    const quand = jour === aujourdhui ? "Aujourd'hui" : jour === jours[jours.indexOf(aujourdhui) + 1] ? "Demain" : jourLong(jour);
+    const detail = analyse.note > 0
+      ? `${creneauTexte(analyse, jour)}, environ ${nombre(analyse.repere.hauteur)} m au bord`
+      : `${motif(analyse, niveau)}, ${nombre(analyse.tailleMax)} m au bord au mieux`;
+    zone.className = `spot-une-verdict spot-une-verdict--${v.badge}`;
+    zone.innerHTML = `
+      <strong>${icone(v.icone)}${v.nom}</strong>
+      <span>${quand}, niveau ${niveau.nom.toLowerCase()}<br>${detail}</span>`;
+    zone.hidden = false;
+  }
+
   function afficherVerdict() {
     const niveau = NIVEAUX[niveauChoisi];
     const analyse = analyserJour(jourChoisi, niveau);
@@ -194,10 +216,10 @@
       </div>
       <div class="fc-valeurs">
         ${valeur(nombre(p.hauteur), "m", "au bord")}
-        ${valeur(nombre(p.houle), "m", `houle de ${cardinal(p.direction)}, ${nombre(p.periode, 0)} s`)}
+        ${valeur(nombre(p.houle), "m", `houle ${deDirection(p.direction)}, ${nombre(p.periode, 0)} s`)}
         ${valeur(nombre(p.vent, 0), "km/h", `${libelleVent(type).toLowerCase()}, rafales ${nombre(p.rafales, 0)}`)}
         ${valeur(nombre(p.eau, 0), "°C", `eau · soleil ${s.lever.slice(11)}–${s.coucher.slice(11)}`)}
-        ${p.maree != null ? valeur(niveauMer(p.maree), "m", `marée ${p.mareeSens}`) : ""}
+        ${p.mareeEtat ? valeur(libelleMaree(p.mareeEtat), "", p.mareeSens) : ""}
       </div>`;
   }
 
@@ -206,8 +228,8 @@
     const duJour = marees.filter((m) => m.t.startsWith(jourChoisi));
     zoneMarees.innerHTML = duJour.length ? `
       <ul class="fc-marees" aria-label="Marées du jour">
-        ${duJour.map((m) => `<li><strong>${m.type === "pleine" ? "Pleine mer" : "Basse mer"}</strong> vers ${heureMinute(m.t)}, ${niveauMer(m.niveau)} m</li>`).join("")}
-        <li class="fc-marees-note">Indicatif, par rapport au niveau moyen de la mer</li>
+        ${duJour.map((m) => `<li><strong>${m.type === "pleine" ? "Pleine mer" : "Basse mer"}</strong> vers ${heureMinute(m.t)}</li>`).join("")}
+        <li class="fc-marees-note">Horaires indicatifs</li>
       </ul>` : "";
   }
 
@@ -232,15 +254,15 @@
         const ev = evaluer(x, niveau);
         const type = typeVent(x.ventDir);
         const seconde = x.houle2 != null && x.houle2 >= 0.2 ? `, 2e houle ${nombre(x.houle2)} m` : "";
-        const maree = x.maree != null
-          ? colonne("fc-c-maree", `${x.mareeSens === "montante" ? "↗" : "↘"} ${niveauMer(x.maree)} m`, `marée ${x.mareeSens}`)
+        const maree = x.mareeEtat
+          ? colonne("fc-c-maree", `${x.mareeSens === "montante" ? "↗" : "↘"} ${libelleMaree(x.mareeEtat)}`, x.mareeSens)
           : colonne("fc-c-maree", "–", "marée");
         return `
           <li class="fc-ligne fc-ligne--${ev ? VERDICTS[ev.note].badge : "neutral"}">
             <strong class="fc-ligne-heure">${heureTexte(x.heure)}</strong>
             <div class="fc-ligne-verdict">${ev ? badge(ev.note) : "–"}</div>
             ${colonne("fc-c-taille", `${nombre(x.hauteur)} m`, "au bord")}
-            ${colonne("fc-c-houle", `${nombre(x.houle)} m, ${nombre(x.periode, 0)} s`, `houle de ${cardinal(x.direction)}${seconde}`)}
+            ${colonne("fc-c-houle", `${nombre(x.houle)} m, ${nombre(x.periode, 0)} s`, `houle ${deDirection(x.direction)}${seconde}`)}
             ${colonne("fc-c-vent", `${flecheVent(x.ventDir)}${nombre(x.vent, 0)} km/h`, `${libelleVent(type)}, rafales ${nombre(x.rafales, 0)}`)}
             ${maree}
           </li>`;
@@ -462,6 +484,7 @@
   }
 
   function toutAfficher() {
+    afficherUne();
     afficherJours();
     afficherVerdict();
     afficherTableau();

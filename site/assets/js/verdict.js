@@ -100,6 +100,17 @@ window.SwellcomeVerdict = (function () {
     return apres >= avant ? "montante" : "descendante";
   }
 
+  // « haute », « mi-marée » ou « basse », selon la place du niveau entre la pleine et la basse mer qui l'encadrent
+  function etatMaree(t, niveau, extremes) {
+    if (niveau == null || extremes.length < 2) return null;
+    const suivante = extremes.findIndex((m) => m.t > t);
+    const rang = suivante <= 0 ? (suivante === 0 ? 1 : extremes.length - 1) : suivante;
+    const [a, b] = [extremes[rang - 1].niveau, extremes[rang].niveau];
+    const part = (niveau - Math.min(a, b)) / Math.abs(a - b);
+    if (part >= 0.7) return "haute";
+    return part <= 0.3 ? "basse" : "mi-marée";
+  }
+
   // Adapte un niveau à un spot qui sature à partir d'une certaine taille de houle
   function pourSpot(niveau, saturation) {
     if (!saturation) return niveau;
@@ -155,6 +166,16 @@ window.SwellcomeVerdict = (function () {
 
   const POINTS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
   const cardinal = (deg) => (deg == null ? "–" : POINTS[Math.round(deg / 22.5) % 16]);
+  const POINTS_LONGS = [
+    "nord", "nord-nord-est", "nord-est", "est-nord-est", "est", "est-sud-est", "sud-est", "sud-sud-est",
+    "sud", "sud-sud-ouest", "sud-ouest", "ouest-sud-ouest", "ouest", "ouest-nord-ouest", "nord-ouest", "nord-nord-ouest",
+  ];
+  // « d'ouest », « de nord-ouest » : la provenance en toutes lettres
+  function deDirection(deg) {
+    if (deg == null) return "de direction inconnue";
+    const nom = POINTS_LONGS[Math.round(deg / 22.5) % 16];
+    return /^[eo]/.test(nom) ? `d'${nom}` : `de ${nom}`;
+  }
   const nombre = (x, decimales = 1) =>
     x == null ? "–" : x.toLocaleString("fr-FR", { maximumFractionDigits: decimales });
   const libelleVent = (type) => LIBELLE_VENT[type] || "Vent";
@@ -190,6 +211,7 @@ window.SwellcomeVerdict = (function () {
       ventDir: h.vent_dir[i],
       maree: niveauxMer[i] ?? null,
       mareeSens: sensMaree(niveauxMer, i),
+      mareeEtat: etatMaree(t, niveauxMer[i], marees),
     }));
 
     // Les prévisions sont à l'heure de Paris, quel que soit le fuseau du visiteur
@@ -321,13 +343,13 @@ window.SwellcomeVerdict = (function () {
 
     return {
       NIVEAUX: niveaux, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
-      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif,
+      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif, creneauTexte,
     };
   }
 
   return {
     NIVEAUX, VERDICTS, LIBELLE_VENT, TAILLE_MINI,
     typeVent, tailleAuBord, pourSpot, evaluer, creerAnalyse,
-    nombre, cardinal, libelleVent, heureTexte,
+    nombre, cardinal, deDirection, libelleVent, heureTexte,
   };
 })();

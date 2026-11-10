@@ -17,7 +17,7 @@
   if (!racine || !window.SwellcomeVerdict) return;
 
   const V = window.SwellcomeVerdict;
-  const { VERDICTS, nombre, cardinal } = V;
+  const { VERDICTS, nombre, deDirection } = V;
 
 
   /* 1. Réglages */
@@ -280,7 +280,7 @@
       const limite = ref.analyse.parisMaintenant.slice(0, 13) + ":00";
       const h = ref.analyse.heures.find((x) => x.t >= limite && x.houle != null);
       if (!zone || !h) return;
-      zone.textContent = `En ce moment au large du Médoc : houle de ${cardinal(h.direction)}, ${nombre(h.houle)} m à ${nombre(h.periode, 0)} s · vent ${nombre(h.vent, 0)} km/h · eau ${nombre(h.eau, 0)} °C`;
+      zone.textContent = `En ce moment au large du Médoc : houle ${deDirection(h.direction)}, ${nombre(h.houle)} m à ${nombre(h.periode, 0)} s · vent ${nombre(h.vent, 0)} km/h · eau ${nombre(h.eau, 0)} °C`;
       zone.hidden = false;
     }
 
@@ -644,7 +644,7 @@
       zoneHoule.hidden = false;
       zoneHoule.innerHTML = `
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="transform:rotate(${(houle.direction + 180) % 360}deg)"><path d="M12 20V4"/><path d="m5 11 7-7 7 7"/></svg>
-        <span>Houle<span class="carte-houle-long"> du large</span> : ${cardinal(houle.direction)}, ${nombre(houle.houle)} m, ${nombre(houle.periode, 0)} s</span>`;
+        <span>Houle<span class="carte-houle-long"> du large</span> ${deDirection(houle.direction)}, ${nombre(houle.houle)} m, ${nombre(houle.periode, 0)} s</span>`;
       if (carte && carte.getLayer("houle")) {
         const force = Math.min(houle.houle / 2.5, 1);
         carte.setPaintProperty("houle", "line-opacity", 0.16 + 0.42 * force);

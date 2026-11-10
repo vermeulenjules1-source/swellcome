@@ -103,7 +103,7 @@ if (video) {
 }
 
 
-/* 4. Onglets des fiches spots : l'adresse garde l'onglet ouvert (#le-spot, #conseils) */
+/* 4. Onglets des fiches spots : l'adresse garde l'onglet ouvert (#le-spot) */
 
 const barreOnglets = document.querySelector("[data-onglets]");
 

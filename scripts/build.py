@@ -20,6 +20,7 @@ Aucune bibliothèque à installer : uniquement Python 3.
 
 import html
 import json
+import math
 import os
 import re
 import shutil
@@ -134,7 +135,7 @@ def liste_spots_html(spots):
             </span>
           </span>
           <span class="spot-meta">
-            <span class="badge badge--neutral">Plage orientée {e(spot['orientation_16'] or '?')}</span>
+            <span class="badge badge--neutral">Plage face {e(vers_direction(spot.get('orientation_deg')))}</span>
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
           </span>
         </a>
@@ -142,24 +143,105 @@ def liste_spots_html(spots):
     return "    <ol class=\"coast-list\">\n" + "\n".join(lignes) + "\n    </ol>"
 
 
+POINTS_LONGS = ["nord", "nord-nord-est", "nord-est", "est-nord-est", "est", "est-sud-est", "sud-est", "sud-sud-est",
+                "sud", "sud-sud-ouest", "sud-ouest", "ouest-sud-ouest", "ouest", "ouest-nord-ouest", "nord-ouest", "nord-nord-ouest"]
+POINTS_8 = ["nord", "nord-est", "est", "sud-est", "sud", "sud-ouest", "ouest", "nord-ouest"]
+OUVERTURE_HOULE = 60  # degrés de part et d'autre de la plage : au-delà, la houle entre mal (voir effetDirection dans verdict.js)
+
+
+def nom_direction(degres):
+    return POINTS_LONGS[round(degres / 22.5) % 16]
+
+
+def vers_direction(degres):
+    """« à l'ouest », « au nord-ouest »."""
+    if degres is None:
+        return "non renseignée"
+    nom = nom_direction(degres)
+    return f"à l'{nom}" if nom[0] in "eo" else f"au {nom}"
+
+
+def de_direction(degres):
+    """« d'est », « de sud-est »."""
+    nom = nom_direction(degres)
+    return f"d'{nom}" if nom[0] in "eo" else f"de {nom}"
+
+
+def point_boussole(angle, rayon):
+    """Coordonnées SVG d'un angle de boussole (0 = nord, sens des aiguilles d'une montre)."""
+    radians = math.radians(angle)
+    return round(rayon * math.sin(radians), 1), round(-rayon * math.cos(radians), 1)
+
+
+def secteur(depart, arrivee, rayon):
+    x1, y1 = point_boussole(depart, rayon)
+    x2, y2 = point_boussole(arrivee, rayon)
+    grand_arc = 1 if (arrivee - depart) % 360 > 180 else 0
+    return f"M0,0 L{x1},{y1} A{rayon},{rayon} 0 {grand_arc} 1 {x2},{y2} Z"
+
+
+def fleche_boussole(angle, classe):
+    """Une flèche qui part du bord et pointe vers la plage, au centre."""
+    x1, y1 = point_boussole(angle, 74)
+    x2, y2 = point_boussole(angle, 20)
+    g1, h1 = point_boussole(angle + 16, 33)
+    g2, h2 = point_boussole(angle - 16, 33)
+    return (f'<path class="{classe}" d="M{x1},{y1} L{x2},{y2} M{g1},{h1} L{x2},{y2} L{g2},{h2}"/>')
+
+
+def boussole_html(spot):
+    """La plage vue du ciel : d'où la houle arrive bien et d'où le vent la creuse proprement."""
+    o = spot.get("orientation_deg")
+    if o is None:
+        return ""
+    bord_a, bord_b = point_boussole(o + 90, 80), point_boussole(o - 90, 80)
+    reperes = "".join(
+        f'<text x="{point_boussole(angle, 97)[0]}" y="{point_boussole(angle, 97)[1] + 4}" text-anchor="middle">{lettre}</text>'
+        for angle, lettre in [(0, "N"), (90, "E"), (180, "S"), (270, "O")])
+    houle_de = POINTS_8[round(((o - OUVERTURE_HOULE) % 360) / 45) % 8]
+    houle_a = POINTS_8[round(((o + OUVERTURE_HOULE) % 360) / 45) % 8]
+    return f"""    <div class="boussole">
+      <svg viewBox="-112 -112 224 224" role="img" aria-label="Boussole du spot : plage tournée {e(vers_direction(o))}, vent idéal {e(de_direction((o + 180) % 360))}.">
+        <circle class="b-terre" r="80"/>
+        <path class="b-mer" d="{secteur(o - 90, o + 90, 80)}"/>
+        <path class="b-fenetre" d="{secteur(o - OUVERTURE_HOULE, o + OUVERTURE_HOULE, 80)}"/>
+        <line class="b-plage" x1="{bord_a[0]}" y1="{bord_a[1]}" x2="{bord_b[0]}" y2="{bord_b[1]}"/>
+        {fleche_boussole(o, "b-houle")}
+        {fleche_boussole(o + 180, "b-vent")}
+        {reperes}
+      </svg>
+      <dl class="boussole-legende">
+        <div><dt>La plage</dt><dd>Tournée {e(vers_direction(o))}</dd></div>
+        <div><dt><i class="b-puce b-puce--houle"></i>Houle qui marche</dt><dd>Du {e(houle_de)} au {e(houle_a)}</dd></div>
+        <div><dt><i class="b-puce b-puce--vent"></i>Vent idéal</dt><dd>Vent de terre, {e(de_direction((o + 180) % 360))}</dd></div>
+      </dl>
+    </div>"""
+
+
 # Libellés affichés dans la fiche, dans l'ordre. Un champ vide reste affiché « À confirmer ».
 CHAMPS_FICHE = [
+    ("niveau_minimal", "Niveau minimal conseillé"),
+    ("maree_favorable", "Marée qui fonctionne"),
     ("fond", "Type de fond"),
     ("type_vague", "Type de vague"),
-    ("maree_favorable", "Marée qui fonctionne"),
-    ("fenetre_houle", "Houle qui fonctionne"),
-    ("vent_ideal", "Vent idéal"),
-    ("niveau_minimal", "Niveau minimal conseillé"),
-    ("surveillance", "Surveillance"),
     ("acces_parking", "Accès et parking"),
 ]
 
 
 def fiche_html(spot):
-    """Les faits connus du spot ; ce qui manque tient sur une seule ligne."""
+    """La fiche : sécurité d'abord, puis la boussole, puis les faits connus. Ce qui manque tient sur une ligne."""
+    alertes = []
+    if spot.get("dangers"):
+        alertes.append(("Dangers", ", ".join(spot["dangers"])))
+    if spot.get("surveillance"):
+        alertes.append(("Surveillance", spot["surveillance"]))
+    html = ""
+    if alertes:
+        lignes = "\n".join(f"      <div><dt>{libelle}</dt><dd>{e(valeur)}</dd></div>" for libelle, valeur in alertes)
+        html += f'    <dl class="fiche-alerte">\n{lignes}\n    </dl>\n'
+    html += boussole_html(spot) + "\n"
+
     faits, manquants = [], []
-    if spot.get("orientation_deg") is not None:
-        faits.append(("Orientation", f"{spot['orientation_16']} ({spot['orientation_deg']}°)"))
     if spot.get("saturation_m"):
         faits.append(("Limite de taille", f"Sature vers {decimale(spot['saturation_m']).replace(',0', '')} m de houle"))
     for cle, libelle in CHAMPS_FICHE:
@@ -167,10 +249,8 @@ def fiche_html(spot):
             faits.append((libelle, spot[cle]))
         else:
             manquants.append(libelle.lower())
-    if spot.get("dangers"):
-        faits.append(("Dangers", ", ".join(spot["dangers"])))
     lignes = "\n".join(f"      <div><dt>{libelle}</dt><dd>{e(valeur)}</dd></div>" for libelle, valeur in faits)
-    html = f'    <dl class="fiche-faits">\n{lignes}\n    </dl>'
+    html += f'    <dl class="fiche-faits">\n{lignes}\n    </dl>'
     if manquants:
         html += f'\n    <p class="muted fiche-manque">À confirmer sur place : {e(", ".join(manquants))}.</p>'
     return html
@@ -518,6 +598,10 @@ def construire():
         "communs": communs,
         "sitemap": [],
     }
+    # Pas de service d'envoi configuré : on n'affiche ni le bouton ni le formulaire
+    if not NEWSLETTER_ACTION:
+        for morceau in ("header", "footer"):
+            morceaux[morceau] = re.sub(r"[ \t]*<!-- newsletter:debut -->.*?<!-- newsletter:fin -->\n?", "", morceaux[morceau], flags=re.S)
     gabarit = lire(SITE / "templates" / "base.html")
 
     # 3. Pages éditoriales : site/pages/nom.html devient dist/nom/index.html

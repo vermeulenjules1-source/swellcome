@@ -1,6 +1,6 @@
 <!--
   Gabarit d'une fiche spot. build.py le remplit avec les données de data/spots/<slug>.json.
-  Trois onglets (main.js) : sans JavaScript, ils s'affichent les uns sous les autres.
+  Deux onglets (main.js) : sans JavaScript, ils s'affichent les uns sous les autres.
 -->
 <section class="spot-une" {{style_photo}}>
   <div class="container">
@@ -13,6 +13,7 @@
     </nav>
     <h1>{{nom}}</h1>
     <p class="spot-une-lieu">{{commune}}, {{departement}}</p>
+    <p class="spot-une-verdict" id="verdict-une" aria-live="polite" hidden></p>
     <div class="spot-une-actions">
 {{bouton_webcam}}
       <a class="btn btn--clair" href="{{lien_carte}}" rel="noopener">
@@ -28,7 +29,6 @@
   <div class="container">
     <button type="button" role="tab" id="onglet-previsions" aria-controls="panneau-previsions" aria-selected="true">Prévisions</button>
     <button type="button" role="tab" id="onglet-le-spot" aria-controls="panneau-le-spot" aria-selected="false">Le spot</button>
-    <button type="button" role="tab" id="onglet-conseils" aria-controls="panneau-conseils" aria-selected="false">Conseils</button>
   </div>
 </div>
 
@@ -50,19 +50,14 @@
 {{webcam}}
     <h2>À côté</h2>
     <div class="chips">{{chips_voisins}}</div>
+    <h2>À lire avant d'y aller</h2>
+{{articles_spot}}
+    <p class="spot-lien-guides"><a href="{{base}}/accompagnement/">Tout l'accompagnement →</a></p>
     <details class="sources">
       <summary>Sources de cette fiche</summary>
 {{sources}}
       <p class="muted">{{statut}}. Les bancs de sable bougent : ces informations restent à confirmer sur place. <a href="{{base}}/a-propos/">Notre méthode</a>.</p>
     </details>
-  </div>
-</section>
-
-<section class="panneau" id="panneau-conseils" role="tabpanel" aria-labelledby="onglet-conseils">
-  <div class="container spot-infos">
-    <h2>À lire avant d'y aller</h2>
-{{articles_spot}}
-    <p style="margin-top:20px"><a href="{{base}}/accompagnement/">Tout l'accompagnement →</a></p>
   </div>
 </section>
 
