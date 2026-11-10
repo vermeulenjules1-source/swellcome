@@ -26,6 +26,7 @@ import re
 import shutil
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 # --- Réglages ---------------------------------------------------------------
@@ -107,6 +108,16 @@ def charger_spots():
     """Lit toutes les fiches et les trie du nord au sud."""
     spots = [json.loads(lire(f)) for f in sorted((RACINE / "data" / "spots").glob("*.json"))]
     return sorted(spots, key=lambda s: (s["departement"], s["ordre_nord_sud"]))
+
+
+# Sources générales de la côte : seules, elles ne suffisent pas à faire une fiche utile
+SOURCES_GENERALES = {"geoservices.ign.fr", "infoterre.brgm.fr", "services.data.shom.fr",
+                     "www.prefectures-regions.gouv.fr", "www.smgbl.fr"}
+
+
+def fiche_trop_vide(spot):
+    """Une fiche sans source propre à la plage reste accessible, mais Google ne l'indexe pas encore."""
+    return not any(urlparse(s["url"]).netloc not in SOURCES_GENERALES for s in spot.get("sources") or [])
 
 
 def url_spot(spot):
@@ -554,7 +565,8 @@ def liens_spots(slugs, spots):
 
 def page_complete(gabarit, morceaux, infos, contenu, chemin):
     """Assemble une page : gabarit + header + contenu + footer."""
-    morceaux["sitemap"].append(chemin)
+    if not infos.get("noindex"):
+        morceaux["sitemap"].append(chemin)
     header = morceaux["header"]
     # Met en valeur l'entrée du menu correspondant à la page courante
     if infos.get("nav"):
@@ -568,6 +580,7 @@ def page_complete(gabarit, morceaux, infos, contenu, chemin):
         "footer": morceaux["footer"],
         "contenu": contenu,
         "canonical": f"{SITE_URL}{BASE}/{chemin}",
+        "meta_robots": '\n  <meta name="robots" content="noindex">' if infos.get("noindex") else "",
     })
     # Les {{...}} des partials et du contenu sont remplacés en dernier
     return remplacer(page, morceaux["communs"])
@@ -673,6 +686,7 @@ def construire():
             "titre": f"Surf à {spot['nom']} ({spot['commune']}) : prévisions et fiche spot | Swellcome",
             "description": f"Prévisions surf pour {spot['nom']}, à {spot['commune']} ({spot['departement']}) : houle, vent, marée et conseils selon ton niveau.",
             "nav": "spots",
+            "noindex": fiche_trop_vide(spot),
         }
         chemin = f"{spot['departement_slug']}/{spot['slug']}/"
         ecrire(chemin + "index.html", page_complete(gabarit, morceaux, infos, contenu, chemin))
