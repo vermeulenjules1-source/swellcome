@@ -75,6 +75,8 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 - Les spots de Gironde saturent vers 3 m (`saturation_m`) : à oublier pour tous les niveaux.
 - Sur l'accueil, pas de « À oublier » : la raison (Flat, Vent, Trop gros, Trop petit, Houle courte, Saturé).
 - Le verdict le plus bas s'affiche « Jour off » (`VERDICTS` dans `verdict.js`).
+- Tailles de texte : utiliser l'échelle `--t-*` de `style.css`, ne pas en créer d'autres. Directions et marées écrites en clair, jamais « O » seul ni hauteur négative.
+- Le bouton et le formulaire newsletter ne s'affichent que si `NEWSLETTER_ACTION` est rempli dans `build.py`.
 - Chaque spot a sa propre page ; l'accueil ne fait qu'y mener.
 - Style : pas d'aspect fade ni « fait par une IA ». Fonds sombres, verdict lisible sans être géant (demande de Jules du 9 novembre 2026), photos, textes courts et directs. Éviter les petits titres en capitales, les blocs à trois icônes, les tuiles beiges, les slogans en antithèse.
 - Pas d'image ni de flux Viewsurf sans autorisation écrite : ses mentions légales l'interdisent. Ne pas se présenter comme un navigateur pour récupérer des fichiers.
