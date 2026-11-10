@@ -28,7 +28,7 @@
   "dangers": [],
   "surveillance": "Surveillée en été. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Grande plage au cœur de la ville, protégée des vents et des courants par la baie. Location de kayaks de mer et de stand-up paddle.",
+  "description": "Grande plage au cœur de la ville, avec location de kayaks de mer et de stand-up paddle. L'effet de la baie n'est pas pris en compte dans les prévisions.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",

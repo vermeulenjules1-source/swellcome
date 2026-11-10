@@ -27,7 +27,7 @@
   "dangers": [],
   "surveillance": "Plage surveillée en saison. Dates à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": "Accès pour personnes à mobilité réduite.",
-  "description": "Plage de sable fin dans la baie de Saint-Jean-de-Luz, face au fort de Socoa. La digue l'abrite et atténue les vagues.",
+  "description": "Plage de sable fin dans la baie de Saint-Jean-de-Luz, face au fort de Socoa. L'effet de la baie et de la digue n'est pas pris en compte dans les prévisions.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
