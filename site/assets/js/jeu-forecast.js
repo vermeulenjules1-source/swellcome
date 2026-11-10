@@ -42,7 +42,7 @@
     { niveau: "confirme", houle: 2, periode: 13, dirHoule: OUEST, vent: 12, dir: EST, lecon: "Houle longue, taille solide et vent de terre : le créneau à ne pas rater." },
     { niveau: "confirme", houle: 3.2, periode: 14, dirHoule: OUEST, vent: 10, dir: EST, lecon: "À partir de 3 m, les bancs saturent : ça ferme partout et il devient quasi impossible de sortir, même avec un vent parfait." },
     { niveau: "confirme", houle: 2.2, periode: 9, dirHoule: OUEST, vent: 8, dir: EST, lecon: "La taille est là, mais la période reste un peu courte pour ce niveau : surfable sans être idéal." },
-    { niveau: "confirme", houle: 1.7, periode: 12, dirHoule: OUEST, vent: 25, dir: EST, lecon: "Un vent fort n'est pas forcément un problème : venu de la terre, il lisse et creuse la vague." },
+    { niveau: "confirme", houle: 1.7, periode: 12, dirHoule: OUEST, vent: 25, dir: EST, lecon: "Un vent soutenu venu de la terre lisse la vague, mais il complique le take-off." },
     { niveau: "expert", houle: 2, periode: 14, dirHoule: OUEST, vent: 15, dir: EST, lecon: "2 m à 14 s, c'est plus gros au bord qu'au large : exactement ce que ce niveau recherche." },
     { niveau: "expert", houle: 2.2, periode: 14, dirHoule: OUEST, vent: 15, dir: EST, lecon: "Ça commence à faire beaucoup : on approche de la saturation, le passage de la barre devient dur." },
     { niveau: "expert", houle: 3, periode: 15, dirHoule: OUEST, vent: 15, dir: EST, lecon: "Même pour un expert, 3 m sur ces beach breaks, c'est saturé : les vagues ferment et sortir devient quasi impossible." },
@@ -274,12 +274,12 @@
     const longueur = 90 + s.periode * 24;
     const frequence = 1 / (s.periode * 0.35);
     const pointe = 1 + s.periode / 6;
-    const clapot = s.type === "terre" ? 0.6 : (s.vent / 40) * (s.type === "mer" ? 8 : 5);
-    const moutons = s.type !== "terre" && s.vent >= 18;
+    const clapot = s.type === "offshore" ? 0.6 : (s.vent / 40) * (s.type === "onshore" ? 8 : 5);
+    const moutons = s.type !== "offshore" && s.vent >= 18;
 
     // Le vent de terre souffle vers le large (vers la gauche de la scène)
-    const sens = s.type === "terre" ? -1 : 1;
-    const derive = s.type === "travers" ? 12 : 0;
+    const sens = s.type === "offshore" ? -1 : 1;
+    const derive = s.type.startsWith("side") ? 12 : 0;
     const traits = Array.from({ length: Math.min(8, Math.ceil(s.vent / 4)) }, (_, i) => ({
       x: (i * 97) % 640,
       y: 18 + (i * 29) % 78,

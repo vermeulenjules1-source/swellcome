@@ -81,6 +81,7 @@ def collecter_lot(spots):
         "hourly": ",".join(VARIABLES_VENT),
         "daily": "sunrise,sunset",
         "models": ",".join(MODELES_VENT),
+        "cell_selection": "sea",  # point mer le plus proche, sans mélange de cases terre et mer
     })
 
     for spot, m, c, v in zip(spots, marine, comparaison, meteo):
@@ -95,6 +96,10 @@ def collecter_lot(spots):
                 valeur_vent(v["hourly"], api, index_vent[t]) if t in index_vent else None
                 for t in heures["temps"]
             ]
+        # Écart entre modèles de vent, pour l'indice de confiance
+        ecarts_vent = [ecart_vent(v["hourly"], index_vent[t]) if t in index_vent else (None, None) for t in heures["temps"]]
+        heures["vent_min"] = [mini for mini, _ in ecarts_vent]
+        heures["vent_max"] = [maxi for _, maxi in ecarts_vent]
         ecrire_si_change(spot, {
             "slug": spot["slug"],
             "point_modele": {"lat": m["latitude"], "lon": m["longitude"]},
@@ -123,7 +128,7 @@ def combiner_modeles(heures, modeles):
     """
     rangs = {t: i for i, t in enumerate(modeles["time"])}
     heures["periode_moyenne"] = heures["periode"]
-    for nom in ("houle_min", "houle_max", "nb_modeles"):
+    for nom in ("houle_min", "houle_max", "periode_min", "periode_max", "nb_modeles"):
         heures[nom] = [None] * len(heures["temps"])
 
     for i, t in enumerate(heures["temps"]):
@@ -150,6 +155,8 @@ def combiner_modeles(heures, modeles):
             heures["direction"][i] = mediane_direction(directions)
         if pics:
             heures["periode"][i] = round(statistics.median(pics), 2)
+            heures["periode_min"][i] = min(pics)
+            heures["periode_max"][i] = max(pics)
 
 
 def valeur_vent(horaire, variable, rang):
@@ -159,6 +166,13 @@ def valeur_vent(horaire, variable, rang):
         if valeur is not None:
             return valeur
     return None
+
+
+def ecart_vent(horaire, rang):
+    """Plus petite et plus grande vitesse annoncées par les modèles de vent à cette heure."""
+    valeurs = [horaire[f"wind_speed_10m_{modele}"][rang] for modele in MODELES_VENT]
+    valeurs = [x for x in valeurs if x is not None]
+    return (min(valeurs), max(valeurs)) if valeurs else (None, None)
 
 
 def serie_soleil(quotidien, variable):

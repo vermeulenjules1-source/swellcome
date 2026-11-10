@@ -24,7 +24,8 @@ import math
 import os
 import re
 import shutil
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -160,6 +161,7 @@ def barre_recherche_html(spots):
 POINTS_LONGS = ["nord", "nord-nord-est", "nord-est", "est-nord-est", "est", "est-sud-est", "sud-est", "sud-sud-est",
                 "sud", "sud-sud-ouest", "sud-ouest", "ouest-sud-ouest", "ouest", "ouest-nord-ouest", "nord-ouest", "nord-nord-ouest"]
 POINTS_8 = ["nord", "nord-est", "est", "sud-est", "sud", "sud-ouest", "ouest", "nord-ouest"]
+HOULE_ATLANTIQUE = (225, 335)  # secteur d'où la houle peut réellement arriver sur cette côte
 OUVERTURE_HOULE = 60  # degrés de part et d'autre de la plage : au-delà, la houle entre mal (voir effetDirection dans verdict.js)
 
 
@@ -219,13 +221,14 @@ def boussole_html(spot):
     reperes = "".join(
         f'<text x="{point_boussole(angle, 97)[0]}" y="{point_boussole(angle, 97)[1] + 4}" text-anchor="middle">{lettre}</text>'
         for angle, lettre in [(0, "N"), (90, "E"), (180, "S"), (270, "O")])
-    houle_de = POINTS_8[round(((o - OUVERTURE_HOULE) % 360) / 45) % 8]
-    houle_a = POINTS_8[round(((o + OUVERTURE_HOULE) % 360) / 45) % 8]
+    fenetre_de, fenetre_a = max(o - OUVERTURE_HOULE, HOULE_ATLANTIQUE[0]), min(o + OUVERTURE_HOULE, HOULE_ATLANTIQUE[1])
+    houle_de = POINTS_8[round((fenetre_de % 360) / 45) % 8]
+    houle_a = POINTS_8[round((fenetre_a % 360) / 45) % 8]
     return f"""    <div class="boussole">
       <svg viewBox="-112 -112 224 224" role="img" aria-label="Boussole du spot : plage tournée {e(vers_direction(o))}, vent idéal {e(de_direction((o + 180) % 360))}.">
         <circle class="b-terre" r="80"/>
         <path class="b-mer" d="{secteur(o - 90, o + 90, 80)}"/>
-        <path class="b-fenetre" d="{secteur(o - OUVERTURE_HOULE, o + OUVERTURE_HOULE, 80)}"/>
+        <path class="b-fenetre" d="{secteur(fenetre_de, fenetre_a, 80)}"/>
         <line class="b-plage" x1="{bord_a[0]}" y1="{bord_a[1]}" x2="{bord_b[0]}" y2="{bord_b[1]}"/>
         {fleche_boussole(o, "b-houle")}
         {fleche_boussole(o + 180, "b-vent")}
@@ -437,11 +440,37 @@ def resume_prevision(prevision):
         periode = f"{sum(periodes) / len(periodes):.0f} s" if periodes else "–"
         lignes.append(f"          <tr><td>{date_fr(jour)}</td><td>{decimale(min(houles))} à {decimale(max(houles))} m</td>"
                       f"<td>{periode}</td><td>{vent:.0f} km/h</td></tr>")
-    return ('      <div class="table-wrap"><table class="data-table">\n'
-            '        <thead><tr><th scope="col">Jour</th><th scope="col">Houle au large</th>'
-            '<th scope="col">Période moyenne</th><th scope="col">Vent moyen</th></tr></thead>\n'
-            "        <tbody>\n" + "\n".join(lignes) + "\n        </tbody>\n      </table></div>\n"
-            f'      <p class="muted" style="font-size:0.85rem;margin-top:12px">Moyennes des heures de jour. Mis à jour le {e(prevision["mis_a_jour"][:10])} (UTC).</p>')
+    paris = ZoneInfo("Europe/Paris")
+    maj = datetime.strptime(prevision["mis_a_jour"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=timezone.utc).astimezone(paris)
+    resume = ('      <div class="table-wrap"><table class="data-table">\n'
+              '        <thead><tr><th scope="col">Jour</th><th scope="col">Houle au large</th>'
+              '<th scope="col">Période de la houle</th><th scope="col">Vent moyen</th></tr></thead>\n'
+              "        <tbody>\n" + "\n".join(lignes) + "\n        </tbody>\n      </table></div>\n")
+    return resume + heures_statiques(h, soleil, paris) + (
+        f'      <p class="muted" style="font-size:0.85rem;margin-top:12px">Moyennes des heures de jour. Mis à jour le {maj:%d/%m/%Y à %H h %M}, heure de Paris. '
+        "Houle au large : hauteur des vagues en eau libre devant la côte, pas la hauteur de la face au déferlement. "
+        "Le verdict par niveau s'affiche avec JavaScript.</p>")
+
+
+def heures_statiques(h, soleil, paris):
+    """Les 48 prochaines heures de jour, lisibles sans JavaScript."""
+    maintenant = datetime.now(paris).replace(tzinfo=None)
+    debut, fin = maintenant.strftime("%Y-%m-%dT%H:00"), (maintenant + timedelta(hours=48)).strftime("%Y-%m-%dT%H:00")
+    jours = {j: (lever[:14] + "00", coucher) for j, lever, coucher in zip(soleil["jours"], soleil["lever"], soleil["coucher"])}
+    def direction(x):
+        return nom_direction(x) if x is not None else "–"
+    lignes = []
+    for i, t in enumerate(h["temps"]):
+        bornes = jours.get(t[:10])
+        if not bornes or not (debut <= t < fin) or not (bornes[0] <= t <= bornes[1]) or h["houle"][i] is None or h["vent"][i] is None:
+            continue
+        lignes.append(f"          <tr><td>{date_fr(t[:10])}, {int(t[11:13])} h</td><td>{decimale(h['houle'][i])} m</td>"
+                      f"<td>{h['periode'][i]:.0f} s</td><td>{direction(h['direction'][i])}</td>"
+                      f"<td>{h['vent'][i]:.0f} km/h</td><td>{h['rafales'][i]:.0f} km/h</td><td>{direction(h['vent_dir'][i])}</td></tr>")
+    return ('      <h3 style="margin-top:20px">48 prochaines heures</h3>\n      <div class="table-wrap"><table class="data-table">\n'
+            '        <thead><tr><th scope="col">Heure</th><th scope="col">Houle au large</th><th scope="col">Période</th>'
+            '<th scope="col">Direction de la houle</th><th scope="col">Vent</th><th scope="col">Rafales</th><th scope="col">Direction du vent</th></tr></thead>\n'
+            "        <tbody>\n" + "\n".join(lignes) + "\n        </tbody>\n      </table></div>\n")
 
 
 def apercu_carte(spots):
@@ -488,7 +517,8 @@ def bloc_prevision(spot, prevision):
         <p>Houle, période, vent et marée heure par heure, avec un verdict selon ton niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
       </div>"""
     donnees = {
-        "spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg"), "saturation": spot.get("saturation_m")},
+        "spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg"), "saturation": spot.get("saturation_m"),
+                 "baines": spot["departement_slug"] in ("gironde", "landes")},
         "prevision": prevision,
     }
     # Le remplacement de la séquence fermante empêche de sortir de la balise script

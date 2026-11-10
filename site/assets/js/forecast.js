@@ -23,13 +23,16 @@
   const CLE_NIVEAU = "swellcome-niveau";
   const COULEURS_BARRES = { 2: "#77B9B1", 1: "#E6B96C", 0: "#5F7480" }; // Top, Correct, Jour off, sur fond sombre
   const DONNEES_ANCIENNES_H = 14;    // au-delà, on prévient que les données datent
+  const JOUR_CONFIANCE = 3;          // indice de confiance à partir de J+3
+  const JOUR_TENDANCE = 5;           // à partir de J+5, on donne une tendance, plus de verdict
+  const HEURES_COLLECTE_UTC = [0, 3, 6, 9, 12, 15, 18, 21];   // réveils cron-job.org, à 17 minutes
 
 
   /* 2 et 3. Données et verdict : le calcul est dans verdict.js, partagé avec la carte de l'accueil */
 
   const {
     NIVEAUX, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
-    typeVent, evaluer, estDeJour, analyserJour, phrase, motif, creneauTexte, accordModeles,
+    typeVent, evaluer, estDeJour, analyserJour, phrase, motif, creneauTexte, ecartsModeles, surfaceVent, commentaire, formeDe,
   } = V.creerAnalyse({ spot, prevision });
 
 
@@ -59,6 +62,20 @@
 
   const bornesNiveau = (n) =>
     Number.isFinite(n.max) ? `${nombre(n.min)} à ${nombre(n.max)} m` : `${nombre(n.min)} m et plus`;
+
+  const enTendance = (jour) => jours.indexOf(jour) >= JOUR_TENDANCE;
+  const badgeTendance = '<span class="badge badge--neutral">Tendance</span>';
+
+  // « 0,8 à 1,4 » : la houle s'affiche en fourchette quand plusieurs modèles répondent
+  const fourchette = (x) =>
+    x.houleMin != null && x.houleMax != null && x.nbModeles > 1 && nombre(x.houleMin) !== nombre(x.houleMax)
+      ? `${nombre(x.houleMin)} à ${nombre(x.houleMax)}` : nombre(x.houle);
+
+  const ventDetail = (x) => {
+    const type = typeVent(x.ventDir);
+    const mot = surfaceVent(x.vent, type);
+    return `${libelleVent(type)} ${deDirection(x.ventDir)}, rafales ${nombre(x.rafales, 0)}${mot ? `, ${mot}` : ""}`;
+  };
 
   const icone = (nom, classe = "icon") =>
     `<svg class="${classe}" aria-hidden="true"><use href="#${nom}"></use></svg>`;
@@ -95,9 +112,14 @@
             <span><strong>${n.nom}</strong><small>${bornesNiveau(n)} au bord</small></span>
           </label>`).join("")}
       </div>
+      <label class="fc-confort">
+        <span>Jusqu'où tu vas : <output class="fc-confort-valeur"></output></span>
+        <input type="range" class="fc-confort-curseur" step="0.1">
+      </label>
     </fieldset>
     <div class="fc-jours" role="group" aria-label="Choisir un jour"></div>
     <div class="fc-verdict" aria-live="polite"></div>
+    <p class="fc-maj"></p>
     <div class="fc-carte">
       <div class="fc-lecture"></div>
       <div class="fc-graph"></div>
@@ -129,6 +151,25 @@
   const zoneInfos = racine.querySelector(".fc-infos");
   const zoneMarees = racine.querySelector(".fc-zone-marees");
   const zoneIdeale = racine.querySelector(".fc-zone-ideale");
+  const zoneMaj = racine.querySelector(".fc-maj");
+  const curseurConfort = racine.querySelector(".fc-confort-curseur");
+  const valeurConfort = racine.querySelector(".fc-confort-valeur");
+
+  // Zone de confort : le niveau donne un point de départ, le surfeur règle sa limite
+  function afficherConfort() {
+    const niveau = NIVEAUX[niveauChoisi];
+    curseurConfort.min = (niveau.min + 0.2).toFixed(1);
+    curseurConfort.max = V.CONFORT_SANS_LIMITE;
+    const reglage = V.lireConfort(niveauChoisi);
+    const defaut = Number.isFinite(V.NIVEAUX[niveauChoisi].max) ? V.NIVEAUX[niveauChoisi].max : V.CONFORT_SANS_LIMITE;
+    curseurConfort.value = reglage ?? defaut;
+    majTexteConfort();
+  }
+
+  function majTexteConfort() {
+    const valeur = Number(curseurConfort.value);
+    valeurConfort.textContent = valeur >= V.CONFORT_SANS_LIMITE ? "sans limite" : `${nombre(valeur)} m au bord`;
+  }
 
   // Le message de sécurité remonte juste sous le verdict
   const securite = document.querySelector(".spot-securite");
@@ -146,7 +187,7 @@
       return `
         <button type="button" class="fc-jour" data-jour="${jour}" aria-pressed="${jour === jourChoisi}">
           <span class="fc-jour-nom">${jourCourt(jour)} <small>${dateDe(jour).getDate()}</small></span>
-          ${analyse ? badge(analyse.note) : '<span class="badge badge--neutral">Terminé</span>'}
+          ${enTendance(jour) ? badgeTendance : analyse ? badge(analyse.note) : '<span class="badge badge--neutral">Terminé</span>'}
           <span class="fc-jour-plage">${plage}</span>
         </button>`;
     }).join("");
@@ -175,6 +216,17 @@
     zone.hidden = false;
   }
 
+  // Écart entre modèles par grandeur : la pastille de couleur donne le niveau, le chiffre la valeur
+  function blocConfiance(heure) {
+    const e = ecartsModeles(heure);
+    const NOMS = ["modèles proches", "modèles assez proches", "modèles éloignés"];
+    const ligne = (nom, g, unite, decimales) => (g ? `
+      <li><i class="fc-pastille fc-pastille--${g.rang}" role="img" aria-label="${NOMS[g.rang]}"></i>${nom} ${nombre(g.min, decimales) === nombre(g.max, decimales) ? nombre(g.min, decimales) : `${nombre(g.min, decimales)} à ${nombre(g.max, decimales)}`} ${unite}</li>` : "");
+    return `<ul class="fc-confiance" aria-label="Écart entre modèles">
+      ${ligne("Houle", e.houle, "m", 1)}${ligne("Période", e.periode, "s", 0)}${ligne("Vent", e.vent, "km/h", 0)}
+    </ul>`;
+  }
+
   function afficherVerdict() {
     const niveau = NIVEAUX[niveauChoisi];
     const analyse = analyserJour(jourChoisi, niveau);
@@ -186,21 +238,32 @@
       return;
     }
 
+    if (enTendance(jourChoisi)) {
+      const r = analyse.repere;
+      zoneVerdict.className = "fc-verdict fc-verdict--neutral";
+      zoneVerdict.innerHTML = `
+        <div class="fc-verdict-haut">
+          <span class="fc-verdict-jour">${jourLong(jourChoisi)}</span>
+          <strong class="fc-verdict-mot">Tendance</strong>
+        </div>
+        <p class="fc-phrase">Houle au large de ${fourchette(r)} m, période de ${nombre(r.periode, 0)} s, vent ${libelleVent(typeVent(r.ventDir)).toLowerCase()} à ${nombre(r.vent, 0)} km/h. Le verdict arrive à J+4.</p>
+        ${blocConfiance(r)}`;
+      heureChoisie = r.heure;
+      return;
+    }
+
     const v = VERDICTS[analyse.note];
     const conseil = niveauChoisi === "debutant"
       ? `<p class="fc-conseil">Débutant : prends un cours avec une école de surf, et reste toujours hors de la zone de baignade.</p>` : "";
-    const comparaison = accordModeles(analyse.repere);
-    const accord = !comparaison ? "" : comparaison.accord
-      ? `<p class="fc-accord"><strong>Modèles d'accord</strong> : houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large.</p>`
-      : `<p class="fc-accord fc-accord--incertain"><strong>Prévision incertaine</strong> : selon les modèles, houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large. Repasse ici avant d'y aller.</p>`;
     zoneVerdict.className = `fc-verdict fc-verdict--${v.badge}`;
     zoneVerdict.innerHTML = `
       <div class="fc-verdict-haut">
         <span class="fc-verdict-jour">${jourLong(jourChoisi)} · ${niveau.nom}</span>
         <strong class="fc-verdict-mot">${icone(v.icone)}${v.nom}</strong>
       </div>
+      <p class="fc-commentaire">${commentaire(analyse.repere)}</p>
       <p class="fc-phrase">${phrase(analyse, jourChoisi, niveau)}</p>
-      ${accord}
+      ${jours.indexOf(jourChoisi) >= JOUR_CONFIANCE ? blocConfiance(analyse.repere) : ""}
       ${conseil}`;
 
     heureChoisie = analyse.repere.heure;
@@ -212,7 +275,6 @@
     if (!p) return;
     const ev = estDeJour(p) ? evaluer(p, NIVEAUX[niveauChoisi]) : null;
     const s = soleil[jourChoisi];
-    const type = typeVent(p.ventDir);
     const valeur = (chiffre, unite, libelle) => `
       <div class="fc-valeur">
         <strong>${chiffre}${unite ? `<small> ${unite}</small>` : ""}</strong>
@@ -221,16 +283,19 @@
     zoneLecture.innerHTML = `
       <div class="fc-heure">
         <strong>${heureTexte(p.heure)}</strong>
-        ${ev ? badge(ev.note) : '<span class="badge badge--neutral">Nuit</span>'}
+        ${enTendance(p.jour) ? badgeTendance : ev ? badge(ev.note) : '<span class="badge badge--neutral">Nuit</span>'}
       </div>
       <div class="fc-valeurs">
         ${valeur(nombre(p.hauteur), "m", "au bord")}
-        ${valeur(nombre(p.houle), "m", `houle ${deDirection(p.direction)}, ${nombre(p.periode, 0)} s`)}
-        ${valeur(nombre(p.vent, 0), "km/h", `${libelleVent(type).toLowerCase()}, rafales ${nombre(p.rafales, 0)}`)}
+        ${valeur(fourchette(p), "m", `houle au large ${deDirection(p.direction)}, ${nombre(p.periode, 0)} s`)}
+        ${valeur(nombre(p.vent, 0), "km/h", ventDetail(p))}
         ${valeur(nombre(p.eau, 0), "°C", `eau · soleil ${s.lever.slice(11)}–${s.coucher.slice(11)}`)}
         ${p.mareeEtat ? valeur(libelleMaree(p.mareeEtat), "", p.mareeSens) : ""}
+        ${formeDe(p) ? valeur(formeDe(p)[0].toUpperCase() + formeDe(p).slice(1), "", V.motPuissance(p.houle, p.periode) || "") : ""}
       </div>`;
   }
+
+  const plusTroisHeures = (t) => new Date(Date.parse(t + ":00Z") + 3 * 3600000).toISOString().slice(0, 16);
 
   // Pleines et basses mers du jour choisi
   function afficherMarees() {
@@ -238,6 +303,7 @@
     zoneMarees.innerHTML = duJour.length ? `
       <ul class="fc-marees" aria-label="Marées du jour">
         ${duJour.map((m) => `<li><strong>${m.type === "pleine" ? "Pleine mer" : "Basse mer"}</strong> vers ${heureMinute(m.t)}</li>`).join("")}
+        ${spot.baines ? duJour.filter((m) => m.type === "basse").map((m) => `<li><strong>Baïnes</strong> : danger renforcé de ${heureMinute(m.t)} à ${heureMinute(plusTroisHeures(m.t))}, marée montante</li>`).join("") : ""}
         <li class="fc-marees-note">Horaires indicatifs</li>
       </ul>` : "";
   }
@@ -261,18 +327,17 @@
       .filter((x) => x.jour === jourChoisi && estDeJour(x))
       .map((x) => {
         const ev = evaluer(x, niveau);
-        const type = typeVent(x.ventDir);
         const seconde = x.houle2 != null && x.houle2 >= 0.2 ? `, 2e houle ${nombre(x.houle2)} m` : "";
         const maree = x.mareeEtat
           ? colonne("fc-c-maree", `${x.mareeSens === "montante" ? "↗" : "↘"} ${libelleMaree(x.mareeEtat)}`, x.mareeSens)
           : colonne("fc-c-maree", "–", "marée");
         return `
-          <li class="fc-ligne fc-ligne--${ev ? VERDICTS[ev.note].badge : "neutral"}">
+          <li class="fc-ligne fc-ligne--${ev && !enTendance(x.jour) ? VERDICTS[ev.note].badge : "neutral"}">
             <strong class="fc-ligne-heure">${heureTexte(x.heure)}</strong>
-            <div class="fc-ligne-verdict">${ev ? badge(ev.note) : "–"}</div>
+            <div class="fc-ligne-verdict">${enTendance(x.jour) ? badgeTendance : ev ? badge(ev.note) : "–"}</div>
             ${colonne("fc-c-taille", `${nombre(x.hauteur)} m`, "au bord")}
-            ${colonne("fc-c-houle", `${nombre(x.houle)} m, ${nombre(x.periode, 0)} s`, `houle ${deDirection(x.direction)}${seconde}`)}
-            ${colonne("fc-c-vent", `${flecheVent(x.ventDir)}${nombre(x.vent, 0)} km/h`, `${libelleVent(type)}, rafales ${nombre(x.rafales, 0)}`)}
+            ${colonne("fc-c-houle", `${fourchette(x)} m, ${nombre(x.periode, 0)} s`, `houle au large ${deDirection(x.direction)}${seconde}`)}
+            ${colonne("fc-c-vent", `${flecheVent(x.ventDir)}${nombre(x.vent, 0)} km/h`, ventDetail(x))}
             ${maree}
           </li>`;
       }).join("");
@@ -292,12 +357,29 @@
           <div><p><strong>Ces prévisions datent du ${texteMaj}.</strong> La mise à jour automatique a pris du retard : elles peuvent ne plus être fiables.</p></div>
         </div>`;
     }
+    // Prochain réveil de la collecte, affiché à l'heure de Paris
+    const prochaine = HEURES_COLLECTE_UTC.map((h) => {
+      const d = new Date();
+      d.setUTCHours(h, 17, 0, 0);
+      return d;
+    }).concat((() => {
+      const d = new Date();
+      d.setUTCDate(d.getUTCDate() + 1);
+      d.setUTCHours(HEURES_COLLECTE_UTC[0], 17, 0, 0);
+      return d;
+    })()).find((d) => d > new Date());
+    const texteProchaine = new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "numeric", minute: "2-digit" })
+      .format(prochaine).replace(":", " h ");
+    zoneMaj.textContent = `Mis à jour le ${texteMaj}, heure de Paris. Prochaine mise à jour vers ${texteProchaine}.`;
+
     zoneInfos.innerHTML = `
-      <p>Mis à jour le ${texteMaj}, heure de Paris.</p>
-      <p>La houle retenue est la médiane de quatre modèles : Météo-France, EWAM et GWAM du service météo allemand, GFS de la NOAA. La taille au bord est estimée par Swellcome à partir de cette houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période de pic et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne.</p>
-      <p>Offshore : vent de terre, il lisse les vagues. Onshore : vent de mer, il les hache. Side : vent de travers.</p>
-      <p>La marée vient du niveau de la mer prévu par Open-Meteo. Elle est indicative, ne convient pas à la navigation et ne remplace pas l'annuaire officiel du Shom. Le verdict n'en tient pas encore compte : son effet dépend de chaque spot.</p>
-      <p>Les critères sont en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
+      <p><strong>Houle au large, en mètres :</strong> hauteur des vagues en eau libre devant la côte. Ce n'est pas la hauteur de la face au déferlement, qui dépend du banc de sable de chaque plage. Certaines vagues d'une série seront nettement plus hautes.</p>
+      <p>La fourchette montre la plus basse et la plus haute valeur de quatre modèles : Météo-France, EWAM et GWAM du service météo allemand, GFS de la NOAA. La valeur retenue pour le calcul est leur médiane.</p>
+      <p><strong>Taille au bord :</strong> estimation de Swellcome à partir de la houle (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période de pic et de son orientation par rapport à la plage.</p>
+      <p><strong>Vent :</strong> offshore vient de la terre et lisse les vagues. Onshore vient de la mer et les hache. Side-offshore et side-onshore sont des vents de travers, plutôt de terre ou plutôt de mer.</p>
+      <p><strong>Verdict :</strong> la plus mauvaise note entre le vent, la période et la taille. Une bonne taille ne rattrape jamais un mauvais vent. À partir de J+5, on donne une tendance.</p>
+      <p><strong>Marée :</strong> issue du niveau de la mer prévu par Open-Meteo. Elle est indicative, ne convient pas à la navigation et ne remplace pas l'annuaire officiel du Shom. Elle n'entre pas encore dans le verdict.</p>
+      <p><a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
   }
 
 
@@ -331,7 +413,7 @@
     const marges = { gauche: 34, droite: 8, haut: horizon + 26 };
     const hauteurTrace = etroit ? 130 : 170;
     const bas = marges.haut + hauteurTrace;
-    const totale = bas + 150;
+    const totale = bas + 166;
 
     // L'échelle verticale est la même toute la semaine, pour comparer les jours d'un coup d'œil
     const repereZone = Number.isFinite(niveau.max) ? niveau.max : niveau.min + 1;
@@ -392,7 +474,7 @@
       const gauche = centre(p.heure) - largeurBarre / 2;
       const haut = Math.min(y(p.hauteur), bas - 3);
       const rayon = Math.min(5, largeurBarre / 2, bas - haut);
-      const couleur = COULEURS_BARRES[p.eval ? p.eval.note : 0];
+      const couleur = COULEURS_BARRES[p.eval && !enTendance(p.jour) ? p.eval.note : 0];
       const valeur = colonne >= 24 || lisible(p)
         ? `<text class="g-barre-valeur" x="${centre(p.heure)}" y="${haut - 6}" text-anchor="middle">${nombre(p.hauteur)}</text>` : "";
       svg += `<g class="g-colonne" data-heure="${p.heure}">
@@ -416,12 +498,13 @@
     svg += `<text class="g-rangee" x="0" y="${bas + 88}">Vent (km/h)</text>`;
     colonnes.forEach((p) => {
       const type = typeVent(p.ventDir);
-      const court = { terre: "Terre", mer: "Mer", travers: etroit ? "Trav." : "Travers" }[type] || "";
+      const court = { offshore: "Off", "side-offshore": "Side-off", "side-onshore": "Side-on", onshore: "On" }[type] || "";
       if (p.ventDir != null) {
         svg += `<g transform="translate(${centre(p.heure)},${bas + 104}) rotate(${(p.ventDir + 180) % 360})"><path class="g-fleche" d="M0,8 L0,-7 M-4,-2.5 L0,-7 L4,-2.5"/></g>`;
       }
       svg += `<text class="g-valeur" x="${centre(p.heure)}" y="${bas + 130}" text-anchor="middle">${nombre(p.vent, 0)}</text>`;
       svg += `<text x="${centre(p.heure)}" y="${bas + 145}" text-anchor="middle">${court}</text>`;
+      svg += `<text x="${centre(p.heure)}" y="${bas + 160}" text-anchor="middle">raf. ${nombre(p.rafales, 0)}</text>`;
     });
 
     zoneGraph.innerHTML = `
@@ -494,6 +577,7 @@
   }
 
   function toutAfficher() {
+    afficherConfort();
     afficherUne();
     afficherJours();
     afficherVerdict();
@@ -507,6 +591,21 @@
     niveauChoisi = evenement.target.value;
     garderNiveau(niveauChoisi);
     toutAfficher();
+  });
+
+  curseurConfort.addEventListener("input", () => {
+    const valeur = Number(curseurConfort.value);
+    V.garderConfort(niveauChoisi, valeur);
+    NIVEAUX[niveauChoisi] = V.niveauAvecConfort(niveauChoisi, spot.saturation, valeur);
+    const texte = racine.querySelector(`.fc-pilule input[value="${niveauChoisi}"] + span small`);
+    if (texte) texte.textContent = `${bornesNiveau(NIVEAUX[niveauChoisi])} au bord`;
+    majTexteConfort();
+    afficherJours();
+    afficherVerdict();
+    afficherTableau();
+    dessinerGraphique();
+    afficherLecture();
+    afficherUne();
   });
 
   curseurHeure.addEventListener("input", () => choisirHeure(Number(curseurHeure.value)));

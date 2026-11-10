@@ -25,16 +25,20 @@ nav: accompagnement
       <p class="muted">Pour mettre ces notions en pratique, parcours <a href="{{base}}/gironde/">les spots de Gironde</a>.</p>
 
       <h2>La hauteur de houle</h2>
-      <p>C'est la hauteur moyenne des vagues au large, exprimée en mètres. Elle ne correspond pas exactement à la taille des vagues sur la plage : selon l'orientation du spot, le fond et la période, une houle de 1 m peut donner des vagues plus petites ou plus grosses au bord.</p>
+      <p><strong>Houle au large, en mètres :</strong> hauteur des vagues en eau libre devant la côte. Ce n'est pas la hauteur de la face au déferlement, qui dépend du banc de sable de chaque plage. Certaines vagues d'une série seront nettement plus hautes.</p>
+      <p>Swellcome compare quatre modèles et affiche leur fourchette. La valeur retenue pour le calcul est leur médiane.</p>
       <p>Le forecast distingue souvent deux houles : la <strong>houle primaire</strong>, la plus énergique, et la <strong>houle secondaire</strong>, qui arrive d'une autre direction ou avec une autre période. S'y ajoute la <strong>mer du vent</strong>, levée par le vent local : courte et désordonnée, elle abîme les vagues.</p>
 
       <h2>La période</h2>
       <p>La période est le temps, en secondes, entre deux vagues successives. C'est la donnée la plus sous-estimée : plus elle est longue, plus la houle vient de loin et transporte d'énergie.</p>
       <ul>
-        <li><strong>Moins de 8 s</strong> : houle courte, souvent molle et désordonnée.</li>
-        <li><strong>8 à 11 s</strong> : vagues correctes, bien rangées par vent faible.</li>
-        <li><strong>12 s et plus</strong> : houle longue et puissante, les vagues sont plus grosses que ne le laisse penser la hauteur affichée.</li>
+        <li><strong>Moins de 7 s</strong> : mer du vent, pas de vraie houle.</li>
+        <li><strong>7 à 9 s</strong> : houle courte et molle.</li>
+        <li><strong>9 à 11 s</strong> : houle correcte.</li>
+        <li><strong>11 à 14 s</strong> : houle organisée.</li>
+        <li><strong>Plus de 14 s</strong> : houle longue et puissante, elle peut saturer les beach breaks.</li>
       </ul>
+      <p>La période affichée est la période de pic : celle de la houle la plus énergique.</p>
 
       <h2>La direction de la houle</h2>
       <p>Elle indique d'où vient la houle (par exemple NO, nord-ouest). Un spot fonctionne avec certaines directions et pas avec d'autres : une plage protégée par une pointe ou une jetée ne reçoit qu'une partie de la houle.</p>
@@ -46,10 +50,12 @@ nav: accompagnement
       <h2>Le vent</h2>
       <p>Le vent décide souvent de la qualité de la session. On le décrit par rapport à la plage :</p>
       <ul>
-        <li><strong>Offshore</strong> : il souffle de la terre vers la mer. Il creuse et lisse les vagues, ce sont les meilleures conditions. Sur une plage orientée ouest comme <a href="{{base}}/gironde/lacanau-centrale/">Lacanau</a>, c'est un vent d'est.</li>
-        <li><strong>Side-shore</strong> : il souffle parallèlement à la plage. Acceptable s'il reste faible.</li>
-        <li><strong>Onshore</strong> : il souffle de la mer vers la terre. Il écrase les vagues et rend la mer brouillonne.</li>
+        <li><strong>Offshore</strong> : il souffle de la terre vers la mer. Il lisse les vagues. Sur une plage orientée ouest comme <a href="{{base}}/gironde/lacanau-centrale/">Lacanau</a>, c'est un vent d'est.</li>
+        <li><strong>Side-offshore</strong> : vent de travers, plutôt de terre.</li>
+        <li><strong>Side-onshore</strong> : vent de travers, plutôt de mer. Il ride vite la surface.</li>
+        <li><strong>Onshore</strong> : il souffle de la mer vers la terre. Il hache les vagues.</li>
       </ul>
+      <p>La force compte autant que la direction. Sous 8 km/h, l'eau reste lisse. Au-delà de 30 km/h de vent de mer, c'est la machine à laver. Swellcome affiche le vent en km/h, avec ses rafales et un mot sur l'état de l'eau.</p>
       <p>Sur la côte atlantique, le vent est souvent plus faible et plus favorable tôt le matin, avant que la brise de mer ne se lève l'après-midi.</p>
 
       <h2>La marée</h2>
@@ -61,12 +67,12 @@ nav: accompagnement
       </div>
 
       <h2>Quel forecast pour quel niveau ?</h2>
-      <p>Le même forecast n'a pas le même sens selon ton niveau. Voici les repères de départ utilisés par Swellcome pour donner son verdict.</p>
+      <p>Le verdict prend la plus mauvaise note entre le vent, la période, la taille et la forme de la vague : une bonne taille ne rattrape jamais un mauvais vent. Si la houle arrive de face avec de la taille, on écrit que ça ferme. Voici les repères de départ par niveau. Sur chaque fiche, tu règles toi-même jusqu'où tu vas. À partir de J+5, le site donne une tendance.</p>
       <div class="table-wrap">
         <table class="data-table">
           <thead><tr><th scope="col">Niveau</th><th scope="col">Taille au bord</th><th scope="col">Période</th><th scope="col">Vent</th></tr></thead>
           <tbody>
-            <tr><td>Débutant</td><td>0,5 à 1 m</td><td>Peu importante</td><td>Moins de 15 km/h</td></tr>
+            <tr><td>Débutant</td><td>0,5 à 1 m</td><td>7 s et plus</td><td>Moins de 15 km/h</td></tr>
             <tr><td>Intermédiaire</td><td>0,8 à 1,8 m</td><td>8 s et plus</td><td>Offshore ou faible</td></tr>
             <tr><td>Confirmé</td><td>1,2 à 2,5 m</td><td>10 s et plus</td><td>Offshore ou faible</td></tr>
             <tr><td>Expert</td><td>2 à 2,5 m en Gironde (les spots saturent vers 3 m)</td><td>12 s et plus</td><td>Offshore</td></tr>
@@ -75,7 +81,8 @@ nav: accompagnement
       </div>
 
       <h2>Avant d'aller à l'eau</h2>
-      <p>Un forecast reste une estimation. Prends toujours quelques minutes pour observer le spot : la taille réelle des séries, les courants, <a href="{{base}}/blog/baines-comprendre-et-reagir/">les baïnes</a> et le monde à l'eau. En cas de doute, demande conseil aux sauveteurs ou à une école de surf. Ne surfe jamais dans une zone de baignade surveillée : tu mettrais les baigneurs en danger.</p>
+      <p>Un forecast reste une estimation. Prends toujours quelques minutes pour observer le spot : la taille réelle des séries, les courants, <a href="{{base}}/blog/baines-comprendre-et-reagir/">les baïnes</a> et le monde à l'eau. En cas de doute, demande conseil aux sauveteurs ou à une école de surf. Ne surfe jamais dans une zone de baignade surveillée : tu mettrais les baigneurs en danger. Le damier noir et blanc signale les zones de surf.</p>
+      <p>Consigne de la SNSM : « En cas de dérive, ne luttez pas, laissez-vous d'abord porter, puis nagez de préférence parallèlement au rivage. » Urgences : 196 en mer, 112 sur la plage.</p>
 
     </article>
   </div>

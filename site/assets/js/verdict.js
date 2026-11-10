@@ -21,9 +21,7 @@ window.SwellcomeVerdict = (function () {
 
   const VENT_FAIBLE = 15; // km/h
   const TAILLE_MINI = 0.5; // m au bord : en dessous, il n'y a presque rien à surfer
-  const ACCORD_MODELES_M = 0.3;      // m : écart entre modèles sous lequel ils sont jugés d'accord
-  const ACCORD_MODELES_PART = 0.25;  // ou écart relatif à la houle retenue
-  const ECART_SATURATION = 0.5; // m : le haut de la zone idéale reste sous la saturation
+    const ECART_SATURATION = 0.5; // m : le haut de la zone idéale reste sous la saturation
 
   // Part de la houle du large qui arrive au bord selon sa période (période en s, coefficient).
   // Une houle courte manque de force : c'est la correction la plus importante du calcul.
@@ -31,16 +29,72 @@ window.SwellcomeVerdict = (function () {
   const EFFET_PERIODE = [[4, 0.25], [5, 0.35], [6, 0.45], [7, 0.58], [8, 0.7], [10, 0.9], [12, 1.05], [14, 1.2], [16, 1.3], [18, 1.35]];
   const EFFET_DIRECTION_INCONNUE = 0.6;
 
-  const LIBELLE_VENT = { terre: "Vent de terre", mer: "Vent de mer", travers: "Vent de travers" };
+  const LIBELLE_VENT = { offshore: "Offshore", "side-offshore": "Side-offshore", "side-onshore": "Side-onshore", onshore: "Onshore" };
+
+  // État de l'eau selon la classe de vent et sa force : < 8, 8-18, 18-30, > 30 km/h. Conventions à recaler sur le terrain.
+  const SURFACE = {
+    offshore: ["glassy", "lissé, idéal", "soutenu, take-off dur", "tient les vagues debout"],
+    "side-offshore": ["propre", "correct", "clapot léger", "désordonné"],
+    "side-onshore": ["lisse", "ridé", "désordonné", "machine à laver"],
+    onshore: ["mou mais lisse", "ridé et mou", "désordonné", "machine à laver"],
+  };
+  const NOTES_SURFACE = { offshore: [2, 2, 1, 0], "side-offshore": [2, 1, 1, 0], "side-onshore": [2, 1, 0, 0], onshore: [1, 1, 0, 0] };
+  const RAFALES_RATIO = 1.5;
+  const RAFALES_MIN = 45; // km/h : les modèles dépassent le ratio 87 % du temps, ce plancher garde les vrais coups de vent
+  const CLE_CONFORT = "swellcome-confort-";
+  const CONFORT_SANS_LIMITE = 4;   // m : tout en haut du réglage, plus de limite
+
+  // Taille maximale choisie par le surfeur pour un niveau, ou null
+  function lireConfort(cle) {
+    try {
+      const valeur = Number(localStorage.getItem(CLE_CONFORT + cle));
+      return valeur > 0 ? valeur : null;
+    } catch (erreur) {
+      return null;
+    }
+  }
+
+  function garderConfort(cle, valeur) {
+    try {
+      localStorage.setItem(CLE_CONFORT + cle, String(valeur));
+    } catch (erreur) { /* sans conséquence : le réglage ne sera juste pas mémorisé */ }
+  }
+
+  // Le niveau de départ, avec la taille maximale réglée par le surfeur
+  function niveauAvecConfort(cle, saturation, valeur = lireConfort(cle)) {
+    const niveau = NIVEAUX[cle];
+    const max = valeur == null ? niveau.max : valeur >= CONFORT_SANS_LIMITE ? Infinity : valeur;
+    return pourSpot({ ...niveau, max }, saturation);
+  }
+
+  // Puissance de la houle, en kW par mètre de crête : environ 0,49 x H² x T
+  function motPuissance(houle, periode) {
+    if (houle == null || periode == null) return null;
+    const puissance = 0.49 * houle * houle * periode;
+    return puissance < 3 ? "mou" : puissance < 15 ? "ça pousse" : "puissant";
+  }
+
+  // Forme de la vague selon l'angle de la houle, la taille, la période, la marée et la saturation.
+  // Réglages de départ, à caler avec les retours de session.
+  function formeVague({ hauteur, houle, periode, direction, orientation, mareeEtat, saturation }) {
+    if (direction == null || orientation == null || hauteur == null) return null;
+    if (saturation && Math.max(hauteur, houle || 0) >= saturation - ECART_SATURATION) return "ça ferme";
+    const angle = Math.abs(((direction - orientation + 540) % 360) - 180);
+    const seuilFace = mareeEtat && mareeEtat !== "mi-marée" ? 25 : 15;
+    if (angle < seuilFace && hauteur >= 1.2 && periode >= 10) return "ça ferme";
+    return angle < 35 ? "sections" : "ça déroule";
+  }
+
+  const bandeVent = (v) => (v < 8 ? 0 : v < 18 ? 1 : v <= 30 ? 2 : 3);
+  const surfaceVent = (v, type) => (SURFACE[type] ? SURFACE[type][bandeVent(v)] : null);
 
   // Orientation : direction vers laquelle la plage regarde. Direction : d'où vient le vent.
   function typeVent(direction, orientation) {
     if (orientation == null || direction == null) return null;
-    const venantDeLaTerre = (orientation + 180) % 360;
-    const ecart = Math.abs(((direction - venantDeLaTerre + 540) % 360) - 180);
-    if (ecart <= 45) return "terre";
-    if (ecart >= 135) return "mer";
-    return "travers";
+    const delta = Math.abs(((direction - orientation + 540) % 360) - 180);
+    if (delta <= 45) return "onshore";
+    if (delta <= 90) return "side-onshore";
+    return delta <= 135 ? "side-offshore" : "offshore";
   }
 
   function effetPeriode(periode) {
@@ -132,38 +186,35 @@ window.SwellcomeVerdict = (function () {
     return 0;
   }
 
+  // Porte de la période : < 7 s mer du vent, 7-9 s molle, puis l'exigence propre au niveau
   function notePeriode(x, niveau) {
-    if (niveau.periode == null) return 2;
     if (x == null) return 1;
-    if (x >= niveau.periode) return 2;
-    return x >= niveau.periode - 2 ? 1 : 0;
+    const porte = x < 7 ? 0 : x < 9 ? 1 : 2;
+    if (niveau.periode == null) return porte;
+    return Math.min(porte, x >= niveau.periode ? 2 : x >= niveau.periode - 2 ? 1 : 0);
   }
 
-  function noteVent(vitesse, type, niveau) {
-    if (niveau.vent === "faible") {
-      if (vitesse < VENT_FAIBLE) return 2;
-      return vitesse < 20 ? 1 : 0;
-    }
-    if (niveau.vent === "terre") {
-      if (type === "terre") return vitesse < 40 ? 2 : 1;
-      return vitesse < 12 ? 1 : 0;
-    }
-    // Vent de terre ou vent faible
-    if (vitesse < VENT_FAIBLE) return 2;
-    if (type === "terre") return vitesse < 35 ? 2 : 1;
-    if (type === "travers") return vitesse < 22 ? 1 : 0;
-    return vitesse < 18 ? 1 : 0;
+  // Porte du vent : classe et force, un cran de moins par fortes rafales, puis les limites du niveau
+  function noteVent(vitesse, type, niveau, rafales) {
+    if (!NOTES_SURFACE[type]) return vitesse < 15 ? 1 : 0;
+    let note = NOTES_SURFACE[type][bandeVent(vitesse)];
+    if (rafales != null && rafales > RAFALES_RATIO * vitesse && rafales >= RAFALES_MIN) note = Math.max(note - 1, 0);
+    if (niveau.vent === "faible") note = Math.min(note, vitesse < 15 ? 2 : vitesse < 20 ? 1 : 0);
+    if (niveau.vent === "terre" && !type.endsWith("offshore")) note = Math.min(note, vitesse < 12 ? 1 : 0);
+    return note;
   }
 
   // hauteur : taille estimée au bord. houle : hauteur annoncée au large.
-  function evaluer({ hauteur, houle, periode, vent, type }, niveau) {
+  function evaluer({ hauteur, houle, periode, vent, type, rafales, forme }, niveau) {
     const sature = Boolean(niveau.saturation) && Math.max(hauteur, houle || 0) >= niveau.saturation;
     const notes = {
       hauteur: noteHauteur(hauteur, niveau, sature),
-      vent: noteVent(vent, type, niveau),
+      vent: noteVent(vent, type, niveau, rafales),
       periode: notePeriode(periode, niveau),
     };
-    return { notes, sature, note: Math.min(notes.hauteur, notes.vent, notes.periode) };
+    // Une vague qui ferme n'est jamais « Top », quels que soient le vent et la taille
+    const noteForme = forme === "ça ferme" ? 1 : 2;
+    return { notes, sature, forme, note: Math.min(notes.hauteur, notes.vent, notes.periode, noteForme) };
   }
 
   const NOMS_JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
@@ -188,7 +239,7 @@ window.SwellcomeVerdict = (function () {
   // spot : { orientation, saturation }. prevision : contenu d'un fichier de data/forecast/.
   function creerAnalyse({ spot, prevision }) {
     const niveaux = Object.fromEntries(
-      Object.entries(NIVEAUX).map(([cle, niveau]) => [cle, pourSpot(niveau, spot.saturation)])
+      Object.keys(NIVEAUX).map((cle) => [cle, niveauAvecConfort(cle, spot.saturation)])
     );
 
     const h = prevision.heures;
@@ -218,6 +269,10 @@ window.SwellcomeVerdict = (function () {
       houleMin: (h.houle_min || [])[i] ?? null,
       houleMax: (h.houle_max || [])[i] ?? null,
       nbModeles: (h.nb_modeles || [])[i] ?? 0,
+      periodeMin: (h.periode_min || [])[i] ?? null,
+      periodeMax: (h.periode_max || [])[i] ?? null,
+      ventMin: (h.vent_min || [])[i] ?? null,
+      ventMax: (h.vent_max || [])[i] ?? null,
     }));
 
     // Les prévisions sont à l'heure de Paris, quel que soit le fuseau du visiteur
@@ -235,15 +290,31 @@ window.SwellcomeVerdict = (function () {
 
     const typeVentSpot = (direction) => typeVent(direction, spot.orientation);
 
-    // Les modèles disent-ils la même chose à cette heure ? null si un seul modèle répond.
-    function accordModeles(heure) {
-      if (heure.nbModeles < 2) return null;
-      const ecart = heure.houleMax - heure.houleMin;
+    // Écart entre modèles par grandeur. Rang de confiance : 0 proche, 1 moyen, 2 large.
+    function ecartsModeles(heure) {
+      const rang = (ecart, seuils) => (ecart <= seuils[0] ? 0 : ecart <= seuils[1] ? 1 : 2);
+      const grandeur = (min, max, seuils) => (min == null || max == null ? null : { min, max, rang: rang(max - min, seuils) });
       return {
-        accord: ecart <= ACCORD_MODELES_M || ecart / heure.houle <= ACCORD_MODELES_PART,
-        min: heure.houleMin,
-        max: heure.houleMax,
+        houle: grandeur(heure.houleMin, heure.houleMax, [0.3, 0.6]),
+        periode: grandeur(heure.periodeMin, heure.periodeMax, [1.5, 3]),
+        vent: grandeur(heure.ventMin, heure.ventMax, [5, 10]),
       };
+    }
+
+    function formeDe(heure) {
+      return formeVague({
+        hauteur: heure.hauteur, houle: heure.houle, periode: heure.periode, direction: heure.direction,
+        orientation: spot.orientation, mareeEtat: heure.mareeEtat, saturation: spot.saturation,
+      });
+    }
+
+    // « Propre, puissant, ça ferme » : le commentaire affirmé sous le verdict
+    function commentaire(heure) {
+      const surface = surfaceVent(heure.vent, typeVentSpot(heure.ventDir));
+      // Sans vagues au bord, parler de puissance ou de forme n'aurait pas de sens
+      const mots = (heure.hauteur < TAILLE_MINI ? [surface, "flat"] : [surface, motPuissance(heure.houle, heure.periode), formeDe(heure)]).filter(Boolean);
+      const texte = mots.join(", ");
+      return texte ? texte[0].toUpperCase() + texte.slice(1) : "";
     }
 
     function evaluerHeure(heure, niveau) {
@@ -253,7 +324,9 @@ window.SwellcomeVerdict = (function () {
         houle: heure.houle,
         periode: heure.periode,
         vent: heure.vent,
+        rafales: heure.rafales,
         type: typeVentSpot(heure.ventDir),
+        forme: formeDe(heure),
       }, niveau);
     }
 
@@ -327,10 +400,12 @@ window.SwellcomeVerdict = (function () {
     }
 
     // Le vent en langue de plage : offshore, onshore ou side
-    function ventTexte(heure) {
-      if (heure.vent < 8) return "presque pas de vent";
-      const mot = { terre: "offshore", mer: "onshore", travers: "vent side" }[typeVentSpot(heure.ventDir)] || "vent";
-      return `${mot} à ${nombre(heure.vent, 0)} km/h`;
+    function ventTexte(heure, avecRafales = false) {
+      const type = typeVentSpot(heure.ventDir);
+      const nom = (LIBELLE_VENT[type] || "vent").toLowerCase();
+      const rafales = avecRafales && heure.rafales != null ? `, rafales ${nombre(heure.rafales, 0)}` : "";
+      const mot = surfaceVent(heure.vent, type);
+      return `${nom} à ${nombre(heure.vent, 0)} km/h${rafales}${mot && !avecRafales ? ` (${mot})` : ""}`;
     }
 
     const estWeekEnd = (jour) => [0, 6].includes(new Date(jour + "T12:00:00").getDay());
@@ -399,7 +474,7 @@ window.SwellcomeVerdict = (function () {
       const taille = `${nombre(r.hauteur)} m au bord`;
       if (analyse.note === 2) {
         // « propre » seulement si le vent ne hache pas les vagues
-        const debut = r.vent < 8 || typeVentSpot(r.ventDir) === "terre" ? "Ça rentre propre" : "Ça rentre";
+        const debut = r.eval.notes.vent === 2 ? "Ça rentre propre" : "Ça rentre";
         return `${debut} : ${taille} à ${nombre(r.periode, 0)} s, ${ventTexte(r)}, ${creneauTexte(analyse, jour)}. ${chute(analyse, jour, niveau, "top")}`;
       }
       if (analyse.note === 1) {
@@ -413,18 +488,22 @@ window.SwellcomeVerdict = (function () {
 
       // Ton neutre dès que la mer dépasse le niveau : pas de vanne ici
       if (raison === "Saturé") return `Mer trop grosse : les bancs saturent, houle de ${nombre(r.houle)} m au large.${fenetre}`;
-      if (raison === "Trop gros") return `${taille} : au-dessus de ton niveau aujourd'hui.${fenetre}`;
+      if (raison === "Trop gros") return `${taille} : au-dessus de ta zone aujourd'hui.${fenetre}`;
 
       if (raison === "Flat") return `Flat comme une crêpe : ${taille}.${retour} ${chute(analyse, jour, niveau, "plat")}`;
       if (raison === "Trop petit") return `Un peu juste pour ton niveau : ${taille}.${retour} ${chute(analyse, jour, niveau, "plat")}`;
       if (raison === "Houle courte") return `Houle trop courte : ${nombre(r.periode, 0)} s, ça manque de jus.${retour} ${chute(analyse, jour, niveau, "plat")}`;
-      if (typeVentSpot(r.ventDir) === "mer") return `Machine à laver : ${taille} mais onshore à ${nombre(r.vent, 0)} km/h.${fenetre} ${chute(analyse, jour, niveau, "onshore")}`;
-      return `Trop de vent : ${ventTexte(r)} pour ${taille}.${fenetre} ${chute(analyse, jour, niveau, "vent")}`;
+      // La porte du vent a fermé : on dit laquelle, avec les chiffres
+      const type = typeVentSpot(r.ventDir);
+      const mot = surfaceVent(r.vent, type);
+      const categorie = (type || "").endsWith("onshore") ? "onshore" : "vent";
+      if (mot === "machine à laver") return `Machine à laver : ${taille} mais ${ventTexte(r, true)}.${fenetre} ${chute(analyse, jour, niveau, categorie)}`;
+      return `${ventTexte(r, true)} : ${mot || "trop de vent"}.${fenetre} ${chute(analyse, jour, niveau, categorie)}`.replace(/^./, (c) => c.toUpperCase());
     }
 
     return {
       NIVEAUX: niveaux, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
-      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif, creneauTexte, accordModeles,
+      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, surfaceVent, commentaire, formeDe, motif, creneauTexte, ecartsModeles,
     };
   }
 
@@ -432,5 +511,6 @@ window.SwellcomeVerdict = (function () {
     NIVEAUX, VERDICTS, LIBELLE_VENT, TAILLE_MINI,
     typeVent, tailleAuBord, pourSpot, evaluer, creerAnalyse,
     nombre, cardinal, deDirection, libelleVent, heureTexte,
+    motPuissance, niveauAvecConfort, lireConfort, garderConfort, CONFORT_SANS_LIMITE,
   };
 })();

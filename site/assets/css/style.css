@@ -1619,9 +1619,6 @@ html:not(.js) .onglets { display: none; }
 }
 
 /* Fiche spot : accord des modèles de houle */
-.fc-accord { margin: 8px 0 0; font-size: var(--t-s); color: #C9D6DD; max-width: 680px; }
-.fc-accord strong { font-weight: 600; color: var(--ocean-teal); }
-.fc-accord--incertain strong { color: var(--warm-sun); }
 
 /* Bandeaux de page : titre et accroche sur une seule ligne */
 .page-head { padding: 22px 0; }
@@ -1668,3 +1665,19 @@ html:not(.js) .recherche { display: none; }
 .recherche-carte { flex: 1 1 100%; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: #C9D6DD; font-size: var(--t-s); }
 .recherche-carte .icon { width: 16px; height: 16px; }
 .spot-carte-verdict:empty { display: none; }
+
+/* Fiche spot : confiance par grandeur, à partir de J+3 */
+.fc-confiance { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; margin: 10px 0 0; padding: 0; font-size: var(--t-s); color: #C9D6DD; }
+.fc-confiance li { display: inline-flex; align-items: center; gap: 7px; }
+.fc-pastille { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.fc-pastille--0 { background: var(--ocean-teal); }
+.fc-pastille--1 { background: var(--warm-sun); }
+.fc-pastille--2 { background: #D9775F; }
+.fc-maj { margin: 0 0 16px; font-size: var(--t-xs); color: #A9BCC7; }
+.spot-securite { margin-bottom: 12px; }
+
+/* Fiche spot : zone de confort et commentaire du verdict */
+.fc-confort { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 14px; color: #C9D6DD; font-size: var(--t-s); }
+.fc-confort output { color: var(--white); font-weight: 600; }
+.fc-confort-curseur { flex: 1 1 220px; max-width: 420px; accent-color: var(--warm-sun); }
+.fc-commentaire { margin: 4px 0 0; font-family: var(--font-titre); font-size: var(--t-l); font-weight: 700; color: var(--white); }
