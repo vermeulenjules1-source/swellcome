@@ -83,7 +83,7 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 - Pas d'image ni de flux Viewsurf sans autorisation écrite : ses mentions légales l'interdisent. Ne pas se présenter comme un navigateur pour récupérer des fichiers.
 - Vidéo sous CC BY-SA : le crédit doit rester sur la page À propos, reliée depuis le pied de page.
 
-**Landes et Pays basque (10 novembre 2026)** : fiches créées par `scripts/importer_plages_ign.py` depuis la BD TOPO de l'IGN : position, orientation et prévisions. Fond, vague, dangers et photos restent à compléter avec des sources publiques ou du terrain. Surf-Report et les autres sites de spots restent exclus, même pour une simple liste. La carte de l'accueil et sa grille restent sur la Gironde : à revoir pour plus de spots.
+**Landes et Pays basque (10 novembre 2026)** : 44 fiches, position et orientation depuis la BD TOPO (`scripts/importer_plages_ign.py`, à ne plus relancer tel quel : les doublons ont été triés à la main), une plage par plage. Photos Wikimedia Commons sous licence libre. Faits issus de sources publiques seulement (guides touristiques, Shom, BRGM, préfecture) ; le reste affiche « À confirmer ». Surf-Report et les autres sites de spots restent exclus, même pour une simple liste. La carte de l'accueil montre tous les spots, avec des étiquettes pour les meilleurs et des points pour les autres ; la grille reste sur la Gironde.
 
 **À faire ou à vérifier**
 - Attendre de Jules : email de contact et choix d'adresse pour les mentions légales (passages `.to-fill`), compte Brevo (`NEWSLETTER_ACTION` dans `build.py`), compte AVISO pour les marées.
