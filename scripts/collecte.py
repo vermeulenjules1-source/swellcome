@@ -3,6 +3,7 @@ Récupère les prévisions Open-Meteo et écrit un fichier par spot dans data/fo
 
 Sources (CC BY 4.0) :
   - Marine API : houle, période, direction, mer du vent, température de l'eau.
+    La houle principale est la médiane de plusieurs modèles (MODELES_HOULE).
   - Forecast API : vent et rafales, modèles Météo-France (AROME, ARPEGE),
     complétés par ECMWF au-delà de leur échéance (environ 4 jours).
 
@@ -14,6 +15,7 @@ Aucune bibliothèque à installer : uniquement Python 3.
 """
 
 import json
+import statistics
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -27,6 +29,8 @@ URL_MARINE = "https://marine-api.open-meteo.com/v1/marine"
 URL_METEO = "https://api.open-meteo.com/v1/forecast"
 JOURS = 7
 MODELES_VENT = ["meteofrance_seamless", "ecmwf_ifs025"]  # par ordre de préférence
+# Modèles comparés pour la houle. ECMWF ne donne pas la houle séparée de la mer du vent : il n'y figure pas.
+MODELES_HOULE = ["meteofrance_wave", "ewam", "gwam", "ncep_gfswave016"]
 TAILLE_LOT = 50   # nombre de spots par requête
 
 # Noms courts utilisés dans les JSON et dans le graphique
@@ -67,6 +71,11 @@ def collecter_lot(spots):
         "timezone": "Europe/Paris",
     }
     marine = appeler(URL_MARINE, {**coordonnees, "hourly": ",".join(VARIABLES_MARINE)})
+    comparaison = appeler(URL_MARINE, {
+        **coordonnees,
+        "hourly": "swell_wave_height,swell_wave_peak_period,swell_wave_direction",
+        "models": ",".join(MODELES_HOULE),
+    })
     meteo = appeler(URL_METEO, {
         **coordonnees,
         "hourly": ",".join(VARIABLES_VENT),
@@ -74,10 +83,11 @@ def collecter_lot(spots):
         "models": ",".join(MODELES_VENT),
     })
 
-    for spot, m, v in zip(spots, marine, meteo):
+    for spot, m, c, v in zip(spots, marine, comparaison, meteo):
         heures = {"temps": m["hourly"]["time"]}
         for api, nom in VARIABLES_MARINE.items():
             heures[nom] = m["hourly"][api]
+        combiner_modeles(heures, c["hourly"])
         # Le vent et la mer sont alignés sur les mêmes heures
         index_vent = {t: i for i, t in enumerate(v["hourly"]["time"])}
         for api, nom in VARIABLES_VENT.items():
@@ -95,6 +105,51 @@ def collecter_lot(spots):
                 "coucher": serie_soleil(v["daily"], "sunset"),
             },
         })
+
+
+def mediane_direction(directions):
+    """Médiane d'angles : 350° et 10° doivent donner 0°, pas 180°."""
+    reference = directions[0]
+    ecarts = [((d - reference + 180) % 360) - 180 for d in directions]
+    return round((reference + statistics.median(ecarts)) % 360)
+
+
+def combiner_modeles(heures, modeles):
+    """Remplace la houle principale par la médiane des modèles, et garde leur écart.
+
+    La période retenue est la période de pic, celle de la houle la plus énergique : c'est elle qui fait
+    la force des vagues, alors que la moyenne baisse dès que la mer est mélangée. À défaut, on garde la moyenne.
+    Une hauteur nulle signale une maille du modèle posée sur la terre : elle est ignorée.
+    """
+    rangs = {t: i for i, t in enumerate(modeles["time"])}
+    heures["periode_moyenne"] = heures["periode"]
+    for nom in ("houle_min", "houle_max", "nb_modeles"):
+        heures[nom] = [None] * len(heures["temps"])
+
+    for i, t in enumerate(heures["temps"]):
+        rang = rangs.get(t)
+        if rang is None:
+            continue
+        hauteurs, directions, pics = [], [], []
+        for modele in MODELES_HOULE:
+            hauteur = modeles[f"swell_wave_height_{modele}"][rang]
+            direction = modeles[f"swell_wave_direction_{modele}"][rang]
+            pic = modeles[f"swell_wave_peak_period_{modele}"][rang]
+            if hauteur:
+                hauteurs.append(hauteur)
+                if direction is not None:
+                    directions.append(direction)
+            if pic is not None:
+                pics.append(pic)
+        if hauteurs:
+            heures["houle"][i] = round(statistics.median(hauteurs), 2)
+            heures["houle_min"][i] = min(hauteurs)
+            heures["houle_max"][i] = max(hauteurs)
+            heures["nb_modeles"][i] = len(hauteurs)
+        if directions:
+            heures["direction"][i] = mediane_direction(directions)
+        if pics:
+            heures["periode"][i] = round(statistics.median(pics), 2)
 
 
 def valeur_vent(horaire, variable, rang):

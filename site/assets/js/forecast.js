@@ -29,7 +29,7 @@
 
   const {
     NIVEAUX, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
-    typeVent, evaluer, estDeJour, analyserJour, phrase, motif, creneauTexte,
+    typeVent, evaluer, estDeJour, analyserJour, phrase, motif, creneauTexte, accordModeles,
   } = V.creerAnalyse({ spot, prevision });
 
 
@@ -185,6 +185,10 @@
     const v = VERDICTS[analyse.note];
     const conseil = niveauChoisi === "debutant"
       ? `<p class="fc-conseil">Débutant : prenez un cours avec une école de surf, et restez toujours hors de la zone de baignade.</p>` : "";
+    const comparaison = accordModeles(analyse.repere);
+    const accord = !comparaison ? "" : comparaison.accord
+      ? `<p class="fc-accord"><strong>Modèles d'accord</strong> : houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large.</p>`
+      : `<p class="fc-accord fc-accord--incertain"><strong>Prévision incertaine</strong> : selon les modèles, houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large. Revenez avant d'y aller.</p>`;
     zoneVerdict.className = `fc-verdict fc-verdict--${v.badge}`;
     zoneVerdict.innerHTML = `
       <div class="fc-verdict-haut">
@@ -192,6 +196,7 @@
         <strong class="fc-verdict-mot">${icone(v.icone)}${v.nom}</strong>
       </div>
       <p class="fc-phrase">${phrase(analyse, jourChoisi, niveau)}</p>
+      ${accord}
       ${conseil}`;
 
     heureChoisie = analyse.repere.heure;
@@ -285,7 +290,7 @@
     }
     zoneInfos.innerHTML = `
       <p>Mis à jour le ${texteMaj}, heure de Paris.</p>
-      <p>La taille au bord est estimée par Swellcome à partir de la houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne.</p>
+      <p>La houle retenue est la médiane de quatre modèles : Météo-France, EWAM et GWAM du service météo allemand, GFS de la NOAA. La taille au bord est estimée par Swellcome à partir de cette houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période de pic et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne.</p>
       <p>La marée vient du niveau de la mer prévu par Open-Meteo. Elle est indicative, ne convient pas à la navigation et ne remplace pas l'annuaire officiel du Shom. Le verdict n'en tient pas encore compte : son effet dépend de chaque spot.</p>
       <p>Les critères sont en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
   }

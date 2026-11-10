@@ -1617,3 +1617,8 @@ html:not(.js) .onglets { display: none; }
   .boussole svg { max-width: 220px; }
   .boussole-legende { justify-self: stretch; }
 }
+
+/* Fiche spot : accord des modèles de houle */
+.fc-accord { margin: 8px 0 0; font-size: var(--t-s); color: #C9D6DD; max-width: 680px; }
+.fc-accord strong { font-weight: 600; color: var(--ocean-teal); }
+.fc-accord--incertain strong { color: var(--warm-sun); }

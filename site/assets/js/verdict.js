@@ -21,6 +21,8 @@ window.SwellcomeVerdict = (function () {
 
   const VENT_FAIBLE = 15; // km/h
   const TAILLE_MINI = 0.5; // m au bord : en dessous, il n'y a presque rien à surfer
+  const ACCORD_MODELES_M = 0.3;      // m : écart entre modèles sous lequel ils sont jugés d'accord
+  const ACCORD_MODELES_PART = 0.25;  // ou écart relatif à la houle retenue
   const ECART_SATURATION = 0.5; // m : le haut de la zone idéale reste sous la saturation
 
   // Part de la houle du large qui arrive au bord selon sa période (période en s, coefficient).
@@ -212,6 +214,9 @@ window.SwellcomeVerdict = (function () {
       maree: niveauxMer[i] ?? null,
       mareeSens: sensMaree(niveauxMer, i),
       mareeEtat: etatMaree(t, niveauxMer[i], marees),
+      houleMin: (h.houle_min || [])[i] ?? null,
+      houleMax: (h.houle_max || [])[i] ?? null,
+      nbModeles: (h.nb_modeles || [])[i] ?? 0,
     }));
 
     // Les prévisions sont à l'heure de Paris, quel que soit le fuseau du visiteur
@@ -228,6 +233,17 @@ window.SwellcomeVerdict = (function () {
     const jours = prevision.soleil.jours.filter((jour) => jour >= aujourdhui);
 
     const typeVentSpot = (direction) => typeVent(direction, spot.orientation);
+
+    // Les modèles disent-ils la même chose à cette heure ? null si un seul modèle répond.
+    function accordModeles(heure) {
+      if (heure.nbModeles < 2) return null;
+      const ecart = heure.houleMax - heure.houleMin;
+      return {
+        accord: ecart <= ACCORD_MODELES_M || ecart / heure.houle <= ACCORD_MODELES_PART,
+        min: heure.houleMin,
+        max: heure.houleMax,
+      };
+    }
 
     function evaluerHeure(heure, niveau) {
       if (heure.hauteur == null || heure.vent == null) return null;
@@ -343,7 +359,7 @@ window.SwellcomeVerdict = (function () {
 
     return {
       NIVEAUX: niveaux, heures, marees, soleil, jours, aujourdhui, parisMaintenant,
-      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif, creneauTexte,
+      typeVent: typeVentSpot, evaluer: evaluerHeure, estDeJour, analyserJour, phrase, motif, creneauTexte, accordModeles,
     };
   }
 
