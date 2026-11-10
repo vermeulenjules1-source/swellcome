@@ -1,0 +1,74 @@
+{
+  "slug": "la-sud-hossegor",
+  "nom": "La Sud d'Hossegor",
+  "noms_alternatifs": [
+    "Soorts-Hossegor – Plage sud",
+    "Plage Sud (Océan)"
+  ],
+  "commune": "Soorts-Hossegor",
+  "departement": "Landes",
+  "departement_slug": "landes",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 19,
+  "coordonnees": {
+    "lat": 43.660669,
+    "lon": -1.444493,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 283,
+  "orientation_16": "ONO",
+  "fond": "Sable",
+  "type_vague": "Beach break",
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "En 2026 : surveillée du 4 avril au 25 octobre, de 11 h à 19 h du 4 juillet au 30 août, horaires réduits autour. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": null,
+  "description": "Plage sud d'Hossegor, côté océan.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Tourisme Landes, plage Sud (Océan)",
+      "url": "https://www.tourismelandes.com/en/?p=12939",
+      "porte_sur": "surveillance"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "côte sableuse, barres et baïnes"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux"
+    },
+    {
+      "titre": "Préfecture de Nouvelle-Aquitaine, alertes baïnes sur le littoral aquitain",
+      "url": "https://www.prefectures-regions.gouv.fr/nouvelle-aquitaine/Actualites/Alerte-baine-sur-le-littoral-aquitain-mardi-et-mercredi",
+      "porte_sur": "baïnes, courants"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire",
+  "webcams": [],
+  "photo": {
+    "fichier": "la-sud-hossegor.jpg",
+    "legende": "Vue de la côte à Soorts-Hossegor",
+    "auteur": "Remi Jouan",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Hossegor_plage.jpg"
+  }
+}

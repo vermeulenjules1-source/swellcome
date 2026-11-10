@@ -1,0 +1,63 @@
+{
+  "slug": "la-chambre-d-amour",
+  "nom": "La Chambre d'Amour",
+  "noms_alternatifs": [
+    "La Petite Chambre d'Amour",
+    "Plage de la Petite Chambre d'Amour"
+  ],
+  "commune": "Anglet",
+  "departement": "Pays basque",
+  "departement_slug": "pays-basque",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 6,
+  "coordonnees": {
+    "lat": 43.495886,
+    "lon": -1.545564,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 301,
+  "orientation_16": "ONO",
+  "fond": "Sable",
+  "type_vague": "Beach break",
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [
+    "Courants"
+  ],
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "Bus Txik Txak depuis Bayonne et Biarritz.",
+  "description": "Grande plage de sable fin d'Anglet, avec cafés et restaurants à proximité.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, plages d'Anglet",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/anglet-46.html",
+      "porte_sur": "liste des plages"
+    },
+    {
+      "titre": "Belambra, les plages d'Anglet",
+      "url": "https://www.belambra.fr/guides/destinations/anglet/plages-anglet",
+      "porte_sur": "caractère des plages, surveillance"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire",
+  "webcams": [],
+  "photo": {
+    "fichier": "la-chambre-d-amour.jpg",
+    "legende": "Vue de la côte à Anglet",
+    "auteur": "Christian David",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Vagues_de_la_plage_de_la_Chambre_d%27Amour.jpg"
+  }
+}

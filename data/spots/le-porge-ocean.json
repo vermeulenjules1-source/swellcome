@@ -8,7 +8,7 @@
   "departement": "Gironde",
   "departement_slug": "gironde",
   "region": "Nouvelle-Aquitaine",
-  "ordre_nord_sud": 10,
+  "ordre_nord_sud": 9,
   "coordonnees": {
     "lat": 44.894241,
     "lon": -1.217531,

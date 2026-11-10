@@ -1,0 +1,51 @@
+{
+  "slug": "hendaye",
+  "nom": "Hendaye",
+  "noms_alternatifs": [
+    "Deux Jumeaux - Hélio Marin",
+    "Plage Deux Jumeaux - Hélio Marin"
+  ],
+  "commune": "Hendaye",
+  "departement": "Pays basque",
+  "departement_slug": "pays-basque",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 19,
+  "coordonnees": {
+    "lat": 43.376374,
+    "lon": -1.761368,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 331,
+  "orientation_16": "NNO",
+  "fond": null,
+  "type_vague": null,
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [],
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": null,
+  "description": "Plage d'Hendaye, à l'extrémité sud de la côte basque française.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "faible",
+  "mode_verification": "documentaire",
+  "webcams": [],
+  "photo": {
+    "fichier": "hendaye.jpg",
+    "legende": "Vue de la côte à Hendaye",
+    "auteur": "JLPC",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hendaye_64_Flux_et_reflux.jpg"
+  }
+}

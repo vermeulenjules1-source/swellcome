@@ -1,0 +1,59 @@
+{
+  "slug": "cenitz",
+  "nom": "Cenitz",
+  "noms_alternatifs": [
+    "Senix",
+    "Plage de Senix"
+  ],
+  "commune": "Saint-Jean-de-Luz",
+  "departement": "Pays basque",
+  "departement_slug": "pays-basque",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 14,
+  "coordonnees": {
+    "lat": 43.421355,
+    "lon": -1.620829,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 312,
+  "orientation_16": "NO",
+  "fond": "Sable, galets et rochers",
+  "type_vague": null,
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [
+    "Rochers dans l'eau",
+    "Courants"
+  ],
+  "surveillance": "Surveillée en été. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "Accès par le sentier du littoral.",
+  "description": "Petite crique naturelle de Guéthary où les galets se mêlent au sable.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, plage de Cenitz",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/guethary-62/plage-de-cenitz-3583.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire",
+  "webcams": [],
+  "photo": {
+    "fichier": "cenitz.jpg",
+    "legende": "Vue de la côte à Saint-Jean-de-Luz",
+    "auteur": "This image has been made by Zorion (User:Zorion) and released under the licenses",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Akotzeko_irudia_5.jpg"
+  }
+}

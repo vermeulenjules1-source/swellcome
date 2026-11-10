@@ -8,7 +8,7 @@
   "departement": "Landes",
   "departement_slug": "landes",
   "region": "Nouvelle-Aquitaine",
-  "ordre_nord_sud": 24,
+  "ordre_nord_sud": 15,
   "coordonnees": {
     "lat": 43.687016,
     "lon": -1.4405,
@@ -17,26 +17,62 @@
   },
   "orientation_deg": 272,
   "orientation_16": "O",
-  "fond": null,
-  "type_vague": null,
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
   "fenetre_houle": null,
   "vent_ideal": null,
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": "Baignade surveillée en saison selon la BD TOPO de l'IGN. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Plage de Seignosse, tournée vers l'ouest. Fiche à compléter : le fond, le type de vague et les dangers restent à vérifier sur place.",
+  "description": "Plage de sable fin de Seignosse, plus à l'écart que Le Penon.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
       "url": "https://geoservices.ign.fr/bdtopo",
       "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide des Landes, plages de Seignosse",
+      "url": "https://www.guide-des-landes.com/fr/tourisme/decouvrir/plages-des-landes/seignosse-293/plages-de-seignosse-1340.html",
+      "porte_sur": "sable, surveillance, accès"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "côte sableuse, barres et baïnes"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux"
+    },
+    {
+      "titre": "Préfecture de Nouvelle-Aquitaine, alertes baïnes sur le littoral aquitain",
+      "url": "https://www.prefectures-regions.gouv.fr/nouvelle-aquitaine/Actualites/Alerte-baine-sur-le-littoral-aquitain-mardi-et-mercredi",
+      "porte_sur": "baïnes, courants"
+    },
+    {
+      "titre": "Syndicat mixte de gestion des baignades landaises",
+      "url": "https://www.smgbl.fr/",
+      "porte_sur": "surveillance"
     }
   ],
   "verifie_le": "2026-11-10",
-  "confiance": "faible",
+  "confiance": "moyenne",
   "mode_verification": "documentaire",
-  "webcams": []
+  "webcams": [],
+  "photo": {
+    "fichier": "les-estagnots.jpg",
+    "legende": "Vue de la côte à Seignosse",
+    "auteur": "Seignossetourism",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Plage_des_estagnots.jpg"
+  }
 }

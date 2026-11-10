@@ -1,0 +1,51 @@
+{
+  "slug": "saint-jean-de-luz",
+  "nom": "Saint-Jean-de-Luz",
+  "noms_alternatifs": [
+    "Saint-Jean-de-Luz – Grande plage sud",
+    "Grande Plage Sud"
+  ],
+  "commune": "Saint-Jean-de-Luz",
+  "departement": "Pays basque",
+  "departement_slug": "pays-basque",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 18,
+  "coordonnees": {
+    "lat": 43.390312,
+    "lon": -1.663145,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 316,
+  "orientation_16": "NO",
+  "fond": null,
+  "type_vague": null,
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [],
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": null,
+  "description": "Grande plage de la baie de Saint-Jean-de-Luz, tournée vers le large au fond de la baie.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "faible",
+  "mode_verification": "documentaire",
+  "webcams": [],
+  "photo": {
+    "fichier": "saint-jean-de-luz.jpg",
+    "legende": "Vue de la côte à Saint-Jean-de-Luz",
+    "auteur": "Thomon",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Grande_plage_de_Saint-Jean-de-Luz_en_mai.jpg"
+  }
+}

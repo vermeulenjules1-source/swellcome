@@ -8,7 +8,7 @@
   "departement": "Pays basque",
   "departement_slug": "pays-basque",
   "region": "Nouvelle-Aquitaine",
-  "ordre_nord_sud": 11,
+  "ordre_nord_sud": 8,
   "coordonnees": {
     "lat": 43.475446,
     "lon": -1.567781,
@@ -17,26 +17,42 @@
   },
   "orientation_deg": 288,
   "orientation_16": "ONO",
-  "fond": null,
+  "fond": "Sable",
   "type_vague": null,
   "maree_favorable": null,
   "fenetre_houle": null,
   "vent_ideal": null,
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": "Baignade surveillée en saison selon la BD TOPO de l'IGN. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
-  "description": "Plage de Biarritz, tournée vers l'ouest-nord-ouest. Fiche à compléter : le fond, le type de vague et les dangers restent à vérifier sur place.",
+  "dangers": [
+    "Courants",
+    "Presque plus de plage à marée haute"
+  ],
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "Accès en pente douce pour personnes à mobilité réduite.",
+  "description": "Plage de plus d'un kilomètre sous la falaise de Biarritz, avec vue vers l'Espagne et de nombreuses écoles de surf. Le surf français y est né dans les années 50.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
       "url": "https://geoservices.ign.fr/bdtopo",
       "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, plage de la Côte des Basques",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/biarritz-53/plage-de-la-cote-des-basques-3570.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",
-  "confiance": "faible",
+  "confiance": "moyenne",
   "mode_verification": "documentaire",
-  "webcams": []
+  "webcams": [],
+  "photo": {
+    "fichier": "la-cote-des-basques.jpg",
+    "legende": "Vue de la côte à Biarritz",
+    "auteur": "Alexmar983",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:C%C3%B4te_des_Basques_Biarritz.jpg"
+  }
 }

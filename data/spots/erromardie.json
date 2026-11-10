@@ -8,7 +8,7 @@
   "departement": "Pays basque",
   "departement_slug": "pays-basque",
   "region": "Nouvelle-Aquitaine",
-  "ordre_nord_sud": 22,
+  "ordre_nord_sud": 16,
   "coordonnees": {
     "lat": 43.407688,
     "lon": -1.640122,
@@ -25,18 +25,31 @@
   "taille_ideale": null,
   "niveau_minimal": null,
   "dangers": [],
-  "surveillance": "Baignade surveillée en saison selon la BD TOPO de l'IGN. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Plage de Saint-Jean-de-Luz, tournée vers le nord-ouest. Fiche à compléter : le fond, le type de vague et les dangers restent à vérifier sur place.",
+  "description": "Plage de Saint-Jean-de-Luz citée parmi les sites de baignade de la commune.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
       "url": "https://geoservices.ign.fr/bdtopo",
       "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, plus belles plages",
+      "url": "https://www.guide-du-paysbasque.com/fr/experiences/detente/article-les-plus-belles-plages-du-pays-basque-147.html",
+      "porte_sur": "site de baignade"
     }
   ],
   "verifie_le": "2026-11-10",
-  "confiance": "faible",
+  "confiance": "moyenne",
   "mode_verification": "documentaire",
-  "webcams": []
+  "webcams": [],
+  "photo": {
+    "fichier": "erromardie.jpg",
+    "legende": "Vue de la côte à Saint-Jean-de-Luz",
+    "auteur": "Thomon",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Erromardie_mai_2022.jpg"
+  }
 }

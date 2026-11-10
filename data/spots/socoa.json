@@ -8,7 +8,7 @@
   "departement": "Pays basque",
   "departement_slug": "pays-basque",
   "region": "Nouvelle-Aquitaine",
-  "ordre_nord_sud": 25,
+  "ordre_nord_sud": 17,
   "coordonnees": {
     "lat": 43.39032,
     "lon": -1.683913,
@@ -25,9 +25,9 @@
   "taille_ideale": null,
   "niveau_minimal": null,
   "dangers": [],
-  "surveillance": "Baignade surveillée en saison selon la BD TOPO de l'IGN. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Plage de Ciboure, tournée vers le nord-ouest. Fiche à compléter : le fond, le type de vague et les dangers restent à vérifier sur place.",
+  "description": "Plage de Ciboure, dans la baie de Saint-Jean-de-Luz, près du fort de Socoa.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -38,5 +38,13 @@
   "verifie_le": "2026-11-10",
   "confiance": "faible",
   "mode_verification": "documentaire",
-  "webcams": []
+  "webcams": [],
+  "photo": {
+    "fichier": "socoa.jpg",
+    "legende": "Vue de la côte à Ciboure",
+    "auteur": "Gerard from Tarbes, France",
+    "licence": "CC BY-SA 2.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Plage_de_socoa_(2983735600).jpg"
+  }
 }

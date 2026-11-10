@@ -1,7 +1,9 @@
 {
   "slug": "soulac-centrale",
-  "nom": "Soulac – Plage centrale",
-  "noms_alternatifs": [],
+  "nom": "Soulac",
+  "noms_alternatifs": [
+    "Soulac – Plage centrale"
+  ],
   "commune": "Soulac-sur-Mer",
   "departement": "Gironde",
   "departement_slug": "gironde",

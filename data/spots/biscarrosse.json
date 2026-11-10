@@ -1,0 +1,74 @@
+{
+  "slug": "biscarrosse",
+  "nom": "Biscarrosse",
+  "noms_alternatifs": [
+    "Biscarrosse – Plage centrale",
+    "Plage Centrale"
+  ],
+  "commune": "Biscarrosse",
+  "departement": "Landes",
+  "departement_slug": "landes",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 1,
+  "coordonnees": {
+    "lat": 44.445914,
+    "lon": -1.25642,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 277,
+  "orientation_16": "O",
+  "fond": "Sable",
+  "type_vague": "Beach break",
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [
+    "Baïnes",
+    "Courants"
+  ],
+  "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": null,
+  "description": "Biscarrosse-Plage, longue plage de sable de la côte landaise, ouverte sur l'océan.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "BRGM, évolution géomorphologique de la côte sableuse aquitaine",
+      "url": "https://infoterre.brgm.fr/rapports/RP-56874-FR.pdf",
+      "porte_sur": "côte sableuse, barres et baïnes"
+    },
+    {
+      "titre": "Shom, nature des fonds du golfe de Gascogne",
+      "url": "https://services.data.shom.fr/static/specifications/EE_110527_Nature-fondsV2_GDG.pdf",
+      "porte_sur": "fond sableux"
+    },
+    {
+      "titre": "Préfecture de Nouvelle-Aquitaine, alertes baïnes sur le littoral aquitain",
+      "url": "https://www.prefectures-regions.gouv.fr/nouvelle-aquitaine/Actualites/Alerte-baine-sur-le-littoral-aquitain-mardi-et-mercredi",
+      "porte_sur": "baïnes, courants"
+    },
+    {
+      "titre": "Syndicat mixte de gestion des baignades landaises",
+      "url": "https://www.smgbl.fr/",
+      "porte_sur": "surveillance"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "moyenne",
+  "mode_verification": "documentaire",
+  "webcams": [],
+  "photo": {
+    "fichier": "biscarrosse.jpg",
+    "legende": "Vue de la côte à Biscarrosse",
+    "auteur": "Echtner",
+    "licence": "CC BY 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Biscarrosse_Plage_2.JPG"
+  }
+}

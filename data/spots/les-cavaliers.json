@@ -17,26 +17,46 @@
   },
   "orientation_deg": 295,
   "orientation_16": "ONO",
-  "fond": null,
-  "type_vague": null,
+  "fond": "Sable",
+  "type_vague": "Beach break",
   "maree_favorable": null,
   "fenetre_houle": null,
   "vent_ideal": null,
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": "Baignade surveillée en saison selon la BD TOPO de l'IGN. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
-  "description": "Plage de Anglet, tournée vers l'ouest-nord-ouest. Fiche à compléter : le fond, le type de vague et les dangers restent à vérifier sur place.",
+  "dangers": [
+    "Courants"
+  ],
+  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "Bus Txik Txak depuis Bayonne et Biarritz.",
+  "description": "Plage d'Anglet fréquentée par les surfeurs et connue pour ses vagues puissantes. Elle s'étend jusqu'à la digue de La Barre.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
       "url": "https://geoservices.ign.fr/bdtopo",
       "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, plages d'Anglet",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/anglet-46.html",
+      "porte_sur": "liste des plages"
+    },
+    {
+      "titre": "Belambra, les plages d'Anglet",
+      "url": "https://www.belambra.fr/guides/destinations/anglet/plages-anglet",
+      "porte_sur": "caractère des plages, surveillance"
     }
   ],
   "verifie_le": "2026-11-10",
-  "confiance": "faible",
+  "confiance": "moyenne",
   "mode_verification": "documentaire",
-  "webcams": []
+  "webcams": [],
+  "photo": {
+    "fichier": "les-cavaliers.jpg",
+    "legende": "Vue de la côte à Anglet",
+    "auteur": "Manu6401",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Anglet-cavaliers-beach-2014.jpg"
+  }
 }
