@@ -1646,3 +1646,25 @@ html:not(.js) .onglets { display: none; }
   .site-header { position: static; }
   .onglets { top: 0; }
 }
+
+/* Barre « Trouve ton spot » */
+.page-head--recherche { padding-bottom: 28px; overflow: visible; position: relative; z-index: 30; }
+.recherche { position: relative; flex: 1 1 100%; max-width: 680px; margin-top: 8px; }
+html:not(.js) .recherche { display: none; }
+.recherche label { display: block; margin-bottom: 8px; color: var(--white); font-family: var(--font-titre); font-size: var(--t-l); font-weight: 700; }
+.recherche-champ { position: relative; }
+.recherche-champ .icon { position: absolute; left: 16px; top: 50%; width: 20px; height: 20px; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+.recherche input { width: 100%; padding: 15px 16px 15px 46px; border: 2px solid transparent; border-radius: var(--rayon-petit); background: var(--white); color: var(--deep-ocean); font: inherit; font-size: var(--t-m); }
+.recherche input:focus { outline: none; border-color: var(--warm-sun); }
+.recherche ul { position: absolute; z-index: 40; top: 100%; left: 0; right: 0; margin: 6px 0 0; padding: 6px; max-height: 420px; overflow-y: auto; list-style: none; border-radius: var(--rayon-petit); background: var(--white); box-shadow: 0 12px 32px rgba(9, 40, 59, 0.28); }
+.recherche li a { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: var(--rayon-petit); color: var(--deep-ocean); text-decoration: none; }
+.recherche li a:hover, .recherche li[aria-selected="true"] a { background: var(--sea-mist); }
+.recherche li img { width: 44px; height: 44px; border-radius: var(--rayon-petit); object-fit: cover; flex: none; }
+.recherche-texte { display: flex; flex-direction: column; min-width: 0; }
+.recherche-texte strong { font-weight: 500; font-size: var(--t-m); }
+.recherche-texte mark { background: none; color: inherit; font-weight: 700; }
+.recherche-texte small { font-size: var(--t-xs); color: var(--text-muted); }
+.recherche-vide { padding: 12px; color: var(--text-muted); font-size: var(--t-s); }
+.recherche-carte { flex: 1 1 100%; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: #C9D6DD; font-size: var(--t-s); }
+.recherche-carte .icon { width: 16px; height: 16px; }
+.spot-carte-verdict:empty { display: none; }

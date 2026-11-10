@@ -121,26 +121,29 @@ def vignette_html(spot):
             f'alt="" width="64" height="64" loading="lazy">')
 
 
-def liste_spots_html(spots):
-    """Liste des spots le long de la côte, pour les pages Spots et Gironde."""
-    lignes = []
-    for spot in spots:
-        lignes.append(f"""      <li>
-        <a class="spot-link" href="{url_spot(spot)}">
-          <span class="spot-identite">
-            {vignette_html(spot)}
-            <span>
-              <span class="spot-title">{e(spot['nom'])}</span><br>
-              <span class="spot-commune">{e(spot['commune'])}</span>
-            </span>
-          </span>
-          <span class="spot-meta">
-            <span class="badge badge--neutral">Plage face {e(vers_direction(spot.get('orientation_deg')))}</span>
-            <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-          </span>
-        </a>
-      </li>""")
-    return "    <ol class=\"coast-list\">\n" + "\n".join(lignes) + "\n    </ol>"
+def barre_recherche_html(spots):
+    """La barre « Trouve ton spot » : la liste des spots est lue par assets/js/recherche.js."""
+    donnees = [{
+        "nom": s["nom"],
+        "commune": s["commune"],
+        "departement": s["departement"],
+        "autres": s.get("noms_alternatifs") or [],
+        "url": url_spot(s),
+        "vignette": f"{BASE}/assets/img/spots/vignettes/{s['photo']['fichier']}" if s.get("photo") else None,
+    } for s in spots]
+    # Le remplacement de la séquence fermante empêche de sortir de la balise script
+    texte = json.dumps(donnees, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return f"""<form class="recherche" role="search" data-recherche autocomplete="off">
+      <label for="recherche-spot">Trouve ton spot</label>
+      <div class="recherche-champ">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input type="search" id="recherche-spot" placeholder="Lacanau, Soulac, Le Porge…" role="combobox"
+               aria-autocomplete="list" aria-expanded="false" aria-controls="recherche-suggestions">
+      </div>
+      <ul id="recherche-suggestions" role="listbox" aria-label="Spots proposés" hidden></ul>
+    </form>
+    <script type="application/json" id="donnees-recherche">{texte}</script>
+    <script src="{BASE}/assets/js/recherche.js" defer></script>"""
 
 
 POINTS_LONGS = ["nord", "nord-nord-est", "nord-est", "est-nord-est", "est", "est-sud-est", "sud-est", "sud-sud-est",
@@ -572,6 +575,8 @@ def construire():
     # 2. Données
     spots = charger_spots()
     gironde = [s for s in spots if s["departement_slug"] == "gironde"]
+    landes = [s for s in spots if s["departement_slug"] == "landes"]
+    pays_basque = [s for s in spots if s["departement_slug"] == "pays-basque"]
     articles = charger_articles()
     video = (SITE / "assets" / "video" / "hero.webm").exists()
     credit_video = json.loads(lire(RACINE / "data" / "video-hero.json")) if video else None
@@ -580,8 +585,12 @@ def construire():
         "base": BASE,
         "annee": date.today().year,
         "newsletter_action": e(NEWSLETTER_ACTION),
-        "nombre_spots": len(spots),
-        "liste_spots_gironde": liste_spots_html(gironde),
+        "nombre_spots": len(gironde),
+        "nombre_landes": len(landes),
+        "nombre_pays_basque": len(pays_basque),
+        "grille_spots_landes": grille_spots_html(landes),
+        "grille_spots_pays_basque": grille_spots_html(pays_basque),
+        "barre_recherche": barre_recherche_html(spots),
         "footer_spots": "\n".join(f'          <li><a href="{url_spot(s)}">{e(s["nom"])}</a></li>' for s in gironde),
         "derniers_articles": grille_articles(articles[:3]),
         "rubriques_blog": rubriques_blog(articles),
