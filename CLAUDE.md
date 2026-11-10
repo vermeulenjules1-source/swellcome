@@ -74,7 +74,8 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 - La hauteur affichée est une taille estimée au bord : houle, période et direction par rapport à la plage. Jamais la hauteur totale du large. Une houle courte ou de sud-ouest donne presque rien en Gironde. Depuis le 10 novembre 2026, `houle`, `periode` (de pic) et `direction` de `data/forecast/` sont les médianes de `MODELES_HOULE` dans `collecte.py` (`periode_moyenne`, `houle_min`, `houle_max`, `nb_modeles` conservés). Ne jamais comparer automatiquement aux sites concurrents. Infoclimat : API avec clé uniquement, pas de lecture des pages ; station `000DZ` en CC BY utile pour Lacanau.
 - Les spots de Gironde saturent vers 3 m (`saturation_m`) : à oublier pour tous les niveaux.
 - Sur l'accueil, pas de « À oublier » : la raison (Flat, Vent, Trop gros, Trop petit, Houle courte, Saturé).
-- Le verdict le plus bas s'affiche « Jour off » (`VERDICTS` dans `verdict.js`).
+- Les trois verdicts sont « Top », « Correct » et « À oublier », avec shaka, pouce levé et pouce baissé (`VERDICTS` dans `verdict.js`).
+- Ton : voir le Tone of Voice de Jules (10 novembre 2026, PDF sur son bureau). Tutoiement, français de plage, une seule vanne par écran, jamais sur la sécurité ni le niveau. La banque de phrases est dans `verdict.js`. Signature : « Ne rate plus aucune session. ». Exception maintenue : ne jamais écrire « privilégie les zones surveillées », le surf y est interdit.
 - Tailles de texte : utiliser l'échelle `--t-*` de `style.css`, ne pas en créer d'autres. Directions et marées écrites en clair, jamais « O » seul ni hauteur négative.
 - Le bouton et le formulaire newsletter ne s'affichent que si `NEWSLETTER_ACTION` est rempli dans `build.py`.
 - Chaque spot a sa propre page ; l'accueil ne fait qu'y mener.
