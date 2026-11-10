@@ -192,6 +192,13 @@ def fleche_boussole(angle, classe):
     return (f'<path class="{classe}" d="M{x1},{y1} L{x2},{y2} M{g1},{h1} L{x2},{y2} L{g2},{h2}"/>')
 
 
+def depuis_vers(debut, fin):
+    """« Du sud-ouest au nord-ouest », « De l'ouest au nord »."""
+    premier = f"De l'{debut}" if debut[0] in "eo" else f"Du {debut}"
+    second = f"à l'{fin}" if fin[0] in "eo" else f"au {fin}"
+    return f"{premier} {second}"
+
+
 def boussole_html(spot):
     """La plage vue du ciel : d'où la houle arrive bien et d'où le vent la creuse proprement."""
     o = spot.get("orientation_deg")
@@ -215,7 +222,7 @@ def boussole_html(spot):
       </svg>
       <dl class="boussole-legende">
         <div><dt>La plage</dt><dd>Tournée {e(vers_direction(o))}</dd></div>
-        <div><dt><i class="b-puce b-puce--houle"></i>Houle qui marche</dt><dd>Du {e(houle_de)} au {e(houle_a)}</dd></div>
+        <div><dt><i class="b-puce b-puce--houle"></i>Houle qui marche</dt><dd>{e(depuis_vers(houle_de, houle_a))}</dd></div>
         <div><dt><i class="b-puce b-puce--vent"></i>Vent idéal</dt><dd>Vent de terre, {e(de_direction((o + 180) % 360))}</dd></div>
       </dl>
     </div>"""
@@ -687,7 +694,7 @@ def construire():
         chemin = f"blog/{article['slug']}/"
         ecrire(chemin + "index.html", page_complete(gabarit, morceaux, infos, contenu, chemin))
 
-    ecrire("assets/data/apercu.json", apercu_carte(gironde))
+    ecrire("assets/data/apercu.json", apercu_carte(spots))
 
     # 6. Plan du site pour les moteurs de recherche
     urls = "\n".join(f"  <url><loc>{SITE_URL}{BASE}/{c}</loc></url>"

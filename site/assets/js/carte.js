@@ -500,10 +500,17 @@
       spot.halo = document.createElementNS(espaceSvg, "circle");
       spot.halo.setAttribute("class", "carte-halo");
       spot.halo.setAttribute("r", "7");
+      // Sans étiquette à ce niveau de zoom, le point reste cliquable
+      spot.point.style.pointerEvents = "auto";
+      spot.point.style.cursor = "pointer";
+      spot.point.addEventListener("click", () => choisir(spot, true));
       zoneLiaisons.append(spot.liaison, spot.halo, spot.point);
     });
 
+    let spotActif = null;
+
     function afficherEtiquettes(actif) {
+      spotActif = actif;
       spots.forEach((spot) => {
         const note = noteDe(spot);
         const analyse = analyser(spot, jourChoisi);
@@ -537,26 +544,41 @@
         const p = carte.project([spot.lon, spot.lat]);
         const dedans = p.x > -4 && p.x < W + 4 && p.y > -4 && p.y < H + 4;
         spot.visible = dedans;
-        spot.etiquette.style.visibility = dedans ? "visible" : "hidden";
-        [spot.liaison, spot.point, spot.halo].forEach((e) => { e.style.visibility = dedans ? "visible" : "hidden"; });
+        [spot.point, spot.halo].forEach((e) => { e.style.visibility = dedans ? "visible" : "hidden"; });
+        spot.etiquette.style.visibility = "hidden";
+        spot.liaison.style.visibility = "hidden";
         if (dedans) {
           spot.px = p.x;
           spot.py = p.y;
           visibles.push(spot);
+          [spot.point, spot.halo].forEach((e) => {
+            e.setAttribute("cx", spot.px.toFixed(1));
+            e.setAttribute("cy", spot.py.toFixed(1));
+          });
         }
       });
       if (!visibles.length) return;
 
+      // Trop de spots pour tout écrire : les étiquettes vont aux meilleurs, les autres gardent leur point
+      const pas = HAUTEUR_ETIQUETTE + ESPACE_ETIQUETTES;
+      const places = Math.max(1, Math.floor((H - HAUT_LIBRE - HAUTEUR_ETIQUETTE - 28) / pas) + 1);
+      const affiches = [...visibles]
+        .sort((a, b) => (b === spotActif) - (a === spotActif) || noteDe(b) - noteDe(a) || tailleDe(b) - tailleDe(a))
+        .slice(0, places);
+      affiches.forEach((s) => {
+        s.etiquette.style.visibility = "visible";
+        s.liaison.style.visibility = "visible";
+      });
+
       // Colonne à gauche des plages ; si la place manque, à droite
-      const largeurMax = Math.max(...visibles.map((s) => s.largeur || 120));
-      const plusAGauche = Math.min(...visibles.map((s) => s.px));
-      const plusADroite = Math.max(...visibles.map((s) => s.px));
+      const largeurMax = Math.max(...affiches.map((s) => s.largeur || 120));
+      const plusAGauche = Math.min(...affiches.map((s) => s.px));
+      const plusADroite = Math.max(...affiches.map((s) => s.px));
       const aGauche = plusAGauche - 30 - largeurMax >= 6 || plusADroite + 30 + largeurMax > W;
       const colonne = aGauche ? Math.max(largeurMax + 6, plusAGauche - 30) : plusADroite + 30;
 
       // Empile sans chevauchement, en restant au plus près de chaque plage
-      const pas = HAUTEUR_ETIQUETTE + ESPACE_ETIQUETTES;
-      const rangees = [...visibles].sort((a, b) => a.py - b.py);
+      const rangees = [...affiches].sort((a, b) => a.py - b.py);
       rangees.forEach((s, i) => {
         const voulu = s.py - HAUTEUR_ETIQUETTE / 2;
         s.ey = Math.max(voulu, HAUT_LIBRE, i ? rangees[i - 1].ey + pas : HAUT_LIBRE);
@@ -575,10 +597,6 @@
         s.liaison.setAttribute("y1", (s.ey + HAUTEUR_ETIQUETTE / 2).toFixed(1));
         s.liaison.setAttribute("x2", s.px.toFixed(1));
         s.liaison.setAttribute("y2", s.py.toFixed(1));
-        [s.point, s.halo].forEach((e) => {
-          e.setAttribute("cx", s.px.toFixed(1));
-          e.setAttribute("cy", s.py.toFixed(1));
-        });
       });
     }
 
@@ -589,10 +607,9 @@
 
     // Trait de côte simplifié : les vagues s'arrêtent à la plage (latitude, longitude)
     const COTE = [
-      [44.2, -1.29], [44.62, -1.27],
-      ...spots.map((s) => [s.lat, s.lon - 0.012]).sort((a, b) => a[0] - b[0]),
-      [45.62, -1.2], [45.76, -1.32],
-    ];
+      [43.3, -1.82], [44.62, -1.27], [45.62, -1.2], [45.76, -1.32],
+      ...spots.map((s) => [s.lat, s.lon - 0.012]),
+    ].sort((a, b) => a[0] - b[0]);
 
     // Trois bandes de plus en plus opaques, pour un passage progressif vers la pleine mer
     function masqueLarge() {
@@ -680,7 +697,7 @@
       for (let k = -nombreLignes; k <= nombreLignes; k++) {
         const phase = (k - avance) * espacement;
         let courante = [];
-        for (let lat = 44.22; lat <= 45.74; lat += 0.02) {
+        for (let lat = 43.34; lat <= 45.74; lat += 0.02) {
           const g = (phase - (lat - 45) * Math.sin(angle)) / Math.cos(angle);
           const x = g > 0 ? distanceDepuisPhase(g) : -1;
           if (x > 0.008 && x < 1.8) {
