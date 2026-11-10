@@ -87,7 +87,7 @@
 
   racine.innerHTML = `
     <fieldset class="fc-niveaux">
-      <legend>Votre niveau</legend>
+      <legend>Ton niveau</legend>
       <div class="fc-pilules">
         ${Object.entries(NIVEAUX).map(([cle, n]) => `
           <label class="fc-pilule">
@@ -106,7 +106,7 @@
       <div class="fc-legende">
         ${[2, 1, 0].map((n) => `<span><i style="background:${COULEURS_BARRES[n]}"></i>${VERDICTS[n].nom}</span>`).join("")}
         <span><i class="fc-legende-zone"></i><span class="fc-zone-ideale"></span></span>
-        <span>Touchez une barre pour lire l'heure</span>
+        <span>Touche une barre pour lire l'heure</span>
       </div>
     </div>
     <details class="fc-detail" open>
@@ -129,6 +129,10 @@
   const zoneInfos = racine.querySelector(".fc-infos");
   const zoneMarees = racine.querySelector(".fc-zone-marees");
   const zoneIdeale = racine.querySelector(".fc-zone-ideale");
+
+  // Le message de sécurité remonte juste sous le verdict
+  const securite = document.querySelector(".spot-securite");
+  if (securite) zoneVerdict.after(securite);
 
   const hauteurMaxSemaine = Math.max(...heures.map((x) => x.hauteur || 0));
 
@@ -177,18 +181,18 @@
 
     if (!analyse) {
       zoneVerdict.className = "fc-verdict fc-verdict--neutral";
-      zoneVerdict.innerHTML = `<p class="fc-phrase">Il ne reste plus d'heure de jour aujourd'hui. Choisissez un autre jour.</p>`;
+      zoneVerdict.innerHTML = `<p class="fc-phrase">Il ne reste plus d'heure de jour aujourd'hui. Choisis un autre jour.</p>`;
       heureChoisie = 12;
       return;
     }
 
     const v = VERDICTS[analyse.note];
     const conseil = niveauChoisi === "debutant"
-      ? `<p class="fc-conseil">Débutant : prenez un cours avec une école de surf, et restez toujours hors de la zone de baignade.</p>` : "";
+      ? `<p class="fc-conseil">Débutant : prends un cours avec une école de surf, et reste toujours hors de la zone de baignade.</p>` : "";
     const comparaison = accordModeles(analyse.repere);
     const accord = !comparaison ? "" : comparaison.accord
       ? `<p class="fc-accord"><strong>Modèles d'accord</strong> : houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large.</p>`
-      : `<p class="fc-accord fc-accord--incertain"><strong>Prévision incertaine</strong> : selon les modèles, houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large. Revenez avant d'y aller.</p>`;
+      : `<p class="fc-accord fc-accord--incertain"><strong>Prévision incertaine</strong> : selon les modèles, houle de ${nombre(comparaison.min)} à ${nombre(comparaison.max)} m au large. Repasse ici avant d'y aller.</p>`;
     zoneVerdict.className = `fc-verdict fc-verdict--${v.badge}`;
     zoneVerdict.innerHTML = `
       <div class="fc-verdict-haut">
@@ -291,6 +295,7 @@
     zoneInfos.innerHTML = `
       <p>Mis à jour le ${texteMaj}, heure de Paris.</p>
       <p>La houle retenue est la médiane de quatre modèles : Météo-France, EWAM et GWAM du service météo allemand, GFS de la NOAA. La taille au bord est estimée par Swellcome à partir de cette houle du large (point ${nombre(prevision.point_modele.lat, 2)}° N, ${nombre(Math.abs(prevision.point_modele.lon), 2)}° O), de sa période de pic et de son orientation par rapport à la plage. Les bancs de sable peuvent changer la donne.</p>
+      <p>Offshore : vent de terre, il lisse les vagues. Onshore : vent de mer, il les hache. Side : vent de travers.</p>
       <p>La marée vient du niveau de la mer prévu par Open-Meteo. Elle est indicative, ne convient pas à la navigation et ne remplace pas l'annuaire officiel du Shom. Le verdict n'en tient pas encore compte : son effet dépend de chaque spot.</p>
       <p>Les critères sont en cours de validation avec des surfeurs. <a href="${racine.dataset.guide}">Apprendre à lire un forecast</a>.</p>`;
   }

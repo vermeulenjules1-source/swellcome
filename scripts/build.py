@@ -464,7 +464,7 @@ def bloc_prevision(spot, prevision):
           <svg class="icon" aria-hidden="true"><use href="#i-waves"></use></svg>
         </span>
         <h3>Prévisions bientôt disponibles</h3>
-        <p>Houle, période, vent et marée heure par heure, avec un verdict selon votre niveau : top, correct ou jour off. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
+        <p>Houle, période, vent et marée heure par heure, avec un verdict selon ton niveau : top, correct ou à oublier. <a href="{{base}}/comprendre-le-forecast/">Apprendre à lire un forecast</a>.</p>
       </div>"""
     donnees = {
         "spot": {"nom": spot["nom"], "orientation": spot.get("orientation_deg"), "saturation": spot.get("saturation_m")},
@@ -524,6 +524,8 @@ def rubriques_blog(articles):
     blocs = []
     for cle, nom in CATEGORIES.items():
         de_la_rubrique = [a for a in articles if a["categorie"] == cle]
+        if not de_la_rubrique:
+            continue  # une rubrique sans article n'est pas affichée
         blocs.append(f'  <div class="dept-block" id="{cle}">\n    <div class="dept-head"><h2>{nom}</h2></div>\n'
                      + grille_articles(de_la_rubrique, f"Pas encore d'articles dans cette rubrique.") + "\n  </div>")
     return "\n".join(blocs)
@@ -583,6 +585,8 @@ def construire():
         "footer_spots": "\n".join(f'          <li><a href="{url_spot(s)}">{e(s["nom"])}</a></li>' for s in gironde),
         "derniers_articles": grille_articles(articles[:3]),
         "rubriques_blog": rubriques_blog(articles),
+        "chips_blog": "".join(f'<a class="chip" href="#{cle}">{nom}</a>' for cle, nom in CATEGORIES.items()
+                              if any(a["categorie"] == cle for a in articles)),
         "hero_classe": "hero--video" if video else "",
         # La vidéo n'est insérée que si le fichier site/assets/video/hero.webm existe
         "grille_spots": grille_spots_html(gironde),
@@ -651,7 +655,7 @@ def construire():
         })
         infos = {
             "titre": f"Surf à {spot['nom']} ({spot['commune']}) : prévisions et fiche spot | Swellcome",
-            "description": f"Prévisions surf pour {spot['nom']}, à {spot['commune']} ({spot['departement']}) : houle, vent, marée et conseils selon votre niveau.",
+            "description": f"Prévisions surf pour {spot['nom']}, à {spot['commune']} ({spot['departement']}) : houle, vent, marée et conseils selon ton niveau.",
             "nav": "spots",
         }
         chemin = f"{spot['departement_slug']}/{spot['slug']}/"

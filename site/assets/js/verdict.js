@@ -14,9 +14,9 @@ window.SwellcomeVerdict = (function () {
   };
 
   const VERDICTS = {
-    2: { nom: "Top", badge: "good", icone: "i-check", couleur: "#2D6A63" },
-    1: { nom: "Correct", badge: "warn", icone: "i-minus", couleur: "#E6B96C" },
-    0: { nom: "Jour off", badge: "neutral", icone: "i-cafe", couleur: "#8A979F" },
+    2: { nom: "Top", badge: "good", icone: "i-shaka", couleur: "#2D6A63" },
+    1: { nom: "Correct", badge: "warn", icone: "i-pouce-haut", couleur: "#E6B96C" },
+    0: { nom: "À oublier", badge: "neutral", icone: "i-pouce-bas", couleur: "#8A979F" },
   };
 
   const VENT_FAIBLE = 15; // km/h
@@ -166,6 +166,7 @@ window.SwellcomeVerdict = (function () {
     return { notes, sature, note: Math.min(notes.hauteur, notes.vent, notes.periode) };
   }
 
+  const NOMS_JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
   const POINTS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
   const cardinal = (deg) => (deg == null ? "–" : POINTS[Math.round(deg / 22.5) % 16]);
   const POINTS_LONGS = [
@@ -318,43 +319,107 @@ window.SwellcomeVerdict = (function () {
       return pire === "vent" ? "Vent" : "Houle courte";
     }
 
-    function raison(heure, niveau) {
-      const { notes } = heure.eval;
-      const pire = ["hauteur", "vent", "periode"].reduce((a, b) => (notes[b] < notes[a] ? b : a));
-      const limite = notes[pire] === 1;
-
-      if (pire === "hauteur") {
-        if (heure.eval.sature) return `mer trop grosse, les bancs saturent (houle de ${nombre(heure.houle)} m)`;
-        if (heure.hauteur < TAILLE_MINI) return `presque rien au bord (${nombre(heure.hauteur)} m)`;
-        const sens = heure.hauteur < niveau.min ? "petites" : "grosses";
-        return `vagues ${limite ? "un peu" : "trop"} ${sens} (${nombre(heure.hauteur)} m)`;
-      }
-      if (pire === "vent") {
-        return `${libelleVent(typeVentSpot(heure.ventDir)).toLowerCase()} ${limite ? "à surveiller" : "défavorable"} (${nombre(heure.vent, 0)} km/h)`;
-      }
-      return limite
-        ? `houle un peu courte (${nombre(heure.periode, 0)} s)`
-        : `houle trop courte (${nombre(heure.periode, 0)} s), vagues molles`;
-    }
-
     function creneauTexte(analyse, jour) {
       const debut = analyse.creneau[0].heure;
       const dernier = analyse.creneau[analyse.creneau.length - 1].heure;
       const coucher = Number(soleil[jour].coucher.slice(11, 13));
-      return `de ${heureTexte(debut)} à ${heureTexte(Math.min(dernier + 1, coucher + 1))}`;
+      return `${heureTexte(debut)}-${heureTexte(Math.min(dernier + 1, coucher + 1))}`;
+    }
+
+    // Le vent en langue de plage : offshore, onshore ou side
+    function ventTexte(heure) {
+      if (heure.vent < 8) return "presque pas de vent";
+      const mot = { terre: "offshore", mer: "onshore", travers: "vent side" }[typeVentSpot(heure.ventDir)] || "vent";
+      return `${mot} à ${nombre(heure.vent, 0)} km/h`;
+    }
+
+    const estWeekEnd = (jour) => [0, 6].includes(new Date(jour + "T12:00:00").getDay());
+
+    // Toujours la même phrase pour un même spot, jour et niveau : elle ne change pas à chaque clic
+    function choisir(liste, cle) {
+      let somme = 0;
+      for (const lettre of cle) somme = (somme * 31 + lettre.charCodeAt(0)) >>> 0;
+      return liste[somme % liste.length];
+    }
+
+    // « demain », « jeudi » : le prochain jour surfable pour ce niveau
+    function prochainJour(jour, niveau) {
+      const suivant = jours.find((j) => j > jour && analyserJour(j, niveau).note >= 1);
+      if (!suivant) return null;
+      const lendemain = new Date(new Date(jour + "T12:00:00").getTime() + 86400000).toISOString().slice(0, 10);
+      return suivant === lendemain ? "demain" : NOMS_JOURS[new Date(suivant + "T12:00:00").getDay()];
+    }
+
+    // La vanne de fin de phrase, jamais sur la sécurité ni sur un niveau dépassé (voir le Tone of Voice)
+    function chute(analyse, jour, niveau, categorie) {
+      const weekEnd = estWeekEnd(jour);
+      const matin = analyse.creneau[0].heure < 11;
+      const lendemain = new Date(new Date(aujourdhui + "T12:00:00").getTime() + 86400000).toISOString().slice(0, 10);
+      const listes = {
+        top: weekEnd ? ["Pas de boulot, pas d'excuse."] : [
+          "Ton boss comprendra. Ou pas, mais tu seras à l'eau.",
+          "Le point d'équipe se fera sans toi.",
+          "Bloque ton agenda : « rendez-vous extérieur ».",
+          "Les mails attendront, la marée non.",
+          "Le moment de tester le télétravail depuis le parking.",
+          ...(matin ? ["Pose ta matinée."] : []),
+          ...(matin && jour === lendemain ? ["Ta grand-mère risque de tomber malade demain matin."] : []),
+        ],
+        correct: [
+          "Parfait pour se dérouiller.",
+          ...(weekEnd ? [] : [
+            "Pas de quoi poser un RTT, mais de quoi sauver ta pause déj.",
+            "Ni bon ni mauvais, comme un lundi.",
+            "Le genre de session que tu racontes quand même à la machine à café.",
+            ...(matin ? ["Session avant le boulot, douche au bureau."] : []),
+          ]),
+        ],
+        plat: [
+          "Bonne nouvelle : ta combi va enfin sécher.",
+          ...(weekEnd ? ["Le marché, c'est bien aussi."] : [
+            "Excellente journée pour rattraper tes mails.",
+            "L'océan a posé un RTT, toi tu bosses.",
+            "Range la planche, sors le tableur.",
+          ]),
+        ],
+        onshore: [
+          "Garde ta combi au sec.",
+          ...(weekEnd ? [] : [
+            "Reste au bureau, au moins la clim est stable.",
+            "Même ton boss ne te souhaite pas ça.",
+          ]),
+        ],
+        vent: ["Garde ta combi au sec."],
+      };
+      return choisir(listes[categorie], `${spot.nom || ""}|${jour}|${niveau.nom}|${categorie}`);
     }
 
     function phrase(analyse, jour, niveau) {
-      const nom = niveau.nom.toLowerCase();
       const r = analyse.repere;
+      const taille = `${nombre(r.hauteur)} m au bord`;
       if (analyse.note === 2) {
-        return `Les conditions collent à un niveau ${nom} ${creneauTexte(analyse, jour)}. ` +
-          `Vagues d'environ ${nombre(r.hauteur)} m au bord, ${libelleVent(typeVentSpot(r.ventDir)).toLowerCase()} à ${nombre(r.vent, 0)} km/h.`;
+        // « propre » seulement si le vent ne hache pas les vagues
+        const debut = r.vent < 8 || typeVentSpot(r.ventDir) === "terre" ? "Ça rentre propre" : "Ça rentre";
+        return `${debut} : ${taille} à ${nombre(r.periode, 0)} s, ${ventTexte(r)}, ${creneauTexte(analyse, jour)}. ${chute(analyse, jour, niveau, "top")}`;
       }
       if (analyse.note === 1) {
-        return `Surfable pour un niveau ${nom} ${creneauTexte(analyse, jour)}, sans être idéal : ${raison(analyse.creneau.find((x) => x.eval.note === 1) || r, niveau)}.`;
+        return `Surfable, sans plus : ${taille} à ${nombre(r.periode, 0)} s, ${ventTexte(r)}, ${creneauTexte(analyse, jour)}. ${chute(analyse, jour, niveau, "correct")}`;
       }
-      return `Pas de créneau adapté à un niveau ${nom}. Le moins mauvais moment, vers ${heureTexte(r.heure)} : ${raison(r, niveau)}.`;
+
+      const raison = motif(analyse, niveau);
+      const prochain = prochainJour(jour, niveau);
+      const fenetre = prochain ? ` Prochaine fenêtre ${prochain}.` : "";
+      const retour = prochain ? ` Reviens ${prochain}, ça remonte.` : "";
+
+      // Ton neutre dès que la mer dépasse le niveau : pas de vanne ici
+      if (raison === "Saturé") return `Mer trop grosse : les bancs saturent, houle de ${nombre(r.houle)} m au large.${fenetre}`;
+      if (raison === "Trop gros") return `${taille} : au-dessus de ton niveau aujourd'hui.${fenetre}`;
+
+      if (raison === "Flat") return `Flat comme une crêpe : ${taille}.${retour} ${chute(analyse, jour, niveau, "plat")}`;
+      if (raison === "Trop petit") return `Un peu juste pour ton niveau : ${taille}.${retour} ${chute(analyse, jour, niveau, "plat")}`;
+      if (raison === "Houle courte") return `Houle trop courte : ${nombre(r.periode, 0)} s, ça manque de jus.${retour} ${chute(analyse, jour, niveau, "plat")}`;
+      if (typeVentSpot(r.ventDir) === "mer") return `Machine à laver : ${taille} mais onshore à ${nombre(r.vent, 0)} km/h.${fenetre} ${chute(analyse, jour, niveau, "onshore")}`;
+      return `Trop de vent : ${ventTexte(r)} pour ${taille}.${fenetre} ${chute(analyse, jour, niveau, "vent")}`;
     }
 
     return {

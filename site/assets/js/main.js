@@ -47,12 +47,12 @@ document.querySelectorAll("[data-newsletter]").forEach((formulaire) => {
     const consentement = formulaire.querySelector('input[name="OPT_IN"]');
 
     if (!email.value || !email.checkValidity()) {
-      afficher("Indiquez une adresse email valide.", "error");
+      afficher("Cette adresse email ne passe pas. Vérifie-la et réessaie.", "error");
       email.focus();
       return;
     }
     if (!consentement.checked) {
-      afficher("Cochez la case pour accepter de recevoir la newsletter.", "error");
+      afficher("Coche la case pour recevoir la newsletter.", "error");
       consentement.focus();
       return;
     }
@@ -60,16 +60,16 @@ document.querySelectorAll("[data-newsletter]").forEach((formulaire) => {
     // Aucun service d'envoi configuré pour l'instant (voir NEWSLETTER_ACTION dans build.py)
     const adresse = formulaire.getAttribute("action");
     if (!adresse) {
-      afficher("Les inscriptions ouvrent très bientôt. Merci de votre intérêt !", "success");
+      afficher("Les inscriptions ouvrent très bientôt. Merci !", "success");
       return;
     }
 
     try {
       await fetch(adresse, { method: "POST", body: new FormData(formulaire), mode: "no-cors" });
-      afficher("Merci ! Confirmez votre inscription grâce à l'email que vous allez recevoir.", "success");
+      afficher("Merci ! Confirme ton inscription avec l'email que tu vas recevoir.", "success");
       formulaire.reset();
     } catch (erreur) {
-      afficher("L'inscription n'a pas pu être envoyée. Réessayez dans un instant.", "error");
+      afficher("L'inscription n'est pas partie. Réessaie dans un instant.", "error");
     }
   });
 });

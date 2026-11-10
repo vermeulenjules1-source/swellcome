@@ -35,7 +35,7 @@
     { niveau: "debutant", houle: 0.8, periode: 5, dirHoule: SUD_OUEST, vent: 8, dir: EST, lecon: "Houle de sud-ouest et période de 5 s : sur une plage orientée ouest, il n'arrive presque rien au bord." },
     { niveau: "intermediaire", houle: 1.5, periode: 11, dirHoule: OUEST, vent: 10, dir: EST, lecon: "Taille dans la zone, houle bien rangée, vent de terre léger : on y va." },
     { niveau: "intermediaire", houle: 2, periode: 7, dirHoule: OUEST, vent: 10, dir: EST, lecon: "2 m annoncés à 7 s, c'est à peine plus d'un mètre au bord, et des vagues sans grande force." },
-    { niveau: "intermediaire", houle: 1.4, periode: 10, dirHoule: OUEST, vent: 30, dir: OUEST, lecon: "La houle est bonne, mais le vent de mer l'écrase. Regardez toujours le vent après la houle." },
+    { niveau: "intermediaire", houle: 1.4, periode: 10, dirHoule: OUEST, vent: 30, dir: OUEST, lecon: "La houle est bonne, mais le vent de mer l'écrase. Regarde toujours le vent après la houle." },
     { niveau: "intermediaire", houle: 1.6, periode: 9, dirHoule: OUEST, vent: 18, dir: SUD, lecon: "Le vent de travers reste acceptable s'il n'est pas trop fort, mais il abîme la vague." },
     { niveau: "intermediaire", houle: 1.2, periode: 5, dirHoule: OUEST, vent: 8, dir: EST, lecon: "Mer calme ne veut pas dire bonnes vagues : à 5 secondes, 1,2 m au large ne donne presque rien au bord." },
     { niveau: "intermediaire", houle: 0.8, periode: 10, dirHoule: OUEST, vent: 6, dir: EST, lecon: "Un peu petit pour ce niveau, mais propre : de quoi s'amuser avec une planche adaptée." },
@@ -136,7 +136,7 @@
       <h3 class="jeu-question" tabindex="-1">Pour un niveau ${niveau.nom.toLowerCase()}, ce créneau est…</h3>
       <p class="jeu-repere">Repères du niveau, au bord : ${repereNiveau(niveau)}</p>
 
-      <div class="jeu-choix" role="group" aria-label="Votre réponse">
+      <div class="jeu-choix" role="group" aria-label="Ta réponse">
         ${[2, 1, 0].map((n) => `
           <button type="button" class="jeu-bouton" data-note="${n}">
             ${icone(VERDICTS[n].icone)}<span>${VERDICTS[n].nom}</span>
@@ -175,7 +175,7 @@
         bouton.insertAdjacentHTML("beforeend", "<small>Bonne réponse</small>");
       } else if (note === reponse) {
         bouton.classList.add("is-faux");
-        bouton.insertAdjacentHTML("beforeend", "<small>Votre choix</small>");
+        bouton.insertAdjacentHTML("beforeend", "<small>Ton choix</small>");
       }
     });
 
@@ -220,10 +220,10 @@
   }
 
   function titreFinal() {
-    if (score === MANCHES) return ["Know before you go.", "Sans-faute : vous lisez un forecast comme un local."];
-    if (score >= 6) return ["Œil de local", "Vous savez repérer les bons créneaux. Encore quelques réglages sur le vent et la période."];
-    if (score >= 4) return ["Bien placé au pic", "Les bases sont là. Relisez la partie sur le vent : c'est souvent elle qui fait la différence."];
-    return ["Encore dans la mousse", "Pas de panique, ça s'apprend. Relisez le guide au-dessus et retentez une partie."];
+    if (score === MANCHES) return ["Sans-faute", "Tu lis un forecast comme un local."];
+    if (score >= 6) return ["Œil de local", "Tu sais repérer les bons créneaux. Encore quelques réglages sur le vent et la période."];
+    if (score >= 4) return ["Bien placé au pic", "Les bases sont là. Relis la partie sur le vent : c'est souvent elle qui fait la différence."];
+    return ["Encore quelques vagues à prendre", "Pas de panique, ça s'apprend. Relis le guide au-dessus et retente une partie."];
   }
 
   function afficherFin() {

@@ -169,7 +169,7 @@ img, svg { max-width: 100%; }
 }
 
 .section { padding: 72px 0; }
-.section--sand { background: var(--soft-sand); }
+.section--sand { background: var(--sea-mist); }
 .section--mist { background: var(--sea-mist); }
 
 .section-header { max-width: 640px; margin-bottom: 40px; }
@@ -1318,7 +1318,7 @@ img, svg { max-width: 100%; }
 .retour-section { display: inline-block; margin-bottom: 12px; font-size: var(--t-s); font-weight: 500; }
 
 .accomp-section { padding: 64px 0; scroll-margin-top: 80px; }
-.accomp-section:nth-of-type(even) { background: var(--soft-sand); }
+.accomp-section:nth-of-type(even) { background: var(--sea-mist); }
 .accomp-niveaux { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 16px; }
 .accomp-niveau { display: flex; flex-direction: column; padding: 22px; border: 1px solid var(--border); border-radius: var(--rayon); background: var(--white); }
 .accomp-niveau h3 { margin-bottom: 6px; }
@@ -1341,7 +1341,7 @@ img, svg { max-width: 100%; }
 .hero--anime .btn--soleil { background: var(--warm-sun); border-color: var(--warm-sun); color: var(--deep-ocean); }
 .hero--anime .btn--soleil:hover { background: #F0C983; color: var(--deep-ocean); }
 .hero-texte { position: relative; z-index: 2; }
-.hero-texte h1 { font-size: clamp(2.6rem, 6vw, 4.5rem); margin-bottom: 14px; }
+.hero-texte h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); margin-bottom: 14px; }
 .hero-texte .lead { font-size: var(--t-l); max-width: 560px; margin-bottom: 18px; color: var(--white); }
 .hero-direct { margin: 0 0 26px; font-size: var(--t-m); font-weight: 500; color: var(--warm-sun); max-width: 640px; }
 
@@ -1471,7 +1471,7 @@ html:not(.js) .onglets { display: none; }
 .fiche-faits dd { margin: 0; font-weight: 500; }
 .fiche-manque { font-size: var(--t-s); margin: 12px 0 0; }
 
-.spot-securite { display: flex; gap: 10px; align-items: flex-start; margin: 26px 0 0; font-size: var(--t-s); color: #C9D6DD; }
+.spot-securite { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 20px; padding: 10px 14px; border-left: 4px solid var(--warm-sun); border-radius: var(--rayon-petit); background: rgba(230, 185, 108, 0.1); font-size: var(--t-s); color: var(--white); max-width: 680px; }
 .spot-securite .icon { width: 18px; height: 18px; color: var(--warm-sun); margin-top: 1px; }
 
 /* Jours */
@@ -1622,3 +1622,27 @@ html:not(.js) .onglets { display: none; }
 .fc-accord { margin: 8px 0 0; font-size: var(--t-s); color: #C9D6DD; max-width: 680px; }
 .fc-accord strong { font-weight: 600; color: var(--ocean-teal); }
 .fc-accord--incertain strong { color: var(--warm-sun); }
+
+/* Bandeaux de page : titre et accroche sur une seule ligne */
+.page-head { padding: 22px 0; }
+.page-head > .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; }
+.page-head h1 { font-size: var(--t-2xl); margin: 0; }
+.page-head .lead { flex: 1 1 280px; font-size: var(--t-m); }
+.page-head .breadcrumb, .page-head .retour-section, .page-head .eyebrow, .page-head-grid { flex: 1 1 100%; margin: 0; }
+.page-head .chips, .page-head .hero-actions { margin: 0 !important; }
+
+/* Pied de page sombre */
+.site-footer { background: var(--deep-ocean); color: #C9D6DD; }
+.site-footer a, .site-footer .logo { color: var(--white); }
+.site-footer h2 { color: #A9BCC7; }
+.site-footer .footer-brand p, .site-footer .footer-legal { color: #C9D6DD; }
+.site-footer .footer-legal { border-top-color: rgba(255, 255, 255, 0.16); }
+
+/* Légende du niveau sur l'accueil */
+.carte-bloc legend small, fieldset legend small { font-weight: 400; color: #A9BCC7; margin-left: 6px; }
+
+/* Téléphone : seul le choix des onglets reste fixe, pour garder de la place à l'écran */
+@media (max-width: 760px) {
+  .site-header { position: static; }
+  .onglets { top: 0; }
+}

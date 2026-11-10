@@ -38,7 +38,7 @@
   const TEXTES_GESTES = {
     "CooperativeGesturesHandler.WindowsHelpText": "Ctrl + molette pour zoomer sur la carte",
     "CooperativeGesturesHandler.MacHelpText": "⌘ + molette pour zoomer sur la carte",
-    "CooperativeGesturesHandler.MobileHelpText": "Utilisez deux doigts pour bouger la carte",
+    "CooperativeGesturesHandler.MobileHelpText": "Deux doigts pour bouger la carte",
   };
 
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -147,7 +147,7 @@
     racine.innerHTML = `
       <div class="carte-controles">
         <fieldset class="fc-niveaux">
-          <legend>Votre niveau</legend>
+          <legend>Ton niveau <small>Sois honnête, l'océan le sera.</small></legend>
           <div class="fc-pilules">
             ${Object.entries(V.NIVEAUX).map(([cle, n]) => `
               <label class="fc-pilule">
@@ -157,7 +157,7 @@
           </div>
         </fieldset>
         <fieldset class="fc-niveaux">
-          <legend>Votre jour</legend>
+          <legend>Ton jour</legend>
           <div class="fc-pilules">
             ${jours.map((jour) => `
               <label class="fc-pilule">
