@@ -1,0 +1,42 @@
+{
+  "slug": "lafitenia",
+  "nom": "Lafiténia",
+  "noms_alternatifs": [
+    "Plage de Lafiténia"
+  ],
+  "commune": "Saint-Jean-de-Luz",
+  "departement": "Pays basque",
+  "departement_slug": "pays-basque",
+  "region": "Nouvelle-Aquitaine",
+  "ordre_nord_sud": 21,
+  "coordonnees": {
+    "lat": 43.414038,
+    "lon": -1.628115,
+    "precision": "plage",
+    "note": "Zone de baignade surveillée selon la BD TOPO de l'IGN. Ce n'est pas la position exacte du pic."
+  },
+  "orientation_deg": 320,
+  "orientation_16": "NO",
+  "fond": null,
+  "type_vague": null,
+  "maree_favorable": null,
+  "fenetre_houle": null,
+  "vent_ideal": null,
+  "taille_ideale": null,
+  "niveau_minimal": null,
+  "dangers": [],
+  "surveillance": "Baignade surveillée en saison selon la BD TOPO de l'IGN. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": null,
+  "description": "Plage de Saint-Jean-de-Luz, tournée vers le nord-ouest. Fiche à compléter : le fond, le type de vague et les dangers restent à vérifier sur place.",
+  "sources": [
+    {
+      "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
+      "url": "https://geoservices.ign.fr/bdtopo",
+      "porte_sur": "position, orientation"
+    }
+  ],
+  "verifie_le": "2026-11-10",
+  "confiance": "faible",
+  "mode_verification": "documentaire",
+  "webcams": []
+}
