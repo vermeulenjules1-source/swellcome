@@ -71,7 +71,7 @@ En ligne : https://vermeulenjules1-source.github.io/swellcome/ (dépôt `vermeul
 - Carte : MapLibre et données IGN, style généré par `scripts/style_carte.py`.
 
 **Retours de Jules à respecter**
-- La hauteur affichée est une taille estimée au bord : houle, période et direction par rapport à la plage. Jamais la hauteur totale du large. Une houle courte ou de sud-ouest donne presque rien en Gironde.
+- La hauteur affichée est une taille estimée au bord : houle, période et direction par rapport à la plage. Jamais la hauteur totale du large. Une houle courte ou de sud-ouest donne presque rien en Gironde. Depuis le 10 novembre 2026, `houle`, `periode` (de pic) et `direction` de `data/forecast/` sont les médianes de `MODELES_HOULE` dans `collecte.py` (`periode_moyenne`, `houle_min`, `houle_max`, `nb_modeles` conservés). Ne jamais comparer automatiquement aux sites concurrents. Infoclimat : API avec clé uniquement, pas de lecture des pages ; station `000DZ` en CC BY utile pour Lacanau.
 - Les spots de Gironde saturent vers 3 m (`saturation_m`) : à oublier pour tous les niveaux.
 - Sur l'accueil, pas de « À oublier » : la raison (Flat, Vent, Trop gros, Trop petit, Houle courte, Saturé).
 - Le verdict le plus bas s'affiche « Jour off » (`VERDICTS` dans `verdict.js`).
