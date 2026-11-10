@@ -27,11 +27,12 @@
   "dangers": [
     "Baïnes",
     "Courants",
-    "Houle forte"
+    "Houle forte",
+    "Baignade et sports nautiques interdits près des blockhaus"
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Plage de sable de Capbreton, reconnaissable à ses blockhaus. Baignade dangereuse à cause de la houle.",
+  "description": "Plage de sable de Capbreton, reconnaissable à ses blockhaus. Baignade et sports nautiques sont interdits à leurs abords immédiats.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -62,6 +63,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Tourisme Landes, plage de la Piste",
+      "url": "https://www.tourismelandes.com/en/?p=95269",
+      "porte_sur": "interdiction près des blockhaus"
     }
   ],
   "verifie_le": "2026-11-10",

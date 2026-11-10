@@ -29,7 +29,7 @@
     "Courants"
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
+  "acces_parking": "Tapis d'accès pour personnes à mobilité réduite depuis le poste de secours de Santocha.",
   "description": "Plage de Capbreton, sur une partie de côte exposée à l'érosion.",
   "sources": [
     {
@@ -56,6 +56,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Tourisme Landes, plage du Prévent",
+      "url": "https://www.tourismelandes.com/loisir/plage-du-prevent/",
+      "porte_sur": "accès"
     }
   ],
   "verifie_le": "2026-11-10",

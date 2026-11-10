@@ -29,7 +29,7 @@
   ],
   "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": "Bus Txik Txak depuis Bayonne et Biarritz.",
-  "description": "Plage urbaine d'Anglet, plus tranquille hors saison.",
+  "description": "Plage de sable animée d'Anglet en été, avec terrains de volley.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -45,6 +45,11 @@
       "titre": "Belambra, les plages d'Anglet",
       "url": "https://www.belambra.fr/guides/destinations/anglet/plages-anglet",
       "porte_sur": "caractère des plages, surveillance"
+    },
+    {
+      "titre": "Guide du Pays basque, plage des Sables d'Or",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/anglet-46/plage-des-sables-d-or-3560.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

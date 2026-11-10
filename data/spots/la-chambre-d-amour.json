@@ -26,11 +26,12 @@
   "taille_ideale": null,
   "niveau_minimal": null,
   "dangers": [
-    "Courants"
+    "Courants",
+    "Cavités rocheuses interdites"
   ],
   "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": "Bus Txik Txak depuis Bayonne et Biarritz.",
-  "description": "Grande plage de sable fin d'Anglet, avec cafés et restaurants à proximité.",
+  "acces_parking": "Accès pour personnes à mobilité réduite, avec tiralo.",
+  "description": "Plage de sable arrondie d'Anglet, spot de surf réputé. Un talus de grosses roches borde la promenade, et l'accès aux cavités de la roche est interdit.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -46,6 +47,11 @@
       "titre": "Belambra, les plages d'Anglet",
       "url": "https://www.belambra.fr/guides/destinations/anglet/plages-anglet",
       "porte_sur": "caractère des plages, surveillance"
+    },
+    {
+      "titre": "Guide du Pays basque, plage de la petite Chambre d'Amour",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/anglet-46/plage-de-la-petite-chambre-d-amour-3558.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

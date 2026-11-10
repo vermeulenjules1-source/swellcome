@@ -30,8 +30,8 @@
     "Courants"
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
-  "description": "Biscarrosse-Plage, longue plage de sable de la côte landaise, ouverte sur l'océan.",
+  "acces_parking": "Vélodyssée à proximité.",
+  "description": "Plage centrale de Biscarrosse-Plage, en plein front de mer, avec école de surf, commerces et restaurants tout près.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -57,6 +57,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Guide des Landes, plage centrale de Biscarrosse",
+      "url": "https://www.guide-des-landes.com/fr/tourisme/decouvrir/plages-des-landes/biscarrosse-44/plage-centrale-de-biscarrosse-1349.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

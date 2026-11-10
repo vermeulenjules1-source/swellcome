@@ -31,7 +31,7 @@
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Mimizan-Plage, station de la côte d'Argent, avec ses plages de sable de part et d'autre du courant de Mimizan.",
+  "description": "Plage de la Garluche, au centre de Mimizan-Plage, large et assez sauvage. Restaurants face à l'océan et école de surf.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -57,6 +57,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Guide des Landes, plage de la Garluche",
+      "url": "https://www.guide-des-landes.com/fr/tourisme/decouvrir/plages-des-landes/mimizan-181/plage-de-la-garluche-mimizan-1348.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

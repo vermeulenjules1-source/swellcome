@@ -29,8 +29,8 @@
     "Courants",
     "Abords de la jetée"
   ],
-  "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
+  "surveillance": "Pas de calendrier de surveillance trouvé pour cette plage : vérifie auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "90 avenue Georges-Pompidou, à Capbreton.",
   "description": "Plage de Capbreton le long de l'estacade, à l'entrée du port. Le Gouf, canyon sous-marin, passe tout près du rivage.",
   "sources": [
     {
@@ -57,6 +57,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Plages des Landes, plage de l'Estacade",
+      "url": "https://plages-landes.info/en/capbreton-en/plage-de-lestacade-2",
+      "porte_sur": "accès, surveillance"
     }
   ],
   "verifie_le": "2026-11-10",

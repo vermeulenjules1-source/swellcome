@@ -30,7 +30,7 @@
   ],
   "surveillance": "Surveillée en juillet et août selon les sources. Dates à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": "Bus Txik Txak depuis Bayonne et Biarritz.",
-  "description": "Plage la plus au nord d'Anglet, marquée par l'embouchure de l'Adour.",
+  "description": "Première plage basque en arrivant des Landes, à l'embouchure de l'Adour. Bonnes vagues, école de surf, aires de jeux et skatepark à côté.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -46,6 +46,11 @@
       "titre": "Belambra, les plages d'Anglet",
       "url": "https://www.belambra.fr/guides/destinations/anglet/plages-anglet",
       "porte_sur": "caractère des plages, surveillance"
+    },
+    {
+      "titre": "Guide du Pays basque, plage de la Barre",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/anglet-46/plage-de-la-barre-3568.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

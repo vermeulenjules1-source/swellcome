@@ -18,7 +18,7 @@
   },
   "orientation_deg": 316,
   "orientation_16": "NO",
-  "fond": null,
+  "fond": "Sable",
   "type_vague": null,
   "maree_favorable": null,
   "fenetre_houle": null,
@@ -26,18 +26,23 @@
   "taille_ideale": null,
   "niveau_minimal": null,
   "dangers": [],
-  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "surveillance": "Surveillée en été. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Grande plage de la baie de Saint-Jean-de-Luz, tournée vers le large au fond de la baie.",
+  "description": "Grande plage au cœur de la ville, protégée des vents et des courants par la baie. Location de kayaks de mer et de stand-up paddle.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
       "url": "https://geoservices.ign.fr/bdtopo",
       "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, Grande Plage Sud",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/saint-jean-de-luz-75/grande-plage-sud-3590.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",
-  "confiance": "faible",
+  "confiance": "moyenne",
   "mode_verification": "documentaire",
   "webcams": [],
   "photo": {

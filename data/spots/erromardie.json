@@ -17,17 +17,19 @@
   },
   "orientation_deg": 319,
   "orientation_16": "NO",
-  "fond": null,
+  "fond": "Sable, galets et estran rocheux",
   "type_vague": null,
   "maree_favorable": null,
   "fenetre_houle": null,
   "vent_ideal": null,
   "taille_ideale": null,
   "niveau_minimal": null,
-  "dangers": [],
-  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "dangers": [
+    "Rochers"
+  ],
+  "surveillance": "Plage surveillée en saison. Dates à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Plage de Saint-Jean-de-Luz citée parmi les sites de baignade de la commune.",
+  "description": "Plage de Saint-Jean-de-Luz dans un cadre naturel, mêlant sable et galets. À marée basse, on marche sur l'estran. Très fréquentée en saison.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -38,6 +40,11 @@
       "titre": "Guide du Pays basque, plus belles plages",
       "url": "https://www.guide-du-paysbasque.com/fr/experiences/detente/article-les-plus-belles-plages-du-pays-basque-147.html",
       "porte_sur": "site de baignade"
+    },
+    {
+      "titre": "Guide du Pays basque, plage d'Erromardie",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/saint-jean-de-luz-75/plage-d-erromardie-3588.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

@@ -30,8 +30,8 @@
     "Courants"
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
-  "description": "Moliets-Plage, plage de sable de Moliets-et-Maâ, près de l'embouchure du courant d'Huchet.",
+  "acces_parking": "Accès pour personnes à mobilité réduite.",
+  "description": "Plage principale au cœur de la petite station de Moliets-et-Maâ, avec école de surf. Le courant d'Huchet, réserve naturelle, est tout près.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -57,6 +57,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Guide des Landes, plages de Moliets-et-Maâ",
+      "url": "https://www.guide-des-landes.com/fr/tourisme/decouvrir/plages-des-landes/moliets-et-maa-184/plages-de-moliets-et-maa-1344.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

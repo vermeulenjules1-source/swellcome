@@ -17,7 +17,7 @@
   },
   "orientation_deg": 316,
   "orientation_16": "NO",
-  "fond": null,
+  "fond": "Sable fin",
   "type_vague": null,
   "maree_favorable": null,
   "fenetre_houle": null,
@@ -25,18 +25,23 @@
   "taille_ideale": null,
   "niveau_minimal": null,
   "dangers": [],
-  "surveillance": "Baignade surveillée en saison. Dates et horaires à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
-  "description": "Plage de Ciboure, dans la baie de Saint-Jean-de-Luz, près du fort de Socoa.",
+  "surveillance": "Plage surveillée en saison. Dates à vérifier auprès de la commune. Surf interdit dans la zone de baignade et ses abords.",
+  "acces_parking": "Accès pour personnes à mobilité réduite.",
+  "description": "Plage de sable fin dans la baie de Saint-Jean-de-Luz, face au fort de Socoa. La digue l'abrite et atténue les vagues.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
       "url": "https://geoservices.ign.fr/bdtopo",
       "porte_sur": "position, orientation"
+    },
+    {
+      "titre": "Guide du Pays basque, plage de Socoa",
+      "url": "https://www.guide-du-paysbasque.com/fr/tourisme/decouvrir/plages/ciboure-60/plage-de-socoa-3581.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",
-  "confiance": "faible",
+  "confiance": "moyenne",
   "mode_verification": "documentaire",
   "webcams": [],
   "photo": {

@@ -30,7 +30,7 @@
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
   "acces_parking": null,
-  "description": "Plage de sable de Vielle-Saint-Girons, face à l'océan, en bordure de dune.",
+  "description": "L'une des plages océanes de Vielle-Saint-Girons, sur la côte de sable.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -56,6 +56,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Guide des Landes, plages de Vielle-Saint-Girons",
+      "url": "https://www.guide-des-landes.com/fr/tourisme/decouvrir/plages-des-landes/vielle-saint-girons-322/plages-de-vielle-saint-girons-1345.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",

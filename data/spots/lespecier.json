@@ -25,12 +25,12 @@
   "taille_ideale": null,
   "niveau_minimal": null,
   "dangers": [
-    "Baïnes",
-    "Courants"
+    "Baïnes profondes",
+    "Courant fort"
   ],
   "surveillance": "Postes de secours en saison, surtout en juillet et août. Dates et horaires à vérifier auprès de la commune ou du syndicat des baignades landaises (smgbl.fr). Surf interdit dans la zone de baignade et ses abords.",
-  "acces_parking": null,
-  "description": "Plage de sable au sud de Mimizan-Plage, adossée à la dune.",
+  "acces_parking": "Se garer, puis environ 10 minutes à pied à travers la dune.",
+  "description": "Plage sauvage au sud de Mimizan, avec du sable à perte de vue et une école de surf. Le naturisme y est pratiqué.",
   "sources": [
     {
       "titre": "IGN, Géoplateforme : BD TOPO (limite terre-mer, baignades surveillées), Licence Ouverte",
@@ -56,6 +56,11 @@
       "titre": "Syndicat mixte de gestion des baignades landaises",
       "url": "https://www.smgbl.fr/",
       "porte_sur": "surveillance"
+    },
+    {
+      "titre": "Guide des Landes, plage de Lespecier",
+      "url": "https://www.guide-des-landes.com/fr/tourisme/decouvrir/plages-des-landes/mimizan-181/plage-de-mimizan-lespecier-2756.html",
+      "porte_sur": "nature de la plage, surveillance, accès"
     }
   ],
   "verifie_le": "2026-11-10",
